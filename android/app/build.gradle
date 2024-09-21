@@ -1,8 +1,23 @@
-plugins {
+/*plugins {
     id "com.android.application"
     id "kotlin-android"
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
+    id 'com.google.gms.google-services'
+}
+
+dependencies {
+  // Import the Firebase BoM
+  implementation platform('com.google.firebase:firebase-bom:33.3.0')
+
+
+  // TODO: Add the dependencies for Firebase products you want to use
+  // When using the BoM, don't specify versions in Firebase dependencies
+  implementation 'com.google.firebase:firebase-analytics'
+
+
+  // Add the dependencies for any other desired Firebase products
+  // https://firebase.google.com/docs/android/setup#available-libraries
 }
 
 android {
@@ -39,6 +54,57 @@ android {
     }
 }
 
+flutter {
+    source = "../.."
+}*/
+
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android' // Isso deve permanecer
+    id 'dev.flutter.flutter-gradle-plugin'
+    id 'com.google.gms.google-services'
+}
+
+android {
+    namespace = "com.example.flutter_sigma"
+    compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        applicationId = "com.example.flutter_sigma"
+        minSdk = 23 // Você pode ajustar isso se precisar de uma versão mais baixa
+        targetSdk = flutter.targetSdkVersion
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
+    }
+
+    buildTypes {
+        release {
+            signingConfig = signingConfigs.debug
+        }
+    }
+}
+
+dependencies {
+    // Importar o Firebase BoM
+    implementation platform('com.google.firebase:firebase-bom:33.3.0')
+
+    // Adicione as dependências dos produtos Firebase que você deseja usar
+    implementation 'com.google.firebase:firebase-analytics'
+    // Adicione outras dependências desejadas
+    // https://firebase.google.com/docs/android/setup#available-libraries
+}
+
+// Adicionando essa parte para garantir a configuração do Flutter
 flutter {
     source = "../.."
 }

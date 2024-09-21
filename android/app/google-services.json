@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "870701498948",
+    "project_id": "projeto-frontsigma",
+    "storage_bucket": "projeto-frontsigma.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:870701498948:android:00da6df950b0b1fe997211",
+        "android_client_info": {
+          "package_name": "com.example.flutter_sigma"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAh1hu_le5Xy6zZ8a6OOC8UlYcynd28M9o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
