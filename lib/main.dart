@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_sigma/screens/auth/login_screen.dart';
+/*import 'package:flutter_sigma/screens/auth/login_screen.dart';*/
+/*import 'package:flutter_sigma/screens/home/home_screen.dart';*/
 import 'firebase_options.dart'; // Certifique-se de importar o arquivo correto
 
 void main() async {

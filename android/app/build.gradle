@@ -92,6 +92,10 @@ android {
             signingConfig = signingConfigs.debug
         }
     }
+
+    lintOptions {
+        warning 'deprecation'
+    }
 }
 
 dependencies {
