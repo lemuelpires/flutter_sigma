@@ -34,9 +34,9 @@ class Validators {
       return 'Por favor, insira a data de nascimento.';
     }
     try {
-      DateFormat('yyyy-MM-dd').parseStrict(value);
+      DateFormat('dd/MM/yyy').parseStrict(value);
     } catch (e) {
-      return 'Data de nascimento inválida. Use o formato YYYY-MM-DD.';
+      return 'Data de nascimento inválida. Use o formato dd/MM/yyy.';
     }
     return null;
   }
