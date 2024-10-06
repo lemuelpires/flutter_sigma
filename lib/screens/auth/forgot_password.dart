@@ -33,7 +33,9 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Instruções de redefinição de senha enviadas para o seu e-mail.')),
+        const SnackBar(
+            content: Text(
+                'Instruções de redefinição de senha enviadas para o seu e-mail.')),
       );
 
       Navigator.pop(context); // Voltar à tela de login após o envio
@@ -56,9 +58,10 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text('Recuperar Senha'),
-        backgroundColor: Colors.black,
-      ),
+          title: const Text(
+        'Recuperar Senha',
+        style: TextStyle(color: Colors.white), // Define a cor do texto
+      )),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
