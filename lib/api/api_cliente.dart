@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
 class ApiClient {
-  final Dio dio = Dio(BaseOptions(baseUrl: 'https://localhost:7059/'));
+  final Dio dio = Dio(BaseOptions(baseUrl: 'https://localhost:7059/api'));
 
   // Método GET
   Future<Response> get(String endpoint) async {
