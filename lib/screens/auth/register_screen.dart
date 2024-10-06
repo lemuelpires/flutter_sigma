@@ -4,6 +4,7 @@ import 'package:flutter_sigma/models/usuario_model.dart';
 import 'package:flutter_sigma/services/firebase_auth_service.dart';
 import 'package:flutter_sigma/screens/utils/validators.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart'; // Importando o pacote para máscaras
+import 'package:intl/intl.dart';
 
 class RegistroScreen extends StatefulWidget {
   const RegistroScreen({super.key});
@@ -18,28 +19,30 @@ class RegistroScreenState extends State<RegistroScreen> {
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _sobrenomeController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
-  final TextEditingController _dataNascimentoController = TextEditingController();
+  final TextEditingController _dataNascimentoController =
+      TextEditingController();
   final TextEditingController _telefoneController = TextEditingController();
   final TextEditingController _cpfController = TextEditingController();
 
-  String _generoSelecionado = 'Masculino'; // Valor padrão do gênero
+  String _generoSelecionado = ''; // Inicialize com valor vazio
 
-  final FirebaseAuthService _authService = FirebaseAuthService(); // Instância do serviço
+  final FirebaseAuthService _authService =
+      FirebaseAuthService(); // Instância do serviço
 
   // Máscaras
   final MaskTextInputFormatter _telefoneFormatter = MaskTextInputFormatter(
     mask: '(##) #####-####',
-    filter: { "#": RegExp(r'[0-9]') },
+    filter: {"#": RegExp(r'[0-9]')},
   );
 
   final MaskTextInputFormatter _cpfFormatter = MaskTextInputFormatter(
     mask: '###.###.###-##',
-    filter: { "#": RegExp(r'[0-9]') },
+    filter: {"#": RegExp(r'[0-9]')},
   );
 
   final MaskTextInputFormatter _dataFormatter = MaskTextInputFormatter(
     mask: '##/##/####',
-    filter: { "#": RegExp(r'[0-9]') },
+    filter: {"#": RegExp(r'[0-9]')},
   );
 
   Future<void> _registrarUsuario(BuildContext context) async {
@@ -52,23 +55,29 @@ class RegistroScreenState extends State<RegistroScreen> {
         nome: _nomeController.text.trim(),
         sobrenome: _sobrenomeController.text.trim(),
         senha: _senhaController.text.trim(),
-        genero: _generoSelecionado,
-        dataNascimento: DateTime.parse(_dataNascimentoController.text.trim().replaceAll('/', '-')), // Ajustando o formato
-        telefone: _telefoneController.text.trim(),
+        genero:
+            _generoSelecionado.isEmpty ? 'Não informado' : _generoSelecionado,
+        dataNascimento: DateFormat('dd/MM/yyyy').parseStrict(
+            _dataNascimentoController.text.trim()), // Parse correto da data
+        telefone:
+            _telefoneFormatter.getUnmaskedText(), // Remove máscara do telefone
         data: DateTime.now(),
-        cpf: _cpfController.text.trim(),
+        cpf: _cpfFormatter.getUnmaskedText(), // Remove máscara do CPF
         ativo: true,
       );
 
       try {
-        await _authService.registerUser(novoUsuario, _senhaController.text.trim());
+        await _authService.registerUser(
+            novoUsuario, _senhaController.text.trim());
 
         if (mounted) {
-          scaffoldMessenger.showSnackBar(const SnackBar(content: Text('Usuário registrado com sucesso!')));
+          scaffoldMessenger.showSnackBar(
+              const SnackBar(content: Text('Usuário registrado com sucesso!')));
           navigator.pop(); // Retorna à tela de login ou outra tela
         }
       } catch (e) {
-        scaffoldMessenger.showSnackBar(SnackBar(content: Text('Erro ao registrar: $e')));
+        scaffoldMessenger
+            .showSnackBar(SnackBar(content: Text('Erro ao registrar: $e')));
       }
     }
   }
@@ -77,7 +86,8 @@ class RegistroScreenState extends State<RegistroScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Registro de Usuário', style: TextStyle(color: Colors.white)),
+        title: const Text('Registro de Usuário',
+            style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black,
       ),
       backgroundColor: Colors.black,
@@ -140,7 +150,8 @@ class RegistroScreenState extends State<RegistroScreen> {
       _buildTextField(
         _telefoneController,
         'Telefone',
-        validator: Validators.telefone,
+        validator: (value) => Validators.telefone(_telefoneFormatter
+            .getUnmaskedText()), // Removendo a máscara para validar o telefone
         icon: Icons.phone,
         inputFormatters: [_telefoneFormatter], // Máscara para telefone
       ),
@@ -148,7 +159,8 @@ class RegistroScreenState extends State<RegistroScreen> {
       _buildTextField(
         _cpfController,
         'CPF',
-        validator: Validators.cpf,
+        validator: (value) => Validators.cpf(_cpfFormatter
+            .getUnmaskedText()), // Removendo a máscara para validar o CPF
         icon: Icons.account_box,
         inputFormatters: [_cpfFormatter], // Máscara para CPF
       ),
@@ -180,10 +192,12 @@ class RegistroScreenState extends State<RegistroScreen> {
     return SizedBox(
       width: double.infinity,
       child: DropdownButtonFormField<String>(
-        value: _generoSelecionado,
+        value: _generoSelecionado.isEmpty ? null : _generoSelecionado,
         decoration: InputDecoration(
           labelText: 'Gênero',
           labelStyle: const TextStyle(color: Colors.white),
+          prefixIcon: const Icon(Icons.wc,
+              color: Colors.white), // Adiciona o ícone de WC
           filled: true,
           fillColor: Colors.white.withOpacity(0.2),
           border: OutlineInputBorder(
@@ -196,10 +210,14 @@ class RegistroScreenState extends State<RegistroScreen> {
         borderRadius: BorderRadius.circular(30),
         items: const [
           DropdownMenuItem(
+            value: '',
+            child: Text('Selecione um gênero',
+                style: TextStyle(color: Colors.white)),
+          ),
+          DropdownMenuItem(
             value: 'Masculino',
             child: Row(
               children: [
-                Icon(Icons.male, color: Colors.white),
                 SizedBox(width: 10),
                 Text('Masculino', style: TextStyle(color: Colors.white)),
               ],
@@ -209,7 +227,6 @@ class RegistroScreenState extends State<RegistroScreen> {
             value: 'Feminino',
             child: Row(
               children: [
-                Icon(Icons.female, color: Colors.white),
                 SizedBox(width: 10),
                 Text('Feminino', style: TextStyle(color: Colors.white)),
               ],
@@ -218,7 +235,7 @@ class RegistroScreenState extends State<RegistroScreen> {
         ],
         onChanged: (value) {
           setState(() {
-            _generoSelecionado = value!;
+            _generoSelecionado = value ?? '';
           });
         },
         itemHeight: 60,
