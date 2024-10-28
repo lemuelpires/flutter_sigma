@@ -4,10 +4,13 @@ Aplicativo de E-commerce em Flutter com Integração em API C# e Firebase
 O flutter_sigma é um aplicativo mobile voltado para o público gamer, desenvolvido como parte de um projeto interdisciplinar do 5º semestre na Fatec de Matão. Este aplicativo de e-commerce está sendo criado com Flutter, consome uma API desenvolvida em C# para o backend e utiliza o Firebase para autenticação de usuários.
 
 ⚠️ Status do Projeto
+
 Em Desenvolvimento 🚧
+
 O projeto atualmente está nas fases iniciais, com algumas telas básicas de um e-commerce voltado ao público gamer já implementadas. As funcionalidades e páginas serão expandidas à medida que o desenvolvimento avança.
 
 🎯 Objetivo do Projeto
+
 O flutter_sigma visa criar uma experiência de compra imersiva para gamers, oferecendo uma plataforma de e-commerce moderna e acessível em dispositivos móveis, com funcionalidades de autenticação segura e consumo de dados dinâmicos via API.
 
 🛠️ Tecnologias Utilizadas
