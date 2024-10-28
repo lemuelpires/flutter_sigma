@@ -14,20 +14,25 @@ O projeto atualmente está nas fases iniciais, com algumas telas básicas de um 
 O flutter_sigma visa criar uma experiência de compra imersiva para gamers, oferecendo uma plataforma de e-commerce moderna e acessível em dispositivos móveis, com funcionalidades de autenticação segura e consumo de dados dinâmicos via API.
 
 🛠️ Tecnologias Utilizadas
+
 Frontend: Flutter — Interface mobile multiplataforma (Android e iOS).
 Backend: API em C# — Para operações de dados e lógica de negócios.
 Autenticação: Firebase Authentication — Para gerenciamento seguro de usuários.
+
 📋 Funcionalidades Planejadas
+
 Autenticação de Usuário: Firebase Authentication para login e registro.
 Exibição de Produtos: Lista e detalhes dos produtos voltados para o público gamer.
 Integração com API: Consumo de dados e operações CRUD através de uma API em C#.
 Interface Responsiva: UI/UX adaptada para dispositivos Android e iOS.
+
 🚀 Como Começar
+
 Para executar o projeto localmente, siga os passos abaixo:
 
 Clone o Repositório
 
-Código
+Código:
 git clone https://github.com/seuusuario/flutter_sigma.git
 cd flutter_sigma
 Instale as Dependências
@@ -38,7 +43,7 @@ Configurações de Firebase
 
 Configure o Firebase para o projeto, adicionando os arquivos google-services.json (Android) e GoogleService-Info.plist (iOS).
 Ative Firebase Authentication no console Firebase.
-Configure a API
+Configure a API - https://github.com/lemuelpires/SigmaBackEnd
 
 Garanta que a API em C# esteja rodando e que o aplicativo Flutter aponte para o endereço correto da API.
 Atualize a URL da API conforme necessário nos arquivos de configuração.
