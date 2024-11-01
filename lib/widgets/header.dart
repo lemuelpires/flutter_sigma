@@ -53,17 +53,17 @@ class CustomHeader extends StatelessWidget {
             PopupMenuButton<String>(
               icon: const Icon(Icons.menu, color: Colors.white),
               onSelected: (value) {
-                // Lógica para ação do menu
+                Navigator.pushNamed(context, value);
               },
               itemBuilder: (BuildContext context) {
                 return [
                   const PopupMenuItem(
-                    value: 'item1',
-                    child: Text('Item 1', style: TextStyle(color: Colors.black)),
+                    value: '/ambiente_administrador',
+                    child: Text('Ambiente Administrador', style: TextStyle(color: Colors.black)),
                   ),
                   const PopupMenuItem(
-                    value: 'item2',
-                    child: Text('Item 2', style: TextStyle(color: Colors.black)),
+                    value: '/teste_cadastro',
+                    child: Text('teste de cadastro', style: TextStyle(color: Colors.black)),
                   ),
                   const PopupMenuItem(
                     value: 'item3',
