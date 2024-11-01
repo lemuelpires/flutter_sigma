@@ -1,23 +1,22 @@
-// home_screen.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_sigma/widgets/header.dart';
-import 'package:flutter_sigma/widgets/footer.dart'; // Importando o Footer
-import 'package:flutter_sigma/models/produto_model.dart'; // Importar o modelo
-import 'package:flutter_sigma/providers/produto_providers.dart'; // Importar o ProductProvider
-import 'package:provider/provider.dart'; // Importar o provider
+import 'package:flutter_sigma/widgets/footer.dart';
+import 'package:flutter_sigma/models/produto_model.dart';
+import 'package:flutter_sigma/providers/produto_providers.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  HomeScreenState createState() => HomeScreenState(); // Modificado
+  HomeScreenState createState() => HomeScreenState();
 }
 
-class HomeScreenState extends State<HomeScreen> { // Modificado
+class HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Carregar produtos quando a tela é inicializada
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ProductProvider>(context, listen: false).fetchProducts();
     });
@@ -29,83 +28,126 @@ class HomeScreenState extends State<HomeScreen> { // Modificado
 
     return Scaffold(
       appBar: const PreferredSize(
-        preferredSize: Size.fromHeight(60), // Altura do AppBar (Header)
-        child: CustomHeader(), // Usando o Header customizado
+        preferredSize: Size.fromHeight(60),
+        child: CustomHeader(),
       ),
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF101419),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: productProvider.isLoading
-            ? const Center(child: CircularProgressIndicator()) // Indicador de carregamento
-            : SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Carrossel de Produtos em Destaque
-                    _buildFeaturedProductsCarousel(productProvider.products),
-                    const SizedBox(height: 20),
-
-                    // Título de Categorias
-                    _buildSectionTitle('Categorias'),
-                    const SizedBox(height: 10),
-                    _buildCategories(),
-                    const SizedBox(height: 20),
-
-                    // Título de Novidades
-                    _buildSectionTitle('Novidades'),
-                    const SizedBox(height: 10),
-                    _buildNewProducts(productProvider.products),
-                    const SizedBox(height: 20),
-
-                    // Título de Ofertas
-                    _buildSectionTitle('Ofertas Especiais'),
-                    const SizedBox(height: 10),
-                    _buildSpecialOffers(productProvider.products),
-                  ],
-                ),
-              ),
+            ? const Center(child: CircularProgressIndicator())
+            : productProvider.products.isEmpty
+                ? const Center(child: Text('No products available', style: TextStyle(color: Colors.white)))
+                : SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _buildFeaturedProductsCarousel(productProvider.products),
+                        const SizedBox(height: 20),
+                        _buildSectionTitle('Categorias'),
+                        const SizedBox(height: 10),
+                        _buildCategories(),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
       ),
-      bottomNavigationBar: const Footer(), // Corrigido o posicionamento do Footer
+      bottomNavigationBar: const Footer(),
     );
   }
 
-
   Widget _buildFeaturedProductsCarousel(List<Product> products) {
     return Container(
-      height: 200,
+      height: 300,
       color: Colors.grey[850],
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: products.length, // Usar o número de produtos carregados
+        itemCount: products.length,
         itemBuilder: (context, index) {
           final product = products[index];
           return Container(
-            width: 150,
+            width: 220,
             margin: const EdgeInsets.symmetric(horizontal: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: Colors.black,
-              image: DecorationImage(
-                image: NetworkImage(product.imagemProduto), // Usar a imagem do produto
-                fit: BoxFit.cover,
-              ),
+              color: const Color(0xFF1C1F23),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 80), // Espaço para imagem
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    product.nomeProduto, // Usar o nome do produto
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10),
                   ),
+                  child: product.imagemProduto.endsWith('.svg')
+                      ? SvgPicture.network(
+                          product.imagemProduto,
+                          height: 120,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          placeholderBuilder: (BuildContext context) => Container(
+                            height: 120,
+                            color: Colors.grey[800],
+                            child: const Center(child: CircularProgressIndicator()),
+                          ),
+                        )
+                      : Image.network(
+                          product.imagemProduto,
+                          height: 120,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              height: 120,
+                              width: double.infinity,
+                              color: Colors.grey[800],
+                              child: const Center(child: Icon(Icons.error, color: Colors.red)),
+                            );
+                          },
+                        ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    'R\$ ${product.preco.toStringAsFixed(2)}', // Usar o preço do produto
-                    style: const TextStyle(color: Colors.yellowAccent),
+                    product.nomeProduto,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    'R\$ ${product.preco.toStringAsFixed(2)}',
+                    style: const TextStyle(color: Color(0xFF7FFF00)),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Navegar para a página de detalhes
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF7FFF00),
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      textStyle: const TextStyle(fontSize: 16),
+                    ),
+                    child: const Text(
+                      'Detalhes',
+                      style: TextStyle(color: Colors.black),
+                    ),
                   ),
                 ),
               ],
@@ -132,7 +174,6 @@ class HomeScreenState extends State<HomeScreen> { // Modificado
       children: [
         CircleAvatar(
           radius: 30,
-          backgroundColor: Colors.grey[800],
           child: Icon(icon, color: Colors.white),
         ),
         const SizedBox(height: 5),
@@ -141,84 +182,6 @@ class HomeScreenState extends State<HomeScreen> { // Modificado
           style: const TextStyle(color: Colors.white),
         ),
       ],
-    );
-  }
-
-  Widget _buildNewProducts(List<Product> products) {
-    return Container(
-      height: 100,
-      color: Colors.grey[850],
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: products.length, // Usar o número de produtos
-        itemBuilder: (context, index) {
-          final product = products[index];
-          return Container(
-            width: 100,
-            margin: const EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Colors.black,
-              image: DecorationImage(
-                image: NetworkImage(product.imagemProduto), // Usar a imagem do produto
-                fit: BoxFit.cover,
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 60), // Espaço para imagem
-                Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Text(
-                    product.nomeProduto, // Usar o nome do produto
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildSpecialOffers(List<Product> products) {
-    return Container(
-      height: 100,
-      color: Colors.grey[850],
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: products.length, // Usar o número de produtos
-        itemBuilder: (context, index) {
-          final product = products[index];
-          return Container(
-            width: 100,
-            margin: const EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Colors.black,
-              image: DecorationImage(
-                image: NetworkImage(product.imagemProduto), // Usar a imagem do produto
-                fit: BoxFit.cover,
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 60), // Espaço para imagem
-                Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Text(
-                    product.nomeProduto, // Usar o nome do produto
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
     );
   }
 

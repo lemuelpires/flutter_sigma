@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "adb": "^0.2.0",
     "firebase": "^10.13.2"
   }
 }

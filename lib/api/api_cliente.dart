@@ -1,14 +1,26 @@
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
+import 'dart:io'; // Import necessário para o HttpClient
 
 class ApiClient {
-  final Dio dio = Dio(BaseOptions(baseUrl: 'https://localhost:7059/api'));
+  late final Dio dio;
+
+  ApiClient() {
+    dio = Dio(BaseOptions(baseUrl: 'http://10.0.2.2:5182/api/'));
+
+    dio.httpClientAdapter = IOHttpClientAdapter()
+      ..createHttpClient = () {
+        final client = HttpClient();
+        client.badCertificateCallback = (cert, host, port) => true;
+        return client;
+      };
+  }
 
   // Método GET
   Future<Response> get(String endpoint) async {
     try {
       return await dio.get(endpoint);
     } catch (e) {
-      // Você pode adicionar um log ou tratamento de erro aqui
       throw Exception('Erro ao realizar GET: $e');
     }
   }

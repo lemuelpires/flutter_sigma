@@ -1,10 +1,9 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sigma/screens/auth/forgot_password.dart';
 import 'package:flutter_sigma/screens/auth/register_screen.dart';
 import 'package:flutter_sigma/screens/home/home_screen.dart';
-import 'package:flutter_sigma/services/firebase_auth_service.dart';  // Importa o serviço
+import 'package:flutter_sigma/services/firebase_auth_service.dart'; // Importa o serviço
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,7 +15,8 @@ class LoginScreen extends StatefulWidget {
 class LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final FirebaseAuthService _authService = FirebaseAuthService();  // Usa o serviço
+  final FirebaseAuthService _authService =
+      FirebaseAuthService(); // Usa o serviço
   bool _obscureText = true;
 
   Future<void> _login() async {
@@ -55,14 +55,6 @@ class LoginScreenState extends State<LoginScreen> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('fundo/fundo1.svg'),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
           Container(
             color: Colors.black.withOpacity(0.7),
           ),
@@ -114,7 +106,9 @@ class LoginScreenState extends State<LoginScreen> {
                       ),
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _obscureText ? Icons.visibility : Icons.visibility_off,
+                          _obscureText
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                           color: Colors.white,
                         ),
                         onPressed: () {
@@ -193,4 +187,3 @@ class LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-
