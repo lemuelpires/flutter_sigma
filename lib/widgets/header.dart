@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CustomHeader extends StatelessWidget {
-  const CustomHeader({super.key});
+  const CustomHeader({super.key, required String title});
 
   @override
   Widget build(BuildContext context) {
@@ -57,17 +57,37 @@ class CustomHeader extends StatelessWidget {
               },
               itemBuilder: (BuildContext context) {
                 return [
+                   const PopupMenuItem(
+                    value: '/home',
+                    child: Text('pagina inicial', style: TextStyle(color: Colors.black)),
+                  ),
                   const PopupMenuItem(
                     value: '/ambiente_administrador',
                     child: Text('Ambiente Administrador', style: TextStyle(color: Colors.black)),
                   ),
                   const PopupMenuItem(
-                    value: '/teste_cadastro',
-                    child: Text('teste de cadastro', style: TextStyle(color: Colors.black)),
+                    value: '/lista_anuncios',
+                    child: Text('Lista de Anuncios', style: TextStyle(color: Colors.black)),
                   ),
-                  const PopupMenuItem(
-                    value: 'item3',
-                    child: Text('Item 3', style: TextStyle(color: Colors.black)),
+                    const PopupMenuItem(
+                    value: '/lista_produtos',
+                    child: Text('Lista de Produtos', style: TextStyle(color: Colors.black)),
+                  ),
+                     const PopupMenuItem(
+                    value: '/lista_usuarios',
+                    child: Text('Lista de Usuários', style: TextStyle(color: Colors.black)),
+                  ),
+                      const PopupMenuItem(
+                    value: '/cadastro_produto',
+                    child: Text('Cadastro de produto', style: TextStyle(color: Colors.black)),
+                  ),
+                      const PopupMenuItem(
+                    value: '/cadastro_anuncio',
+                    child: Text('Cadastro Anuncio', style: TextStyle(color: Colors.black)),
+                  ),
+                     const PopupMenuItem(
+                    value: '/register',
+                    child: Text('Cadastro Usuario', style: TextStyle(color: Colors.black)),
                   ),
                 ];
               },

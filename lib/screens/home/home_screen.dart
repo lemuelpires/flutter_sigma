@@ -29,7 +29,7 @@ class HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: const PreferredSize(
         preferredSize: Size.fromHeight(60),
-        child: CustomHeader(),
+        child: CustomHeader(title: 'header',),
       ),
       backgroundColor: const Color(0xFF101419),
       body: Padding(

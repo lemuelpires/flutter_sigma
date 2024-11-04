@@ -2,99 +2,104 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sigma/widgets/footer.dart';
 import 'package:flutter_sigma/widgets/header.dart';
 
-class AmbienteAdministradorScreen extends StatelessWidget {
-  const AmbienteAdministradorScreen({super.key});
+class AmbienteAdministrador extends StatelessWidget {
+  const AmbienteAdministrador({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Ambiente do Usuário'),
-      ),
+      backgroundColor: Theme.of(context).colorScheme.primary,
       body: Column(
         children: [
-          // Header
-          const CustomHeader(),
-          // Conteúdo Principal
+          CustomHeader(title: 'header',), // Adiciona o Header
           Expanded(
-            child: GridView.count(
-              crossAxisCount: 2,
-              padding: const EdgeInsets.all(16),
-              children: [
-                // Produtos
-                _buildMenuItem(
-                  context,
-                  icon: Icons.store,
-                  label: 'Produtos',
-                  onTap: () {
-                    // Navegar para a página de produtos
-                  },
-                ),
-                // Anúncios
-                _buildMenuItem(
-                  context,
-                  icon: Icons.announcement,
-                  label: 'Anúncios',
-                  onTap: () {
-                    // Navegar para a página de anúncios
-                  },
-                ),
-                // Usuários
-                _buildMenuItem(
-                  context,
-                  icon: Icons.supervised_user_circle,
-                  label: 'Usuários',
-                  onTap: () {
-                    // Navegar para a página de usuários
-                  },
-                ),
-                // Jogos
-                _buildMenuItem(
-                  context,
-                  icon: Icons.videogame_asset,
-                  label: 'Jogos',
-                  onTap: () {
-                    // Navegar para a página de jogos
-                  },
-                ),
-                // Imagens
-                _buildMenuItem(
-                  context,
-                  icon: Icons.image,
-                  label: 'Imagens',
-                  onTap: () {
-                    // Navegar para a página de imagens
-                  },
-                ),
-              ],
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Ambiente Administrador\nOlá João, em que podemos ajudar?',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                  SizedBox(height: 40),
+                  Wrap(
+                    spacing: 20,
+                    runSpacing: 20,
+                    children: [
+                      MenuButton(
+                        icon: Icons.inventory,
+                        label: 'Produtos',
+                        color: Colors.cyanAccent,
+                      ),
+                      MenuButton(
+                        icon: Icons.article,
+                        label: 'Anúncios',
+                        color: Colors.orangeAccent,
+                      ),
+                      MenuButton(
+                        icon: Icons.group,
+                        label: 'Usuarios',
+                        color: Colors.pinkAccent,
+                      ),
+                      MenuButton(
+                        icon: Icons.videogame_asset,
+                        label: 'Jogos',
+                        color: Colors.white,
+                        borderColor: Colors.blue,
+                      ),
+                      MenuButton(
+                        icon: Icons.image,
+                        label: 'Imagens',
+                        color: Colors.greenAccent,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-          // Footer
-          const Footer(),
+          Footer(), // Adiciona o Footer
         ],
-      ),
-    );
-  }
-
-  Widget _buildMenuItem(BuildContext context, {required IconData icon, required String label, required VoidCallback onTap}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Card(
-        color: const Color(0xFF1D2128), // Usar uma cor escura como fundo dos cards
-        elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, size: 40, color: Colors.white),
-              const SizedBox(height: 10),
-              Text(label, style: const TextStyle(color: Colors.white, fontSize: 16)),
-            ],
-          ),
-        ),
       ),
     );
   }
 }
 
+class MenuButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final Color? borderColor;
+
+  const MenuButton({super.key, 
+    required this.icon,
+    required this.label,
+    required this.color,
+    this.borderColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 80,
+      height: 80,
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: borderColor ?? Colors.transparent, width: 2),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: color, size: 30),
+          SizedBox(height: 5),
+          Text(
+            label,
+            style: TextStyle(color: Colors.white, fontSize: 12),
+          ),
+        ],
+      ),
+    );
+  }
+}
