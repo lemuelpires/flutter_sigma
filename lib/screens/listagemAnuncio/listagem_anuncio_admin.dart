@@ -1,9 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_sigma/providers/anuncio_providers.dart';
 import 'package:flutter_sigma/widgets/footer.dart';
 import 'package:flutter_sigma/widgets/header.dart';
+import 'package:flutter_sigma/widgets/anuncio_card.dart'; // Importando AnuncioCard
+import 'package:provider/provider.dart';
 
-class ListaAnuncios extends StatelessWidget {
+class ListaAnuncios extends StatefulWidget {
   const ListaAnuncios({super.key});
+
+  @override
+  _ListaAnunciosState createState() => _ListaAnunciosState();
+}
+
+class _ListaAnunciosState extends State<ListaAnuncios> {
+  @override
+  void initState() {
+    super.initState();
+    // Carregar os anúncios assim que a tela for montada
+    Provider.of<AnuncioProvider>(context, listen: false).loadAnuncios();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +26,7 @@ class ListaAnuncios extends StatelessWidget {
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(60),
-        child: CustomHeader(title: 'header',),
+        child: CustomHeader(title: 'Anúncios'),
       ),
       body: Column(
         children: [
@@ -40,112 +55,26 @@ class ListaAnuncios extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: 3, // Quantidade de anúncios (exemplo)
-              itemBuilder: (context, index) {
-                return AnuncioCard(
-                  title: 'Título do Anúncio $index', // Título do anúncio (exemplo)
-                  description: 'Descrição breve do anúncio', // Descrição do anúncio
-                  date: 'Data: 01/01/2024', // Data de publicação (exemplo)
-                );
+            child: Consumer<AnuncioProvider>(
+              builder: (context, anuncioProvider, _) {
+                return anuncioProvider.anuncios.isEmpty
+                    ? Center(child: CircularProgressIndicator()) // Esperando os dados
+                    : ListView.builder(
+                        itemCount: anuncioProvider.anuncios.length,
+                        itemBuilder: (context, index) {
+                          final anuncio = anuncioProvider.anuncios[index];
+                          return AnuncioCard(
+                            title: anuncio.titulo,
+                            description: anuncio.descricao,
+                            date: 'Data: ${anuncio.data.toLocal().toString().split(' ')[0]}',
+                            referenciaImagem: anuncio.referenciaImagem, // Passando a URL da imagem
+                          );
+                        },
+                      );
               },
             ),
           ),
           Footer(),
-        ],
-      ),
-    );
-  }
-}
-
-class AnuncioCard extends StatelessWidget {
-  final String title;
-  final String description;
-  final String date;
-
-  const AnuncioCard({super.key, required this.title, required this.description, required this.date});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.black87,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.blue, width: 1), // Borda azul
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  image: DecorationImage(
-                    image: NetworkImage('https://via.placeholder.com/50'), // Imagem de exemplo
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      date,
-                      style: TextStyle(color: Colors.grey, fontSize: 14),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 10),
-          Text(
-            description,
-            style: TextStyle(color: Colors.white70, fontSize: 14),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  // Implementar funcionalidade de excluir anúncio
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                ),
-                child: Text('Excluir', style: TextStyle(color: Colors.white)),
-              ),
-              SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () {
-                  // Implementar funcionalidade de editar anúncio
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                ),
-                child: Text('Editar', style: TextStyle(color: Colors.white)),
-              ),
-            ],
-          ),
         ],
       ),
     );

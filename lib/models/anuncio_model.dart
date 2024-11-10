@@ -33,6 +33,8 @@ class Anuncio {
     );
   }
 
+  get imageUrl => null;
+
   // Método para converter um objeto Anuncio em um objeto JSON
   Map<String, dynamic> toJson() {
     return {

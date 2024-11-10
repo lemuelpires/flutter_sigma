@@ -3,14 +3,43 @@ import 'package:flutter_sigma/screens/utils/theme.dart';
 import 'package:flutter_sigma/widgets/footer.dart';
 import 'package:flutter_sigma/widgets/header.dart';
 
-class CadastroAnuncio extends StatelessWidget {
-  final TextEditingController idProdutoController = TextEditingController();
-  final TextEditingController tituloController = TextEditingController();
-  final TextEditingController descricaoController = TextEditingController();
-  final TextEditingController precoController = TextEditingController();
-  final TextEditingController referenciaImagemController = TextEditingController();
+class EditarAnuncioScreen extends StatefulWidget {
+  final Map<String, dynamic> anuncio;
 
-  CadastroAnuncio({super.key});
+  // Recebe o anúncio atual como parâmetro para edição
+  const EditarAnuncioScreen({super.key, required this.anuncio});
+
+  @override
+  _EditarAnuncioScreenState createState() => _EditarAnuncioScreenState();
+}
+
+class _EditarAnuncioScreenState extends State<EditarAnuncioScreen> {
+  late TextEditingController idProdutoController;
+  late TextEditingController tituloController;
+  late TextEditingController descricaoController;
+  late TextEditingController precoController;
+  late TextEditingController referenciaImagemController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Inicializa os controladores com os valores do anúncio a ser editado
+    idProdutoController = TextEditingController(text: widget.anuncio['idProduto'].toString());
+    tituloController = TextEditingController(text: widget.anuncio['titulo']);
+    descricaoController = TextEditingController(text: widget.anuncio['descricao']);
+    precoController = TextEditingController(text: widget.anuncio['preco'].toString());
+    referenciaImagemController = TextEditingController(text: widget.anuncio['referenciaImagem']);
+  }
+
+  @override
+  void dispose() {
+    idProdutoController.dispose();
+    tituloController.dispose();
+    descricaoController.dispose();
+    precoController.dispose();
+    referenciaImagemController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +60,7 @@ class CadastroAnuncio extends StatelessWidget {
                     // Título da página
                     Center(
                       child: Text(
-                        'Cadastro de Anúncio',
+                        'Editar Anúncio',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 24,
@@ -51,22 +80,21 @@ class CadastroAnuncio extends StatelessWidget {
                     SizedBox(height: 16),
                     _buildTextField('Referência da Imagem', referenciaImagemController),
                     SizedBox(height: 24),
-                    // Botão de cadastro
+                    // Botão de salvar
                     Center(
                       child: ElevatedButton(
                         onPressed: () {
-                          // Lógica para cadastrar o anúncio
-                          // Exemplo de criação do objeto com `ativo` como true:
-                          final novoAnuncio = {
+                          // Lógica para salvar as alterações do anúncio
+                          final anuncioEditado = {
                             "idProduto": int.tryParse(idProdutoController.text) ?? 0,
                             "titulo": tituloController.text,
                             "descricao": descricaoController.text,
                             "preco": double.tryParse(precoController.text) ?? 0.0,
                             "referenciaImagem": referenciaImagemController.text,
                             "data": DateTime.now().toIso8601String(),
-                            "ativo": true,
+                            "ativo": widget.anuncio['ativo'], // mantém o estado ativo original
                           };
-                          // Ação de cadastro a ser implementada
+                          // Ação para atualizar o anúncio a ser implementada
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Theme.of(context).colorScheme.secondary,
@@ -76,7 +104,7 @@ class CadastroAnuncio extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          'Cadastrar Anúncio',
+                          'Salvar Alterações',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 18,

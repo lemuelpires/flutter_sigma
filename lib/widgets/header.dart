@@ -89,6 +89,10 @@ class CustomHeader extends StatelessWidget {
                     value: '/register',
                     child: Text('Cadastro Usuario', style: TextStyle(color: Colors.black)),
                   ),
+                       const PopupMenuItem(
+                    value: '/editar_anuncio',
+                    child: Text('Editar Anuncio', style: TextStyle(color: Colors.black)),
+                  ),
                 ];
               },
             ),

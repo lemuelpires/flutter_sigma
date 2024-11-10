@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_sigma/api/api_response.dart';
 import 'package:flutter_sigma/models/anuncio_model.dart';
 import 'package:flutter_sigma/repositories/anuncio_repositories.dart';
 import 'package:logger/logger.dart';
@@ -6,61 +7,48 @@ import 'package:logger/logger.dart';
 class AnuncioProvider with ChangeNotifier {
   final AnuncioRepository anuncioRepository;
   final Logger logger = Logger(); // Instância do Logger
+  List<Anuncio> _anuncios = []; // Lista privada de anúncios
 
   AnuncioProvider(this.anuncioRepository);
 
-  List<Anuncio> _anuncios = [];
+  // Getter para acessar a lista de anúncios
   List<Anuncio> get anuncios => _anuncios;
 
-  // Método para carregar anúncios
+  // Método para carregar os anúncios
   Future<void> loadAnuncios() async {
     try {
-      _anuncios = await anuncioRepository.getAnuncios();
-      notifyListeners(); // Notifica os ouvintes para atualizar a interface
-      logger.i("Anúncios carregados com sucesso: ${_anuncios.length} itens");
+      // Aqui você deve buscar os dados do repositório (exemplo fictício)
+      final ApiResponse<List<Anuncio>> response = await anuncioRepository.getAnuncios();
+      
+      if (response.success) {
+        _anuncios = response.data ?? []; // Atribui a lista de anúncios
+        notifyListeners(); // Notifica os ouvintes para atualizar a interface
+      } else {
+        logger.e("Erro ao carregar anúncios: ${response.message}");
+      }
     } catch (e) {
       logger.e("Erro ao carregar anúncios: $e");
     }
   }
 
-  // Método para adicionar um anúncio
-  Future<void> addAnuncio(Anuncio anuncio) async {
+  // Método para atualizar a imagem do anúncio
+  Future<void> updateAnuncioImage(int idAnuncio, String novaReferenciaImagem) async {
     try {
-      Anuncio newAnuncio = await anuncioRepository.addAnuncio(anuncio);
-      _anuncios.add(newAnuncio);
-      notifyListeners(); // Atualiza a interface
-      logger.i("Anúncio adicionado com sucesso: ${newAnuncio.idAnuncio}");
-    } catch (e) {
-      logger.e("Erro ao adicionar anúncio: $e");
-    }
-  }
-
-  // Método para atualizar um anúncio
-  Future<void> updateAnuncio(Anuncio anuncio) async {
-    try {
-      Anuncio updatedAnuncio = await anuncioRepository.updateAnuncio(anuncio);
-      int index = _anuncios.indexWhere((a) => a.idAnuncio == updatedAnuncio.idAnuncio);
-      if (index != -1) {
-        _anuncios[index] = updatedAnuncio; // Atualiza o anúncio na lista
-        notifyListeners(); // Atualiza a interface
-        logger.i("Anúncio atualizado com sucesso: ${updatedAnuncio.idAnuncio}");
+      final response = await anuncioRepository.updateAnuncioImage(idAnuncio, novaReferenciaImagem);
+      if (response.success) {
+        logger.log(Level.info, "Imagem do anúncio atualizada com sucesso: $idAnuncio");
+        
+        // Atualizar a lista de anúncios, se necessário
+        final index = _anuncios.indexWhere((anuncio) => anuncio.idAnuncio == idAnuncio);
+        if (index != -1) {
+          _anuncios[index] = _anuncios[index]; // Atualiza o anúncio na lista
+          notifyListeners(); // Notifica os ouvintes para atualizar a interface
+        }
       } else {
-        logger.w("Anúncio não encontrado para atualização: ${anuncio.idAnuncio}");
+        logger.e("Erro ao atualizar a imagem do anúncio: ${response.message}");
       }
     } catch (e) {
-      logger.e("Erro ao atualizar anúncio: $e");
-    }
-  }
-
-  // Método para remover um anúncio
-  Future<void> deleteAnuncio(int idAnuncio) async {
-    try {
-      await anuncioRepository.deleteAnuncio(idAnuncio);
-      _anuncios.removeWhere((a) => a.idAnuncio == idAnuncio); // Remove o anúncio da lista
-      notifyListeners(); // Atualiza a interface
-      logger.i("Anúncio removido com sucesso: $idAnuncio");
-    } catch (e) {
-      logger.e("Erro ao deletar anúncio: $e");
+      logger.e("Erro ao atualizar a imagem do anúncio: $e");
     }
   }
 }
