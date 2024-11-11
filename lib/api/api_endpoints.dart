@@ -9,5 +9,6 @@ class ApiEndpoints {
   static const String jogo = '/Jogo';
   static const String pedido = '/Pedido';
   static const String produto = '/Produto';
-  static const String usuario = '/UsuarioJogo';
+  static const String usuarioJogo = '/UsuarioJogo';
+  static const String usuario = '/Usuario';
 }

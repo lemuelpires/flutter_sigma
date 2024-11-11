@@ -1,64 +1,93 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sigma/models/usuario_model.dart';
 import 'package:flutter_sigma/repositories/usuario_repositories.dart';
-import 'package:logger/logger.dart';
+import 'package:logging/logging.dart';
+
+final Logger _logger = Logger('UsuarioProvider');
 
 class UsuarioProvider with ChangeNotifier {
   final UsuarioRepository usuarioRepository;
-  final Logger logger = Logger(); // Instância do Logger
-
-  List<Usuario> _usuarios = [];
 
   UsuarioProvider(this.usuarioRepository);
 
+  List<Usuario> _usuarios = [];
+  bool _isLoading = false;
+  String? _errorMessage;
+
   List<Usuario> get usuarios => _usuarios;
+  bool get isLoading => _isLoading;
+  String? get errorMessage => _errorMessage;
 
   // Método para carregar todos os usuários
-  Future<void> loadUsuarios() async {
+  Future<void> fetchUsuarios() async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
     try {
-      _usuarios = await usuarioRepository.getUsuarios();
-      notifyListeners(); // Notifica ouvintes para atualizar a interface
-    } catch (e) {
-      logger.e("Erro ao carregar usuários: $e");
+      final response = await usuarioRepository.getUsuarios();
+      if (response.success) {
+        _usuarios = response.data!;
+      } else {
+        _errorMessage = response.message;
+        _usuarios = [];
+      }
+    } catch (error) {
+      _logger.severe('Erro ao carregar usuários: $error');
+      _errorMessage = 'Erro ao carregar usuários: $error';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
   // Método para adicionar um novo usuário
   Future<void> addUsuario(Usuario usuario) async {
     try {
-      Usuario newUsuario = await usuarioRepository.addUsuario(usuario);
-      _usuarios.add(newUsuario);
-      notifyListeners(); // Notifica ouvintes para atualizar a interface
-      logger.i("Usuário adicionado com sucesso: ${usuario.idUsuario}");
-    } catch (e) {
-      logger.e("Erro ao adicionar usuário: $e");
+      final response = await usuarioRepository.addUsuario(usuario);
+      if (response.success) {
+        _usuarios.add(response.data!);
+        notifyListeners();
+        _logger.info('Usuário adicionado com sucesso: ${response.data!.idUsuario}');
+      } else {
+        _logger.severe('Erro ao adicionar usuário: ${response.message}');
+      }
+    } catch (error) {
+      _logger.severe('Erro ao adicionar usuário: $error');
     }
   }
 
   // Método para atualizar um usuário
   Future<void> updateUsuario(Usuario usuario) async {
     try {
-      Usuario updatedUsuario = await usuarioRepository.updateUsuario(usuario);
-      int index = _usuarios.indexWhere((e) => e.idUsuario == updatedUsuario.idUsuario);
-      if (index != -1) {
-        _usuarios[index] = updatedUsuario; // Atualiza o usuário na lista
-        notifyListeners(); // Notifica ouvintes para atualizar a interface
+      final response = await usuarioRepository.updateUsuario(usuario);
+      if (response.success) {
+        final index = _usuarios.indexWhere((u) => u.idUsuario == response.data!.idUsuario);
+        if (index != -1) {
+          _usuarios[index] = response.data!;
+          notifyListeners();
+        }
+        _logger.info('Usuário atualizado com sucesso: ${response.data!.idUsuario}');
+      } else {
+        _logger.severe('Erro ao atualizar usuário: ${response.message}');
       }
-      logger.i("Usuário atualizado com sucesso: ${usuario.idUsuario}");
-    } catch (e) {
-      logger.e("Erro ao atualizar usuário: $e");
+    } catch (error) {
+      _logger.severe('Erro ao atualizar usuário: $error');
     }
   }
 
   // Método para deletar um usuário
   Future<void> deleteUsuario(int idUsuario) async {
     try {
-      await usuarioRepository.deleteUsuario(idUsuario);
-      _usuarios.removeWhere((e) => e.idUsuario == idUsuario); // Remove da lista
-      notifyListeners(); // Notifica ouvintes para atualizar a interface
-      logger.i("Usuário deletado com sucesso: $idUsuario");
-    } catch (e) {
-      logger.e("Erro ao deletar usuário: $e");
+      final response = await usuarioRepository.deleteUsuario(idUsuario);
+      if (response.success) {
+        _usuarios.removeWhere((u) => u.idUsuario == idUsuario);
+        notifyListeners();
+        _logger.info('Usuário deletado com sucesso: $idUsuario');
+      } else {
+        _logger.severe('Erro ao deletar usuário: ${response.message}');
+      }
+    } catch (error) {
+      _logger.severe('Erro ao deletar usuário: $error');
     }
   }
 }

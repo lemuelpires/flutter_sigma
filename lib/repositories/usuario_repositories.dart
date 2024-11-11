@@ -1,73 +1,82 @@
+import 'package:flutter_sigma/api/api_cliente.dart'; // Importa o ApiClient
+import 'package:flutter_sigma/api/api_endpoints.dart'; // Importa os endpoints da API
 import 'package:flutter_sigma/models/usuario_model.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:flutter_sigma/api/api_response.dart';
 
 class UsuarioRepository {
-  final String baseUrl;
+  final ApiClient apiClient;
 
-  UsuarioRepository(this.baseUrl);
+  UsuarioRepository(this.apiClient);
 
   // Método para obter todos os usuários
-  Future<List<Usuario>> getUsuarios() async {
-    final response = await http.get(Uri.parse('$baseUrl/usuarios'));
-
-    if (response.statusCode == 200) {
-      List<dynamic> jsonList = json.decode(response.body);
-      return jsonList.map((json) => Usuario.fromJson(json)).toList();
-    } else {
-      throw Exception('Falha ao carregar usuários');
+  Future<ApiResponse<List<Usuario>>> getUsuarios() async {
+    try {
+      final response = await apiClient.get(ApiEndpoints.usuario);
+      if (response.statusCode == 200) {
+        List data = response.data as List;
+        List<Usuario> usuarios = data.map((e) => Usuario.fromJson(e)).toList();
+        return ApiResponse.success(usuarios);
+      } else {
+        return ApiResponse.error('Falha ao carregar usuários. Código: ${response.statusCode}');
+      }
+    } catch (e) {
+      return ApiResponse.error('Erro ao carregar usuários: $e');
     }
   }
 
   // Método para obter um usuário pelo ID
-  Future<Usuario> getUsuario(int idUsuario) async {
-    final response = await http.get(Uri.parse('$baseUrl/usuarios/$idUsuario'));
-
-    if (response.statusCode == 200) {
-      return Usuario.fromJson(json.decode(response.body));
-    } else {
-      throw Exception('Falha ao carregar o usuário');
+  Future<ApiResponse<Usuario>> getUsuario(int idUsuario) async {
+    try {
+      final response = await apiClient.get('${ApiEndpoints.usuario}/$idUsuario');
+      if (response.statusCode == 200) {
+        return ApiResponse.success(Usuario.fromJson(response.data));
+      } else {
+        return ApiResponse.error('Falha ao carregar o usuário. Código: ${response.statusCode}');
+      }
+    } catch (e) {
+      return ApiResponse.error('Erro ao carregar o usuário: $e');
     }
   }
 
   // Método para adicionar um novo usuário
-  Future<Usuario> addUsuario(Usuario usuario) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/usuarios'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode(usuario.toJson()),
-    );
-
-    if (response.statusCode == 201) {
-      return Usuario.fromJson(json.decode(response.body));
-    } else {
-      throw Exception('Falha ao adicionar o usuário');
+  Future<ApiResponse<Usuario>> addUsuario(Usuario usuario) async {
+    try {
+      final response = await apiClient.post(ApiEndpoints.usuario, data: usuario.toJson());
+      if (response.statusCode == 201) {
+        return ApiResponse.success(Usuario.fromJson(response.data));
+      } else {
+        return ApiResponse.error('Falha ao adicionar o usuário. Código: ${response.statusCode}');
+      }
+    } catch (e) {
+      return ApiResponse.error('Erro ao adicionar o usuário: $e');
     }
   }
 
   // Método para atualizar um usuário
-  Future<Usuario> updateUsuario(Usuario usuario) async {
-    final response = await http.put(
-      Uri.parse('$baseUrl/usuarios/${usuario.idUsuario}'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode(usuario.toJson()),
-    );
-
-    if (response.statusCode == 200) {
-      return Usuario.fromJson(json.decode(response.body));
-    } else {
-      throw Exception('Falha ao atualizar o usuário');
+  Future<ApiResponse<Usuario>> updateUsuario(Usuario usuario) async {
+    try {
+      final response = await apiClient.put('${ApiEndpoints.usuario}/${usuario.idUsuario}', data: usuario.toJson());
+      if (response.statusCode == 200) {
+        return ApiResponse.success(Usuario.fromJson(response.data));
+      } else {
+        return ApiResponse.error('Falha ao atualizar o usuário. Código: ${response.statusCode}');
+      }
+    } catch (e) {
+      return ApiResponse.error('Erro ao atualizar o usuário: $e');
     }
   }
 
   // Método para deletar um usuário
-  Future<void> deleteUsuario(int idUsuario) async {
-    final response = await http.delete(
-      Uri.parse('$baseUrl/usuarios/$idUsuario'),
-    );
-
-    if (response.statusCode != 204) {
-      throw Exception('Falha ao deletar o usuário');
+  Future<ApiResponse<void>> deleteUsuario(int idUsuario) async {
+    try {
+      final response = await apiClient.delete('${ApiEndpoints.usuario}/$idUsuario');
+      if (response.statusCode == 204) {
+        return ApiResponse.success(null);
+      } else {
+        return ApiResponse.error('Falha ao deletar o usuário. Código: ${response.statusCode}');
+      }
+    } catch (e) {
+      return ApiResponse.error('Erro ao deletar o usuário: $e');
     }
   }
 }

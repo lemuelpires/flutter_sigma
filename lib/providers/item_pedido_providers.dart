@@ -1,64 +1,94 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sigma/models/item_pedido_model.dart';
 import 'package:flutter_sigma/repositories/item_pedido_repositories.dart';
-import 'package:logger/logger.dart';
+import 'package:logging/logging.dart';
+import 'package:flutter_sigma/api/api_response.dart';
+
+final Logger _logger = Logger('ItemPedidoProvider');
 
 class ItemPedidoProvider with ChangeNotifier {
   final ItemPedidoRepository itemPedidoRepository;
-  final Logger logger = Logger(); // Instância do Logger
-
-  List<ItemPedido> _itensPedido = [];
 
   ItemPedidoProvider(this.itemPedidoRepository);
 
+  List<ItemPedido> _itensPedido = [];
+  bool _isLoading = false;
+  String? _errorMessage;
+
   List<ItemPedido> get itensPedido => _itensPedido;
+  bool get isLoading => _isLoading;
+  String? get errorMessage => _errorMessage;
 
   // Método para carregar todos os itens de um pedido
   Future<void> loadItensPedido(int idPedido) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
     try {
-      _itensPedido = await itemPedidoRepository.getItensPedido(idPedido);
-      notifyListeners(); // Notifica ouvintes para atualizar a interface
-    } catch (e) {
-      logger.e("Erro ao carregar itens do pedido: $e");
+      final response = await itemPedidoRepository.getItensPedido(idPedido);
+      if (response.success) {
+        _itensPedido = response.data!;
+      } else {
+        _errorMessage = response.message;
+        _itensPedido = [];
+      }
+    } catch (error) {
+      _logger.severe('Erro ao carregar itens do pedido: $error');
+      _errorMessage = 'Erro ao carregar itens do pedido: $error';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
   // Método para adicionar um novo item ao pedido
   Future<void> addItemPedido(ItemPedido itemPedido) async {
     try {
-      ItemPedido newItem = await itemPedidoRepository.addItemPedido(itemPedido);
-      _itensPedido.add(newItem);
-      notifyListeners(); // Notifica ouvintes para atualizar a interface
-      logger.i("Item adicionado ao pedido com sucesso: ${itemPedido.idItemPedido}");
-    } catch (e) {
-      logger.e("Erro ao adicionar item ao pedido: $e");
+      final response = await itemPedidoRepository.addItemPedido(itemPedido);
+      if (response.success) {
+        _itensPedido.add(response.data!);
+        notifyListeners();
+        _logger.info('Item adicionado ao pedido com sucesso: ${itemPedido.idItemPedido}');
+      } else {
+        _logger.severe('Erro ao adicionar item ao pedido: ${response.message}');
+      }
+    } catch (error) {
+      _logger.severe('Erro ao adicionar item ao pedido: $error');
     }
   }
 
   // Método para atualizar um item do pedido
   Future<void> updateItemPedido(ItemPedido itemPedido) async {
     try {
-      ItemPedido updatedItem = await itemPedidoRepository.updateItemPedido(itemPedido);
-      int index = _itensPedido.indexWhere((e) => e.idItemPedido == updatedItem.idItemPedido);
-      if (index != -1) {
-        _itensPedido[index] = updatedItem; // Atualiza o item na lista
-        notifyListeners(); // Notifica ouvintes para atualizar a interface
+      final response = await itemPedidoRepository.updateItemPedido(itemPedido);
+      if (response.success) {
+        final index = _itensPedido.indexWhere((e) => e.idItemPedido == response.data!.idItemPedido);
+        if (index != -1) {
+          _itensPedido[index] = response.data!; // Atualiza o item na lista
+          notifyListeners();
+        }
+        _logger.info('Item do pedido atualizado com sucesso: ${itemPedido.idItemPedido}');
+      } else {
+        _logger.severe('Erro ao atualizar item do pedido: ${response.message}');
       }
-      logger.i("Item do pedido atualizado com sucesso: ${itemPedido.idItemPedido}");
-    } catch (e) {
-      logger.e("Erro ao atualizar item do pedido: $e");
+    } catch (error) {
+      _logger.severe('Erro ao atualizar item do pedido: $error');
     }
   }
 
   // Método para deletar um item do pedido
   Future<void> deleteItemPedido(int idItemPedido) async {
     try {
-      await itemPedidoRepository.deleteItemPedido(idItemPedido);
-      _itensPedido.removeWhere((e) => e.idItemPedido == idItemPedido); // Remove da lista
-      notifyListeners(); // Notifica ouvintes para atualizar a interface
-      logger.i("Item do pedido deletado com sucesso: $idItemPedido");
-    } catch (e) {
-      logger.e("Erro ao deletar item do pedido: $e");
+      final response = await itemPedidoRepository.deleteItemPedido(idItemPedido);
+      if (response.success) {
+        _itensPedido.removeWhere((e) => e.idItemPedido == idItemPedido); // Remove da lista
+        notifyListeners();
+        _logger.info('Item do pedido deletado com sucesso: $idItemPedido');
+      } else {
+        _logger.severe('Erro ao deletar item do pedido: ${response.message}');
+      }
+    } catch (error) {
+      _logger.severe('Erro ao deletar item do pedido: $error');
     }
   }
 }

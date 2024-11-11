@@ -1,64 +1,94 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sigma/models/favoritos_model.dart';
 import 'package:flutter_sigma/repositories/favoritos_repositories.dart';
-import 'package:logger/logger.dart';
+import 'package:logging/logging.dart';
+import 'package:flutter_sigma/api/api_response.dart';
+
+final Logger _logger = Logger('FavoritoProvider');
 
 class FavoritoProvider with ChangeNotifier {
   final FavoritoRepository favoritoRepository;
-  final Logger logger = Logger(); // Instância do Logger
-
-  List<Favorito> _favoritos = [];
 
   FavoritoProvider(this.favoritoRepository);
 
+  List<Favorito> _favoritos = [];
+  bool _isLoading = false;
+  String? _errorMessage;
+
   List<Favorito> get favoritos => _favoritos;
+  bool get isLoading => _isLoading;
+  String? get errorMessage => _errorMessage;
 
   // Método para carregar todos os favoritos de um usuário
   Future<void> loadFavoritos(int idUsuario) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
     try {
-      _favoritos = await favoritoRepository.getFavoritos(idUsuario);
-      notifyListeners(); // Notifica ouvintes para atualizar a interface
-    } catch (e) {
-      logger.e("Erro ao carregar favoritos: $e");
+      final response = await favoritoRepository.getFavoritos(idUsuario);
+      if (response.success) {
+        _favoritos = response.data!;
+      } else {
+        _errorMessage = response.message;
+        _favoritos = [];
+      }
+    } catch (error) {
+      _logger.severe('Erro ao carregar favoritos: $error');
+      _errorMessage = 'Erro ao carregar favoritos: $error';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
   // Método para adicionar um novo favorito
   Future<void> addFavorito(Favorito favorito) async {
     try {
-      Favorito newFavorito = await favoritoRepository.addFavorito(favorito);
-      _favoritos.add(newFavorito);
-      notifyListeners(); // Notifica ouvintes para atualizar a interface
-      logger.i("Favorito adicionado com sucesso: ${favorito.idFavorito}");
-    } catch (e) {
-      logger.e("Erro ao adicionar favorito: $e");
+      final response = await favoritoRepository.addFavorito(favorito);
+      if (response.success) {
+        _favoritos.add(response.data!);
+        notifyListeners();
+        _logger.info('Favorito adicionado com sucesso: ${favorito.idFavorito}');
+      } else {
+        _logger.severe('Erro ao adicionar favorito: ${response.message}');
+      }
+    } catch (error) {
+      _logger.severe('Erro ao adicionar favorito: $error');
     }
   }
 
   // Método para atualizar um favorito
   Future<void> updateFavorito(Favorito favorito) async {
     try {
-      Favorito updatedFavorito = await favoritoRepository.updateFavorito(favorito);
-      int index = _favoritos.indexWhere((e) => e.idFavorito == updatedFavorito.idFavorito);
-      if (index != -1) {
-        _favoritos[index] = updatedFavorito; // Atualiza o favorito na lista
-        notifyListeners(); // Notifica ouvintes para atualizar a interface
+      final response = await favoritoRepository.updateFavorito(favorito);
+      if (response.success) {
+        final index = _favoritos.indexWhere((e) => e.idFavorito == response.data!.idFavorito);
+        if (index != -1) {
+          _favoritos[index] = response.data!; // Atualiza o favorito na lista
+          notifyListeners();
+        }
+        _logger.info('Favorito atualizado com sucesso: ${favorito.idFavorito}');
+      } else {
+        _logger.severe('Erro ao atualizar favorito: ${response.message}');
       }
-      logger.i("Favorito atualizado com sucesso: ${favorito.idFavorito}");
-    } catch (e) {
-      logger.e("Erro ao atualizar favorito: $e");
+    } catch (error) {
+      _logger.severe('Erro ao atualizar favorito: $error');
     }
   }
 
   // Método para deletar um favorito
   Future<void> deleteFavorito(int idFavorito) async {
     try {
-      await favoritoRepository.deleteFavorito(idFavorito);
-      _favoritos.removeWhere((e) => e.idFavorito == idFavorito); // Remove da lista
-      notifyListeners(); // Notifica ouvintes para atualizar a interface
-      logger.i("Favorito deletado com sucesso: $idFavorito");
-    } catch (e) {
-      logger.e("Erro ao deletar favorito: $e");
+      final response = await favoritoRepository.deleteFavorito(idFavorito);
+      if (response.success) {
+        _favoritos.removeWhere((e) => e.idFavorito == idFavorito); // Remove da lista
+        notifyListeners();
+        _logger.info('Favorito deletado com sucesso: $idFavorito');
+      } else {
+        _logger.severe('Erro ao deletar favorito: ${response.message}');
+      }
+    } catch (error) {
+      _logger.severe('Erro ao deletar favorito: $error');
     }
   }
 }

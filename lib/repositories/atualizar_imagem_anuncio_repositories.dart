@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_sigma/models/anuncio_model.dart';
+import 'package:flutter_sigma/api/api_response.dart';
+import 'package:flutter_sigma/api/api_endpoints.dart';
 
 class AnuncioRepository {
   final Dio dio; // Instância do Dio
@@ -7,21 +9,20 @@ class AnuncioRepository {
   AnuncioRepository(this.dio);
 
   // Método para atualizar a imagem do anúncio
-  Future<Anuncio> updateAnuncioImage(int idAnuncio, String novaReferenciaImagem) async {
+  Future<ApiResponse<Anuncio>> updateAnuncioImage(int idAnuncio, String novaReferenciaImagem) async {
     try {
-      final response = await dio.patch('/anuncios/$idAnuncio', // Ajuste a URL conforme necessário
-        data: {
-          'referenciaImagem': novaReferenciaImagem,
-        },
+      final response = await dio.patch(
+        '${ApiEndpoints.anuncio}/$idAnuncio', // Ajuste a URL conforme necessário
+        data: {'referenciaImagem': novaReferenciaImagem},
       );
 
       if (response.statusCode == 200) {
-        return Anuncio.fromJson(response.data);
+        return ApiResponse.success(Anuncio.fromJson(response.data));
       } else {
-        throw Exception('Falha ao atualizar a imagem do anúncio');
+        return ApiResponse.error('Falha ao atualizar a imagem do anúncio. Código de status: ${response.statusCode}');
       }
     } catch (e) {
-      throw Exception('Erro ao atualizar a imagem do anúncio: $e');
+      return ApiResponse.error('Erro ao atualizar a imagem do anúncio: $e');
     }
   }
 }

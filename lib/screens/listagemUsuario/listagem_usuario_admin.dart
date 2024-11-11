@@ -1,17 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_sigma/providers/usuario_providers.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_sigma/widgets/footer.dart';
 import 'package:flutter_sigma/widgets/header.dart';
 
-class ListaUsuarios extends StatelessWidget {
+class ListaUsuarios extends StatefulWidget {
   const ListaUsuarios({super.key});
 
   @override
+  _ListaUsuariosState createState() => _ListaUsuariosState();
+}
+
+class _ListaUsuariosState extends State<ListaUsuarios> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<UsuarioProvider>(context, listen: false).fetchUsuarios();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final usuarioProvider = Provider.of<UsuarioProvider>(context);
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(60), // Define a altura do header
-        child: CustomHeader(title: 'header',), // Usa o seu componente de header
+        preferredSize: const Size.fromHeight(60), // Define a altura do header
+        child: const CustomHeader(title: 'Usuários'), // Usa o seu componente de header
       ),
       body: Column(
         children: [
@@ -40,17 +57,30 @@ class ListaUsuarios extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: 3, // Quantidade de usuários (exemplo)
-              itemBuilder: (context, index) {
-                return UserCard(
-                  name: 'Nome do Usuário $index', // Nome do usuário (exemplo)
-                  phoneNumber: '123456789', // Telefone (exemplo)
-                );
-              },
-            ),
+            child: usuarioProvider.isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : usuarioProvider.errorMessage != null
+                    ? Center(child: Text(usuarioProvider.errorMessage!))
+                    : usuarioProvider.usuarios.isEmpty
+                        ? const Center(child: Text('Nenhum usuário encontrado.'))
+                        : ListView.builder(
+                            itemCount: usuarioProvider.usuarios.length,
+                            itemBuilder: (context, index) {
+                              final usuario = usuarioProvider.usuarios[index];
+                              return UserCard(
+                                name: usuario.nome,
+                                phoneNumber: usuario.telefone,
+                                onDelete: () {
+                                  usuarioProvider.deleteUsuario(usuario.idUsuario!);
+                                },
+                                onEdit: () {
+                                  // Implementar funcionalidade de editar usuário
+                                },
+                              );
+                            },
+                          ),
           ),
-          Footer(), // Usa o componente de footer
+          const Footer(), // Usa o componente de footer
         ],
       ),
     );
@@ -60,14 +90,22 @@ class ListaUsuarios extends StatelessWidget {
 class UserCard extends StatelessWidget {
   final String name;
   final String phoneNumber;
+  final VoidCallback onDelete;
+  final VoidCallback onEdit;
 
-  const UserCard({super.key, required this.name, required this.phoneNumber});
+  const UserCard({
+    super.key,
+    required this.name,
+    required this.phoneNumber,
+    required this.onDelete,
+    required this.onEdit,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      padding: EdgeInsets.all(10),
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.black87,
         borderRadius: BorderRadius.circular(10),
@@ -80,54 +118,50 @@ class UserCard extends StatelessWidget {
             height: 50,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
-              image: DecorationImage(
+              image: const DecorationImage(
                 image: NetworkImage('https://via.placeholder.com/50'), // Imagem de exemplo
                 fit: BoxFit.cover,
               ),
             ),
           ),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   name,
-                  style: TextStyle(color: Colors.white, fontSize: 16),
+                  style: const TextStyle(color: Colors.white, fontSize: 16),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   phoneNumber,
-                  style: TextStyle(color: Colors.grey, fontSize: 14),
+                  style: const TextStyle(color: Colors.grey, fontSize: 14),
                 ),
               ],
             ),
           ),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           Column(
             children: [
               ElevatedButton(
-                onPressed: () {
-                  // Implementar funcionalidade de excluir usuário
-                },
+                onPressed: onDelete,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 ),
-                child: Text('Excluir', style: TextStyle(color: Colors.white)),
+                child: const Text('Excluir', style: TextStyle(color: Colors.white)),
               ),
-              SizedBox(height: 5),
+              const SizedBox(height: 5),
               ElevatedButton(
-                onPressed: () {
-                  // Implementar funcionalidade de editar usuário
-                },
+                onPressed: onEdit,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 ),
-                child: Text('Editar', style: TextStyle(color: Colors.white)),
+                child: const Text('Editar', style: TextStyle(color: Colors.white)),
               ),
             ],
           ),

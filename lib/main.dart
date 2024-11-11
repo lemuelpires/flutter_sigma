@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_sigma/firebase_options.dart';
 import 'package:flutter_sigma/providers/anuncio_providers.dart';
-import 'package:flutter_sigma/routes.dart';
 import 'package:flutter_sigma/providers/produto_providers.dart';
+import 'package:flutter_sigma/providers/usuario_providers.dart';
 import 'package:flutter_sigma/api/api_cliente.dart';
 import 'package:flutter_sigma/repositories/produto_repositories.dart';
-import 'package:flutter_sigma/repositories/anuncio_repositories.dart'; 
+import 'package:flutter_sigma/repositories/anuncio_repositories.dart';
+import 'package:flutter_sigma/repositories/usuario_repositories.dart'; // Importado o repositorio de Usuario
 import 'package:flutter_sigma/screens/utils/theme.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_sigma/routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,8 +36,15 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) {
             final apiClient = ApiClient();
-            final anuncioRepository = AnuncioRepository(apiClient); // Inicializar AnuncioRepository
-            return AnuncioProvider(anuncioRepository); // Inicializar AnuncioProvider
+            final anuncioRepository = AnuncioRepository(apiClient);
+            return AnuncioProvider(anuncioRepository);
+          },
+        ),
+        ChangeNotifierProvider(
+          create: (context) {
+            final apiClient = ApiClient();
+            final usuarioRepository = UsuarioRepository(apiClient); // Passe a URL correta
+            return UsuarioProvider(usuarioRepository); // Passando a instância de UsuarioRepository
           },
         ),
       ],
@@ -49,5 +58,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
