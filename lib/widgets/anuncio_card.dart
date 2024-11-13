@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 
 class AnuncioCard extends StatelessWidget {
   final String title;
@@ -66,4 +66,4 @@ class AnuncioCard extends StatelessWidget {
       ),
     );
   }
-}
+}*/

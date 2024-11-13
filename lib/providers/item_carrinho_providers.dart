@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sigma/models/item_carrinho_model.dart';
 import 'package:flutter_sigma/repositories/item_carrinho_repositories.dart';
 import 'package:logging/logging.dart';
-import 'package:flutter_sigma/api/api_response.dart';
 
 final Logger _logger = Logger('ItemCarrinhoProvider');
 

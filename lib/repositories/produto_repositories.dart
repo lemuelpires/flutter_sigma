@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_sigma/api/api_cliente.dart'; // Importe o ApiClient
 import 'package:flutter_sigma/api/api_endpoints.dart'; // Importe os endpoints da API
 import 'package:flutter_sigma/models/produto_model.dart';
@@ -27,6 +28,9 @@ class ProductRepository {
   // Método para adicionar um novo produto
   Future<ApiResponse<Product>> addProduct(Product produto) async {
     try {
+      if (kDebugMode) {
+        print(produto.toJson());
+      }
       final response = await apiClient.post(ApiEndpoints.produto, data: produto.toJson());
       if (response.statusCode == 201) {
         return ApiResponse.success(Product.fromJson(response.data));

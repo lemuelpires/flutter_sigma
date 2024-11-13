@@ -6,7 +6,7 @@ class ApiEndpoints {
   static const String favorito = '/Favorito';
   static const String itemCarrinho = '/ItemCarrinho';
   static const String itemPedido = '/ItemPedido';
-  static const String jogo = '/Jogo';
+  static const String jogo = '/jogo';
   static const String pedido = '/Pedido';
   static const String produto = '/Produto';
   static const String usuarioJogo = '/UsuarioJogo';

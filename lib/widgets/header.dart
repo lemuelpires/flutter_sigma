@@ -77,17 +77,25 @@ class CustomHeader extends StatelessWidget {
                     value: '/lista_usuarios',
                     child: Text('Lista de Usuários', style: TextStyle(color: Colors.black)),
                   ),
+                  const PopupMenuItem(
+                    value: '/lista_jogos',
+                    child: Text('Lista de Jogos', style: TextStyle(color: Colors.black)),
+                  ),
                       const PopupMenuItem(
                     value: '/cadastro_produto',
                     child: Text('Cadastro de produto', style: TextStyle(color: Colors.black)),
                   ),
                       const PopupMenuItem(
                     value: '/cadastro_anuncio',
-                    child: Text('Cadastro Anuncio', style: TextStyle(color: Colors.black)),
+                    child: Text('Cadastro de Anuncio', style: TextStyle(color: Colors.black)),
                   ),
                      const PopupMenuItem(
                     value: '/register',
                     child: Text('Cadastro Usuario', style: TextStyle(color: Colors.black)),
+                  ),
+                     const PopupMenuItem(
+                    value: '/cadastro_jogo',
+                    child: Text('Cadastro de Jogo', style: TextStyle(color: Colors.black)),
                   ),
                        const PopupMenuItem(
                     value: '/editar_anuncio',

@@ -4,10 +4,12 @@ import 'package:flutter_sigma/firebase_options.dart';
 import 'package:flutter_sigma/providers/anuncio_providers.dart';
 import 'package:flutter_sigma/providers/produto_providers.dart';
 import 'package:flutter_sigma/providers/usuario_providers.dart';
+import 'package:flutter_sigma/providers/jogo_providers.dart';
 import 'package:flutter_sigma/api/api_cliente.dart';
+import 'package:flutter_sigma/repositories/jogo_repositories.dart';
 import 'package:flutter_sigma/repositories/produto_repositories.dart';
 import 'package:flutter_sigma/repositories/anuncio_repositories.dart';
-import 'package:flutter_sigma/repositories/usuario_repositories.dart'; // Importado o repositorio de Usuario
+import 'package:flutter_sigma/repositories/usuario_repositories.dart';
 import 'package:flutter_sigma/screens/utils/theme.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_sigma/routes.dart';
@@ -45,6 +47,13 @@ class MyApp extends StatelessWidget {
             final apiClient = ApiClient();
             final usuarioRepository = UsuarioRepository(apiClient); // Passe a URL correta
             return UsuarioProvider(usuarioRepository); // Passando a instância de UsuarioRepository
+          },
+        ),
+        ChangeNotifierProvider(
+          create: (context) {
+            final apiClient = ApiClient();
+            final jogoRepository = JogoRepository(apiClient);
+            return JogoProvider(jogoRepository);
           },
         ),
       ],

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sigma/models/avaliacao_model.dart';
 import 'package:flutter_sigma/repositories/avaliacao_repositories.dart';
 import 'package:logging/logging.dart';
-import 'package:flutter_sigma/api/api_response.dart';
 
 final Logger _logger = Logger('AvaliacaoProvider');
 

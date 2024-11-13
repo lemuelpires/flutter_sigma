@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sigma/models/categoria_model.dart';
 import 'package:flutter_sigma/repositories/categoria_repositories.dart';
 import 'package:logging/logging.dart';
-import 'package:flutter_sigma/api/api_response.dart';
+
 
 final Logger _logger = Logger('CategoriaProvider');
 

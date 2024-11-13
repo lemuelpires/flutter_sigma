@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sigma/models/jogo_model.dart';
 import 'package:flutter_sigma/repositories/jogo_repositories.dart';
 import 'package:logging/logging.dart';
-import 'package:flutter_sigma/api/api_response.dart';
 
 final Logger _logger = Logger('JogoProvider');
 
@@ -20,7 +19,7 @@ class JogoProvider with ChangeNotifier {
   String? get errorMessage => _errorMessage;
 
   // Método para carregar todos os jogos
-  Future<void> loadJogos() async {
+  Future<void> fetchJogos() async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -47,10 +46,9 @@ class JogoProvider with ChangeNotifier {
       final response = await jogoRepository.addJogo(jogo);
       if (response.success) {
         _jogos.add(response.data!);
-        notifyListeners();
         _logger.info('Jogo adicionado com sucesso: ${jogo.nomeJogo}');
+        notifyListeners();
       } else {
-        _errorMessage = response.message;
         _logger.severe('Erro ao adicionar jogo: ${response.message}');
       }
     } catch (error) {
@@ -63,14 +61,13 @@ class JogoProvider with ChangeNotifier {
     try {
       final response = await jogoRepository.updateJogo(jogo);
       if (response.success) {
-        final index = _jogos.indexWhere((e) => e.idJogo == response.data!.idJogo);
+        final index = _jogos.indexWhere((j) => j.idJogo == response.data!.idJogo);
         if (index != -1) {
-          _jogos[index] = response.data!; // Atualiza o jogo na lista
+          _jogos[index] = response.data!;
+          _logger.info('Jogo atualizado com sucesso: ${jogo.nomeJogo}');
           notifyListeners();
         }
-        _logger.info('Jogo atualizado com sucesso: ${jogo.nomeJogo}');
       } else {
-        _errorMessage = response.message;
         _logger.severe('Erro ao atualizar jogo: ${response.message}');
       }
     } catch (error) {
@@ -83,11 +80,10 @@ class JogoProvider with ChangeNotifier {
     try {
       final response = await jogoRepository.deleteJogo(idJogo);
       if (response.success) {
-        _jogos.removeWhere((e) => e.idJogo == idJogo); // Remove da lista
-        notifyListeners();
+        _jogos.removeWhere((j) => j.idJogo == idJogo);
         _logger.info('Jogo deletado com sucesso: $idJogo');
+        notifyListeners();
       } else {
-        _errorMessage = response.message;
         _logger.severe('Erro ao deletar jogo: ${response.message}');
       }
     } catch (error) {

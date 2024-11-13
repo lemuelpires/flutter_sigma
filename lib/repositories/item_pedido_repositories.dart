@@ -2,7 +2,6 @@ import 'package:flutter_sigma/models/item_pedido_model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_sigma/api/api_response.dart';
-import 'package:flutter_sigma/api/api_endpoints.dart';
 
 class ItemPedidoRepository {
   final String baseUrl;
