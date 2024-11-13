@@ -1,15 +1,15 @@
 class Anuncio {
-  int? idAnuncio;                        // Chave primária autoincrementável
-  int idProduto;                          // Chave estrangeira referenciando a tabela de Produtos
-  String titulo;                          // Título do anúncio
-  String descricao;                       // Descrição do anúncio
-  double preco;                           // Preço do produto
-  String referenciaImagem;                // Referência ou URL da imagem do anúncio
-  DateTime data;                          // Data do anúncio
-  bool ativo;                             // Indica se o anúncio está ativo
+  int? idAnuncio;                       // Chave primária autoincrementável
+  int idProduto;                        // Chave estrangeira referenciando a tabela de Produtos
+  String titulo;                        // Título do anúncio
+  String descricao;                     // Descrição do anúncio
+  double preco;                         // Preço do produto
+  String referenciaImagem;              // Referência ou URL da imagem do anúncio
+  DateTime data;                        // Data do anúncio
+  bool ativo;                           // Indica se o anúncio está ativo
 
   Anuncio({
-    this.idAnuncio,                       // Pode ser null, pois é autoincrementável
+    this.idAnuncio,                     // Pode ser null, pois é autoincrementável
     required this.idProduto,
     required this.titulo,
     required this.descricao,
@@ -33,19 +33,23 @@ class Anuncio {
     );
   }
 
-  get imageUrl => null;
-
   // Método para converter um objeto Anuncio em um objeto JSON
   Map<String, dynamic> toJson() {
-    return {
-      'idAnuncio': idAnuncio,
+    final Map<String, dynamic> data = {
       'idProduto': idProduto,
       'titulo': titulo,
       'descricao': descricao,
       'preco': preco,
       'referenciaImagem': referenciaImagem,
-      'data': data.toIso8601String(), // Convertendo DateTime para string
+      'data': this.data.toIso8601String(), // Convertendo DateTime para string ISO 8601
       'ativo': ativo,
     };
+
+    // Inclui idAnuncio apenas se não for nulo
+    if (idAnuncio != null) {
+      data['idAnuncio'] = idAnuncio;
+    }
+
+    return data;
   }
 }

@@ -12,7 +12,7 @@ class Product {
   bool ativo;
 
   Product({
-    this.idProduto,              // Pode ser null já que é autoincrementável
+    this.idProduto, // Pode ser null já que é autoincrementável
     required this.nomeProduto,
     required this.descricaoProduto,
     required this.preco,
@@ -44,8 +44,7 @@ class Product {
 
   // Método para converter um objeto Product em um objeto JSON
   Map<String, dynamic> toJson() {
-    return {
-      'idProduto': idProduto,
+    final Map<String, dynamic> data = {
       'nomeProduto': nomeProduto,
       'descricaoProduto': descricaoProduto,
       'preco': preco,
@@ -54,8 +53,15 @@ class Product {
       'marca': marca,
       'imagemProduto': imagemProduto,
       'fichaTecnica': fichaTecnica,
-      'data': data.toIso8601String(),
+      'data': this.data.toIso8601String(),
       'ativo': ativo,
     };
+
+    // Só inclui idProduto se ele não for nulo
+    if (idProduto != null) {
+      data['idProduto'] = idProduto;
+    }
+
+    return data;
   }
 }
