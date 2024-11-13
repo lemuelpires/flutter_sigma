@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sigma/providers/anuncio_providers.dart';
+import 'package:flutter_sigma/screens/cadastroAnuncio/cadastro_anuncio_screen.dart';
 import 'package:provider/provider.dart';
 
 class ListaAnuncios extends StatefulWidget {
   const ListaAnuncios({super.key});
 
   @override
-  _ListaAnunciosState createState() => _ListaAnunciosState();
+  ListaAnunciosState createState() => ListaAnunciosState();
 }
 
-class _ListaAnunciosState extends State<ListaAnuncios> {
-  @override
-  void initState() {
-    super.initState();
-    // Carrega os anúncios quando a tela for inicializada
-    Future.delayed(Duration.zero, () {
+class ListaAnunciosState extends State<ListaAnuncios> {
+ @override
+void initState() {
+  super.initState();
+  // Carrega os jogos quando a tela for inicializada
+  Future.delayed(Duration.zero, () {
+    if (mounted) {
       Provider.of<AnuncioProvider>(context, listen: false).loadAnuncios();
-    });
-  }
+    }
+  });
+}
 
   @override
   Widget build(BuildContext context) {
@@ -145,10 +148,10 @@ class _ListaAnunciosState extends State<ListaAnuncios> {
                         onPressed: () {
                           // Navegar para a tela de adicionar anúncio
                           // Substitua 'AddAnuncioScreen' pelo nome da sua tela de adição de anúncio
-                          /*Navigator.push(
+                          Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => CadastroAnuncio()),
-                          );*/
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),

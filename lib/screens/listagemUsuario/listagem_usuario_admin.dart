@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sigma/providers/usuario_providers.dart';
+import 'package:flutter_sigma/screens/auth/register_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_sigma/widgets/footer.dart';
 import 'package:flutter_sigma/widgets/header.dart';
@@ -8,10 +9,10 @@ class ListaUsuarios extends StatefulWidget {
   const ListaUsuarios({super.key});
 
   @override
-  _ListaUsuariosState createState() => _ListaUsuariosState();
+  ListaUsuariosState createState() => ListaUsuariosState();
 }
 
-class _ListaUsuariosState extends State<ListaUsuarios> {
+class ListaUsuariosState extends State<ListaUsuarios> {
   @override
   void initState() {
     super.initState();
@@ -50,7 +51,10 @@ class _ListaUsuariosState extends State<ListaUsuarios> {
                     color: Theme.of(context).colorScheme.secondary,
                   ),
                   onPressed: () {
-                    // Implementar funcionalidade de adicionar usuário
+                     Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => RegistroScreen()),
+                          );
                   },
                 ),
               ],
