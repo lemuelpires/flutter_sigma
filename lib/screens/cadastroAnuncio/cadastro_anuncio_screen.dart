@@ -1,118 +1,146 @@
-/*import 'package:flutter/material.dart';
-import 'package:flutter_sigma/screens/utils/theme.dart';
-import 'package:flutter_sigma/widgets/footer.dart';
-import 'package:flutter_sigma/widgets/header.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_sigma/api/api_cliente.dart';
+import 'package:flutter_sigma/repositories/anuncio_repositories.dart';
+import 'package:flutter_sigma/models/anuncio_model.dart';
 
-class CadastroAnuncio extends StatelessWidget {
-  final TextEditingController idProdutoController = TextEditingController();
-  final TextEditingController tituloController = TextEditingController();
-  final TextEditingController descricaoController = TextEditingController();
-  final TextEditingController precoController = TextEditingController();
-  final TextEditingController referenciaImagemController = TextEditingController();
+class CadastroAnuncio extends StatefulWidget {
+  const CadastroAnuncio({super.key});
 
-  CadastroAnuncio({super.key});
+  @override
+  CadastroAnuncioState createState() => CadastroAnuncioState();
+}
+
+class CadastroAnuncioState extends State<CadastroAnuncio> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _idProdutoController = TextEditingController();
+  final TextEditingController _tituloController = TextEditingController();
+  final TextEditingController _descricaoController = TextEditingController();
+  final TextEditingController _precoController = TextEditingController();
+  final TextEditingController _referenciaImagemController = TextEditingController();
+  final AnuncioRepository _anuncioRepository = AnuncioRepository(ApiClient());
+
+  Future<void> _cadastrarAnuncio(BuildContext context) async {
+    if (_formKey.currentState!.validate()) {
+      final scaffoldMessenger = ScaffoldMessenger.of(context);
+      final navigator = Navigator.of(context);
+
+      Anuncio novoAnuncio = Anuncio(
+        idProduto: int.parse(_idProdutoController.text.trim()),
+        titulo: _tituloController.text.trim(),
+        descricao: _descricaoController.text.trim(),
+        preco: double.parse(_precoController.text.trim()),
+        referenciaImagem: _referenciaImagemController.text.trim(),
+        data: DateTime.now(),
+        ativo: true,
+      );
+
+      try {
+        final response = await _anuncioRepository.addAnuncio(novoAnuncio);
+        if (response.success) {
+          scaffoldMessenger.showSnackBar(
+            SnackBar(
+              content: const Text('Anúncio cadastrado com sucesso!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          navigator.pop();
+        } else {
+          scaffoldMessenger.showSnackBar(
+            SnackBar(
+              content: Text('Erro ao cadastrar anúncio: ${response.message}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } catch (e) {
+        scaffoldMessenger.showSnackBar(
+          SnackBar(
+            content: Text('Erro ao cadastrar anúncio: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      data: AppTheme.buildTheme(), // Aplica o tema customizado
-      child: Scaffold(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Cadastro de Anúncio', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black,
-        body: Column(
-          children: [
-            CustomHeader(title: '',), // Exibe o CustomHeader no topo
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 24),
-                    // Título da página
-                    Center(
-                      child: Text(
-                        'Cadastro de Anúncio',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 24),
-                    // Campos de entrada
-                    _buildTextField('ID do Produto', idProdutoController, isNumber: true),
-                    SizedBox(height: 16),
-                    _buildTextField('Título', tituloController),
-                    SizedBox(height: 16),
-                    _buildTextField('Descrição', descricaoController, maxLines: 3),
-                    SizedBox(height: 16),
-                    _buildTextField('Preço', precoController, isNumber: true),
-                    SizedBox(height: 16),
-                    _buildTextField('Referência da Imagem', referenciaImagemController),
-                    SizedBox(height: 24),
-                    // Botão de cadastro
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Lógica para cadastrar o anúncio
-                          // Exemplo de criação do objeto com `ativo` como true:
-                          final novoAnuncio = {
-                            "idProduto": int.tryParse(idProdutoController.text) ?? 0,
-                            "titulo": tituloController.text,
-                            "descricao": descricaoController.text,
-                            "preco": double.tryParse(precoController.text) ?? 0.0,
-                            "referenciaImagem": referenciaImagemController.text,
-                            "data": DateTime.now().toIso8601String(),
-                            "ativo": true,
-                          };
-                          // Ação de cadastro a ser implementada
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).colorScheme.secondary,
-                          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Text(
-                          'Cadastrar Anúncio',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+      ),
+      backgroundColor: Colors.black,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: _buildFormFields(),
             ),
-            Footer(), // Exibe o Footer na parte inferior
-          ],
+          ),
         ),
       ),
     );
   }
 
-  // Widget auxiliar para criar os campos de entrada
-  Widget _buildTextField(String label, TextEditingController controller, {bool isNumber = false, int maxLines = 1}) {
-    return TextField(
+  List<Widget> _buildFormFields() {
+    return [
+      _buildTextField(_idProdutoController, 'ID do Produto', icon: Icons.label, inputFormatters: [
+        FilteringTextInputFormatter.digitsOnly,
+      ]),
+      const SizedBox(height: 16),
+      _buildTextField(_tituloController, 'Título do Anúncio', icon: Icons.title),
+      const SizedBox(height: 16),
+      _buildTextField(_descricaoController, 'Descrição', icon: Icons.description),
+      const SizedBox(height: 16),
+      _buildTextField(_precoController, 'Preço', icon: Icons.attach_money, inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+      ]),
+      const SizedBox(height: 16),
+      _buildTextField(_referenciaImagemController, 'URL da Imagem', icon: Icons.image),
+      const SizedBox(height: 32),
+      ElevatedButton(
+        onPressed: () => _cadastrarAnuncio(context),
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          backgroundColor: Colors.green,
+        ),
+        child: const Text('Cadastrar Anúncio', style: TextStyle(fontSize: 18)),
+      ),
+    ];
+  }
+
+  TextFormField _buildTextField(
+    TextEditingController controller,
+    String labelText, {
+    IconData? icon,
+    List<TextInputFormatter>? inputFormatters,
+  }) {
+    return TextFormField(
       controller: controller,
-      keyboardType: isNumber ? TextInputType.number : TextInputType.text,
-      maxLines: maxLines,
-      style: TextStyle(color: Colors.white),
       decoration: InputDecoration(
-        labelText: label,
-        labelStyle: TextStyle(color: Colors.white70),
+        prefixIcon: Icon(icon, color: Colors.white),
+        labelText: labelText,
+        labelStyle: const TextStyle(color: Colors.white),
         filled: true,
-        fillColor: Colors.white12,
+        fillColor: Colors.white.withOpacity(0.2),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(30),
           borderSide: BorderSide.none,
         ),
       ),
+      style: const TextStyle(color: Colors.white),
+      inputFormatters: inputFormatters,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Este campo é obrigatório';
+        }
+        return null;
+      },
     );
   }
-}*/
+}
