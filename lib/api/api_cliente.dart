@@ -6,7 +6,7 @@ class ApiClient {
   late final Dio dio;
 
   ApiClient() {
-    dio = Dio(BaseOptions(baseUrl: 'http://10.0.2.2:5182/api/'));
+    dio = Dio(BaseOptions(baseUrl: 'http://www.portalmantec.com.br:5001/api/'));
 
     dio.httpClientAdapter = IOHttpClientAdapter()
       ..createHttpClient = () {
