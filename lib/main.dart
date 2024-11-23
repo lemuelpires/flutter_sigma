@@ -26,35 +26,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Singleton do ApiClient
+    final apiClient = ApiClient();
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (context) {
-            final apiClient = ApiClient();
-            final productRepository = ProductRepository(apiClient);
-            return ProductProvider(productRepository);
-          },
+          create: (_) => ProductProvider(ProductRepository(apiClient)),
         ),
         ChangeNotifierProvider(
-          create: (context) {
-            final apiClient = ApiClient();
-            final anuncioRepository = AnuncioRepository(apiClient);
-            return AnuncioProvider(anuncioRepository);
-          },
+          create: (_) => AnuncioProvider(AnuncioRepository(apiClient)),
         ),
         ChangeNotifierProvider(
-          create: (context) {
-            final apiClient = ApiClient();
-            final usuarioRepository = UsuarioRepository(apiClient); // Passe a URL correta
-            return UsuarioProvider(usuarioRepository); // Passando a instância de UsuarioRepository
-          },
+          create: (_) => UsuarioProvider(UsuarioRepository(apiClient)),
         ),
         ChangeNotifierProvider(
-          create: (context) {
-            final apiClient = ApiClient();
-            final jogoRepository = JogoRepository(apiClient);
-            return JogoProvider(jogoRepository);
-          },
+          create: (_) => JogoProvider(JogoRepository(apiClient)),
         ),
       ],
       child: MaterialApp(
