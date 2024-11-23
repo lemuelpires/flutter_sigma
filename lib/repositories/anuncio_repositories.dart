@@ -17,7 +17,8 @@ class AnuncioRepository {
         List<Anuncio> anuncios = data.map((e) => Anuncio.fromJson(e)).toList();
         return ApiResponse.success(anuncios);
       } else {
-        return ApiResponse.error('Falha ao carregar anúncios. Código de status: ${response.statusCode}');
+        return ApiResponse.error(
+            'Falha ao carregar anúncios. Código de status: ${response.statusCode}');
       }
     } catch (e) {
       return ApiResponse.error('Erro ao buscar anúncios: $e');
@@ -27,25 +28,39 @@ class AnuncioRepository {
   // Método para adicionar um novo anúncio
   Future<ApiResponse<Anuncio>> addAnuncio(Anuncio anuncio) async {
     try {
-      final response = await apiClient.post(ApiEndpoints.anuncio, data: anuncio.toJson());
+      final response =
+          await apiClient.post(ApiEndpoints.anuncio, data: anuncio.toJson());
       if (response.statusCode == 201) {
         return ApiResponse.success(Anuncio.fromJson(response.data));
       } else {
-        return ApiResponse.error('Falha ao adicionar anúncio. Código de status: ${response.statusCode}');
+        return ApiResponse.error(
+            'Falha ao adicionar anúncio. Código de status: ${response.statusCode}');
       }
     } catch (e) {
       return ApiResponse.error('Erro ao adicionar anúncio: $e');
     }
   }
 
-  // Método para atualizar um anúncio existente
+// Método para atualizar um anúncio existente
   Future<ApiResponse<Anuncio>> updateAnuncio(Anuncio anuncio) async {
     try {
-      final response = await apiClient.put('${ApiEndpoints.anuncio}/${anuncio.idAnuncio}', data: anuncio.toJson());
-      if (response.statusCode == 200) {
-        return ApiResponse.success(Anuncio.fromJson(response.data));
+      if (anuncio.idAnuncio == null) {
+        return ApiResponse.error(
+            'O idAnuncio não pode ser nulo para atualização.');
+      }
+
+      // Atualizando o anúncio
+      final response = await apiClient.put(
+          '${ApiEndpoints.anuncio}/${anuncio.idAnuncio}',
+          data: anuncio.toJson());
+
+      // Verifica se o status é 200 ou 204 (sucesso sem conteúdo)
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        return ApiResponse.success(
+            anuncio); // Retorna o anúncio, pois ele foi atualizado corretamente
       } else {
-        return ApiResponse.error('Falha ao atualizar anúncio. Código de status: ${response.statusCode}');
+        return ApiResponse.error(
+            'Falha ao atualizar anúncio. Código de status: ${response.statusCode}');
       }
     } catch (e) {
       return ApiResponse.error('Erro ao atualizar anúncio: $e');
@@ -55,11 +70,13 @@ class AnuncioRepository {
   // Método para remover um anúncio
   Future<ApiResponse<void>> deleteAnuncio(int idAnuncio) async {
     try {
-      final response = await apiClient.delete('${ApiEndpoints.anuncio}/$idAnuncio');
+      final response =
+          await apiClient.delete('${ApiEndpoints.anuncio}/$idAnuncio');
       if (response.statusCode == 204) {
         return ApiResponse.success(null);
       } else {
-        return ApiResponse.error('Falha ao deletar anúncio. Código de status: ${response.statusCode}');
+        return ApiResponse.error(
+            'Falha ao deletar anúncio. Código de status: ${response.statusCode}');
       }
     } catch (e) {
       return ApiResponse.error('Erro ao remover anúncio: $e');
@@ -67,7 +84,8 @@ class AnuncioRepository {
   }
 
   // Método para atualizar a imagem de um anúncio
-  Future<ApiResponse<void>> updateAnuncioImage(int idAnuncio, String novaReferenciaImagem) async {
+  Future<ApiResponse<void>> updateAnuncioImage(
+      int idAnuncio, String novaReferenciaImagem) async {
     try {
       final response = await apiClient.put(
         '${ApiEndpoints.anuncio}/$idAnuncio/image',
@@ -76,7 +94,8 @@ class AnuncioRepository {
       if (response.statusCode == 200) {
         return ApiResponse.success(null);
       } else {
-        return ApiResponse.error('Falha ao atualizar imagem do anúncio. Código de status: ${response.statusCode}');
+        return ApiResponse.error(
+            'Falha ao atualizar imagem do anúncio. Código de status: ${response.statusCode}');
       }
     } catch (e) {
       return ApiResponse.error('Erro ao atualizar imagem do anúncio: $e');

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sigma/providers/usuario_providers.dart';
 import 'package:flutter_sigma/screens/auth/register_screen.dart';
+import 'package:flutter_sigma/screens/edicaoUsuario/edicao_usuario_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_sigma/widgets/footer.dart';
 import 'package:flutter_sigma/widgets/header.dart';
@@ -28,8 +29,8 @@ class ListaUsuariosState extends State<ListaUsuarios> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60), // Define a altura do header
-        child: const CustomHeader(title: 'Usuários'), // Usa o seu componente de header
+        preferredSize: const Size.fromHeight(60),
+        child: const CustomHeader(title: 'Usuários'),
       ),
       body: Column(
         children: [
@@ -51,10 +52,10 @@ class ListaUsuariosState extends State<ListaUsuarios> {
                     color: Theme.of(context).colorScheme.secondary,
                   ),
                   onPressed: () {
-                     Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => RegistroScreen()),
-                          );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => RegistroScreen()),
+                    );
                   },
                 ),
               ],
@@ -78,13 +79,19 @@ class ListaUsuariosState extends State<ListaUsuarios> {
                                   usuarioProvider.deleteUsuario(usuario.idUsuario!);
                                 },
                                 onEdit: () {
-                                  // Implementar funcionalidade de editar usuário
+                                  // Navegar para a tela de edição passando o usuário selecionado
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => EditarUsuario(usuario: usuario),
+                                    ),
+                                  );
                                 },
                               );
                             },
                           ),
           ),
-          const Footer(), // Usa o componente de footer
+          const Footer(),
         ],
       ),
     );
@@ -113,7 +120,7 @@ class UserCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.black87,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.blue, width: 1), // Borda azul
+        border: Border.all(color: Colors.blue, width: 1),
       ),
       child: Row(
         children: [

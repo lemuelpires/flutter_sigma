@@ -1,40 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_sigma/models/anuncio_model.dart';
-import 'package:flutter_sigma/providers/anuncio_providers.dart';
+import 'package:flutter_sigma/models/jogo_model.dart';
+import 'package:flutter_sigma/providers/jogo_providers.dart';
 import 'package:provider/provider.dart';
 
-class EditarAnuncio extends StatefulWidget {
-  final Anuncio anuncio;
+class EditarJogo extends StatefulWidget {
+  final Jogo jogo;
 
-  const EditarAnuncio({super.key, required this.anuncio});
+  const EditarJogo({super.key, required this.jogo});
 
   @override
-  EditarAnuncioState createState() => EditarAnuncioState();
+  EditarJogoState createState() => EditarJogoState();
 }
 
-class EditarAnuncioState extends State<EditarAnuncio> {
+class EditarJogoState extends State<EditarJogo> {
   final _formKey = GlobalKey<FormState>();
-  late TextEditingController _tituloController;
-  late TextEditingController _descricaoController;
-  late TextEditingController _precoController;
-  late TextEditingController _referenciaImagemController;
+  late TextEditingController _nomeJogoController;
+  late TextEditingController _categoriaJogoController;
+  late TextEditingController _processadorRequeridoController;
+  late TextEditingController _memoriaRAMRequeridaController;
+  late TextEditingController _placaVideoRequeridaController;
+  late TextEditingController _espacoDiscoRequeridoController;
+  late TextEditingController _referenciaImagemJogoController;
 
   @override
   void initState() {
     super.initState();
-    _tituloController = TextEditingController(text: widget.anuncio.titulo);
-    _descricaoController = TextEditingController(text: widget.anuncio.descricao);
-    _precoController = TextEditingController(text: widget.anuncio.preco.toString());
-    _referenciaImagemController = TextEditingController(text: widget.anuncio.referenciaImagem);
+    _nomeJogoController = TextEditingController(text: widget.jogo.nomeJogo);
+    _categoriaJogoController = TextEditingController(text: widget.jogo.categoriaJogo);
+    _processadorRequeridoController = TextEditingController(text: widget.jogo.processadorRequerido);
+    _memoriaRAMRequeridaController = TextEditingController(text: widget.jogo.memoriaRAMRequerida);
+    _placaVideoRequeridaController = TextEditingController(text: widget.jogo.placaVideoRequerida);
+    _espacoDiscoRequeridoController = TextEditingController(text: widget.jogo.espacoDiscoRequerido);
+    _referenciaImagemJogoController = TextEditingController(text: widget.jogo.referenciaImagemJogo);
   }
 
   @override
   void dispose() {
-    _tituloController.dispose();
-    _descricaoController.dispose();
-    _precoController.dispose();
-    _referenciaImagemController.dispose();
+    _nomeJogoController.dispose();
+    _categoriaJogoController.dispose();
+    _processadorRequeridoController.dispose();
+    _memoriaRAMRequeridaController.dispose();
+    _placaVideoRequeridaController.dispose();
+    _espacoDiscoRequeridoController.dispose();
+    _referenciaImagemJogoController.dispose();
     super.dispose();
   }
 
@@ -43,28 +52,30 @@ class EditarAnuncioState extends State<EditarAnuncio> {
       final scaffoldMessenger = ScaffoldMessenger.of(context);
       final navigator = Navigator.of(context);
 
-      final updatedAnuncio = Anuncio(
-        idAnuncio: widget.anuncio.idAnuncio,
-        idProduto: widget.anuncio.idProduto,
-        titulo: _tituloController.text.trim(),
-        descricao: _descricaoController.text.trim(),
-        preco: double.tryParse(_precoController.text.trim()) ?? widget.anuncio.preco,
-        referenciaImagem: _referenciaImagemController.text.trim(),
-        data: widget.anuncio.data,
-        ativo: widget.anuncio.ativo,
+      final updatedJogo = Jogo(
+        idJogo: widget.jogo.idJogo,
+        nomeJogo: _nomeJogoController.text.trim(),
+        categoriaJogo: _categoriaJogoController.text.trim(),
+        processadorRequerido: _processadorRequeridoController.text.trim(),
+        memoriaRAMRequerida: _memoriaRAMRequeridaController.text.trim(),
+        placaVideoRequerida: _placaVideoRequeridaController.text.trim(),
+        espacoDiscoRequerido: _espacoDiscoRequeridoController.text.trim(),
+        referenciaImagemJogo: _referenciaImagemJogoController.text.trim(),
+        data: widget.jogo.data,
+        ativo: widget.jogo.ativo,
       );
 
-      final anuncioProvider = Provider.of<AnuncioProvider>(context, listen: false);
-      await anuncioProvider.updateAnuncio(updatedAnuncio);
+      final jogoProvider = Provider.of<JogoProvider>(context, listen: false);
+      await jogoProvider.updateJogo(updatedJogo);
 
-      if (anuncioProvider.errorMessage == null) {
+      if (jogoProvider.errorMessage == null) {
         scaffoldMessenger.showSnackBar(
-          const SnackBar(content: Text('Anúncio atualizado com sucesso!')),
+          const SnackBar(content: Text('Jogo atualizado com sucesso!')),
         );
         navigator.pop();
       } else {
         scaffoldMessenger.showSnackBar(
-          SnackBar(content: Text('Erro: ${anuncioProvider.errorMessage}')),
+          SnackBar(content: Text('Erro: ${jogoProvider.errorMessage}')),
         );
       }
     }
@@ -74,7 +85,7 @@ class EditarAnuncioState extends State<EditarAnuncio> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Editar Anúncio', style: TextStyle(color: Colors.white)),
+        title: const Text('Editar Jogo', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black,
       ),
       backgroundColor: Colors.black,
@@ -96,45 +107,79 @@ class EditarAnuncioState extends State<EditarAnuncio> {
   List<Widget> _buildFormFields() {
     return [
       _buildTextField(
-        _tituloController,
-        'Título',
+        _nomeJogoController,
+        'Nome do Jogo',
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return 'Por favor, insira o título';
+            return 'Por favor, insira o nome do jogo';
           }
           return null;
         },
-        icon: Icons.title,
+        icon: Icons.gamepad,
       ),
       const SizedBox(height: 16),
       _buildTextField(
-        _descricaoController,
-        'Descrição',
+        _categoriaJogoController,
+        'Categoria do Jogo',
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return 'Por favor, insira a descrição';
+            return 'Por favor, insira a categoria do jogo';
           }
           return null;
         },
-        icon: Icons.description,
+        icon: Icons.category,
       ),
       const SizedBox(height: 16),
       _buildTextField(
-        _precoController,
-        'Preço',
+        _processadorRequeridoController,
+        'Processador Requerido',
         validator: (value) {
-          if (value == null || double.tryParse(value) == null) {
-            return 'Por favor, insira um preço válido';
+          if (value == null || value.isEmpty) {
+            return 'Por favor, insira o processador requerido';
           }
           return null;
         },
-        icon: Icons.attach_money,
-        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))],
-        keyboardType: TextInputType.number,
+        icon: Icons.computer,
       ),
       const SizedBox(height: 16),
       _buildTextField(
-        _referenciaImagemController,
+        _memoriaRAMRequeridaController,
+        'Memória RAM Requerida',
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Por favor, insira a memória RAM requerida';
+          }
+          return null;
+        },
+        icon: Icons.memory,
+      ),
+      const SizedBox(height: 16),
+      _buildTextField(
+        _placaVideoRequeridaController,
+        'Placa de Vídeo Requerida',
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Por favor, insira a placa de vídeo requerida';
+          }
+          return null;
+        },
+        icon: Icons.videogame_asset,
+      ),
+      const SizedBox(height: 16),
+      _buildTextField(
+        _espacoDiscoRequeridoController,
+        'Espaço em Disco Requerido',
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Por favor, insira o espaço em disco requerido';
+          }
+          return null;
+        },
+        icon: Icons.storage,
+      ),
+      const SizedBox(height: 16),
+      _buildTextField(
+        _referenciaImagemJogoController,
         'Referência da Imagem',
         validator: (value) {
           if (value == null || value.isEmpty) {
@@ -147,16 +192,16 @@ class EditarAnuncioState extends State<EditarAnuncio> {
       const SizedBox(height: 16),
       _buildReadOnlyField(
         'Data de Criação',
-        widget.anuncio.data.toString(),
+        widget.jogo.data.toString(),
         icon: Icons.calendar_today,
       ),
       const SizedBox(height: 16),
       SwitchListTile(
         title: const Text('Ativo', style: TextStyle(color: Colors.white)),
-        value: widget.anuncio.ativo,
+        value: widget.jogo.ativo,
         onChanged: (value) {
           setState(() {
-            widget.anuncio.ativo = value;
+            widget.jogo.ativo = value;
           });
         },
         activeColor: Colors.green,
@@ -230,8 +275,8 @@ class EditarAnuncioState extends State<EditarAnuncio> {
           borderSide: BorderSide.none,
         ),
       ),
-      readOnly: true,
       style: const TextStyle(color: Colors.white),
+      enabled: false,
     );
   }
 }

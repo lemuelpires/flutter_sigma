@@ -11,16 +11,16 @@ class ListaAnuncios extends StatefulWidget {
 }
 
 class ListaAnunciosState extends State<ListaAnuncios> {
- @override
-void initState() {
-  super.initState();
-  // Carrega os jogos quando a tela for inicializada
-  Future.delayed(Duration.zero, () {
-    if (mounted) {
-      Provider.of<AnuncioProvider>(context, listen: false).loadAnuncios();
-    }
-  });
-}
+  @override
+  void initState() {
+    super.initState();
+    // Carrega os jogos quando a tela for inicializada
+    Future.delayed(Duration.zero, () {
+      if (mounted) {
+        Provider.of<AnuncioProvider>(context, listen: false).loadAnuncios();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +88,6 @@ void initState() {
                         itemCount: anuncioProvider.anuncios.length,
                         itemBuilder: (context, index) {
                           final anuncio = anuncioProvider.anuncios[index];
-
                           return Card(
                             margin: const EdgeInsets.only(bottom: 16),
                             color: Colors.white.withOpacity(0.1),
@@ -96,13 +95,14 @@ void initState() {
                               contentPadding: const EdgeInsets.all(16),
                               leading: CircleAvatar(
                                 backgroundImage: NetworkImage(
-                                  anuncio.referenciaImagem, // Imagem do anúncio
+                                  anuncio.referenciaImagem,
                                 ),
                                 radius: 30,
-                                onBackgroundImageError: (exception, stackTrace) {
-                                  // Caso a imagem não carregue, exibe uma imagem de fallback
+                                onBackgroundImageError:
+                                    (exception, stackTrace) {
                                   setState(() {
-                                    anuncio.referenciaImagem = 'url_da_imagem_fallback';
+                                    anuncio.referenciaImagem =
+                                        'url_da_imagem_fallback';
                                   });
                                 },
                               ),
@@ -119,14 +119,34 @@ void initState() {
                                   color: Colors.white70,
                                 ),
                               ),
-                              trailing: IconButton(
-                                icon: const Icon(
-                                  Icons.delete,
-                                  color: Colors.red,
-                                ),
-                                onPressed: () async {
-                                  await anuncioProvider.deleteAnuncio(anuncio.idAnuncio!);
-                                },
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.edit,
+                                      color: Colors.yellow,
+                                    ),
+                                    onPressed: () {
+                                      // Navega para a tela de edição passando o anúncio
+                                      Navigator.pushNamed(
+                                        context,
+                                        '/editar_anuncio',
+                                        arguments: anuncio,
+                                      );
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Colors.red,
+                                    ),
+                                    onPressed: () async {
+                                      await anuncioProvider
+                                          .deleteAnuncio(anuncio.idAnuncio!);
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
                           );
@@ -150,7 +170,8 @@ void initState() {
                           // Substitua 'AddAnuncioScreen' pelo nome da sua tela de adição de anúncio
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => CadastroAnuncio()),
+                            MaterialPageRoute(
+                                builder: (context) => CadastroAnuncio()),
                           );
                         },
                         style: ElevatedButton.styleFrom(

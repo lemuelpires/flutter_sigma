@@ -52,4 +52,27 @@ class Anuncio {
 
     return data;
   }
+
+  // Método copyWith para criar uma nova instância de Anuncio com valores modificados
+  Anuncio copyWith({
+    int? idAnuncio,
+    int? idProduto,
+    String? titulo,
+    String? descricao,
+    double? preco,
+    String? referenciaImagem,
+    DateTime? data,
+    bool? ativo, required String imagemReferencia,
+  }) {
+    return Anuncio(
+      idAnuncio: idAnuncio ?? this.idAnuncio,
+      idProduto: idProduto ?? this.idProduto,
+      titulo: titulo ?? this.titulo,
+      descricao: descricao ?? this.descricao,
+      preco: preco ?? this.preco,
+      referenciaImagem: referenciaImagem ?? this.referenciaImagem,
+      data: data ?? this.data,
+      ativo: ativo ?? this.ativo,
+    );
+  }
 }

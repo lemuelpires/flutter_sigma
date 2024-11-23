@@ -90,7 +90,8 @@ class AnuncioProvider with ChangeNotifier {
         // Atualiza a lista de anúncios, se necessário
         final index = _anuncios.indexWhere((anuncio) => anuncio.idAnuncio == idAnuncio);
         if (index != -1) {
-          _anuncios[index] = _anuncios[index]; // Mantém o anúncio atualizado
+          // Atualiza apenas a imagem do anúncio
+          _anuncios[index] = _anuncios[index].copyWith(imagemReferencia: novaReferenciaImagem);
           notifyListeners(); // Notifica os ouvintes
         }
         logger.i("Imagem do anúncio atualizada com sucesso: $idAnuncio");
