@@ -1,11 +1,14 @@
 import 'package:carousel_slider/carousel_slider.dart' as custom_carousel;
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_sigma/widgets/header.dart';
-import 'package:flutter_sigma/widgets/footer.dart';
 import 'package:flutter_sigma/models/produto_model.dart';
 import 'package:flutter_sigma/providers/produto_providers.dart';
+import 'package:flutter_sigma/widgets/header.dart';
+import 'package:flutter_sigma/widgets/footer.dart';
+import 'package:flutter_sigma/models/anuncio_model.dart'; 
+import 'package:flutter_sigma/providers/anuncio_providers.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_sigma/widgets/anuncio_card.dart';
+import 'package:flutter_sigma/widgets/produto_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,18 +22,20 @@ class HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<AnuncioProvider>(context, listen: false).loadAnuncios();
       Provider.of<ProductProvider>(context, listen: false).fetchProducts();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final productProvider = Provider.of<ProductProvider>(context);
+    final anuncioProvider = Provider.of<AnuncioProvider>(context);
+    final produtoProvider = Provider.of<ProductProvider>(context);
 
     return Scaffold(
       appBar: const PreferredSize(
         preferredSize: Size.fromHeight(60),
-        child: CustomHeader(title: 'header',),
+        child: CustomHeader(title: 'header'),
       ),
       backgroundColor: const Color(0xFF101419),
       body: Padding(
@@ -39,11 +44,11 @@ class HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildAnuncioCarousel(),
+              _buildAnuncioCarousel(anuncioProvider.anuncios),
               const SizedBox(height: 20),
               _buildSectionTitle('Mais Vendidos'),
               const SizedBox(height: 10),
-              _buildFeaturedProductsCarousel(productProvider.products),
+              _buildFeaturedProductsCarousel(produtoProvider.products),
               const SizedBox(height: 20),
               _buildSectionTitle('Categorias'),
               const SizedBox(height: 10),
@@ -56,34 +61,23 @@ class HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildAnuncioCarousel() {
-    final List<String> anuncios = [
-      'Anuncio 1',
-      'Anuncio 2',
-      'Anuncio 3',
-    ];
-
+  Widget _buildAnuncioCarousel(List<Anuncio> anuncios) {
     return custom_carousel.CarouselSlider(
       options: custom_carousel.CarouselOptions(
-        height: 150,
+        height: 220,
         autoPlay: true,
         enlargeCenterPage: true,
       ),
       items: anuncios.map((anuncio) {
         return Builder(
           builder: (BuildContext context) {
-            return Container(
-              width: MediaQuery.of(context).size.width,
-              margin: const EdgeInsets.symmetric(horizontal: 5.0),
-              decoration: BoxDecoration(
-                color: Colors.amber,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Center(
-                child: Text(
-                  anuncio,
-                  style: const TextStyle(fontSize: 16, color: Colors.white),
-                ),
+            return SizedBox(
+              width: MediaQuery.of(context).size.width,              
+              child: AnuncioCard(
+                anuncio: anuncio,
+                onDelete: () {
+                  // Lógica para excluir o anúncio (caso necessário)
+                },
               ),
             );
           },
@@ -92,101 +86,23 @@ class HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildFeaturedProductsCarousel(List<Product> products) {
+  Widget _buildFeaturedProductsCarousel(List<Product> produtos) {
     return custom_carousel.CarouselSlider(
       options: custom_carousel.CarouselOptions(
-        height: 300,
+        height: 400,
         autoPlay: true,
         enlargeCenterPage: true,
       ),
-      items: products.map((product) {
-        return Container(
-          width: 220,
-          margin: const EdgeInsets.symmetric(horizontal: 8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: const Color(0xFF1C1F23),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                ),
-                child: product.imagemProduto.endsWith('.svg')
-                    ? SvgPicture.network(
-                        product.imagemProduto,
-                        height: 120,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        placeholderBuilder: (BuildContext context) => Container(
-                          height: 120,
-                          color: Colors.grey[800],
-                          child: const Center(child: CircularProgressIndicator()),
-                        ),
-                      )
-                    : Image.network(
-                        product.imagemProduto,
-                        height: 120,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            height: 120,
-                            width: double.infinity,
-                            color: Colors.grey[800],
-                            child: const Center(child: Icon(Icons.error, color: Colors.red)),
-                          );
-                        },
-                      ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  product.nomeProduto,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Text(
-                  'R\$ ${product.preco.toStringAsFixed(2)}',
-                  style: const TextStyle(color: Color(0xFF7FFF00)),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Navegar para a página de detalhes
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF7FFF00),
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    textStyle: const TextStyle(fontSize: 16),
-                  ),
-                  child: const Text(
-                    'Detalhes',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
-              ),
-            ],
-          ),
+      items: produtos.map((product) {
+        return Builder(
+          builder: (BuildContext context) {
+            return ProductCard(
+              product: product,
+              onDetailsPressed: () {
+                // Ação para abrir os detalhes do produto
+              },
+            );
+          },
         );
       }).toList(),
     );
@@ -196,25 +112,9 @@ class HomeScreenState extends State<HomeScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        _buildCategoryItem('Jogos', Icons.videogame_asset),
-        _buildCategoryItem('Consoles', Icons.gamepad),
-        _buildCategoryItem('Acessórios', Icons.headset),
-      ],
-    );
-  }
-
-  Widget _buildCategoryItem(String title, IconData icon) {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 30,
-          child: Icon(icon, color: Colors.white),
-        ),
-        const SizedBox(height: 5),
-        Text(
-          title,
-          style: const TextStyle(color: Colors.white),
-        ),
+        CategoryWidget(title: 'Eletrônicos'),
+        CategoryWidget(title: 'Roupas'),
+        CategoryWidget(title: 'Alimentos'),
       ],
     );
   }
@@ -223,10 +123,30 @@ class HomeScreenState extends State<HomeScreen> {
     return Text(
       title,
       style: const TextStyle(
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: FontWeight.bold,
         color: Colors.white,
       ),
+    );
+  }
+}
+
+class CategoryWidget extends StatelessWidget {
+  final String title;
+
+  const CategoryWidget({required this.title, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Icon(Icons.category, size: 40, color: Colors.white),
+        const SizedBox(height: 5),
+        Text(
+          title,
+          style: const TextStyle(color: Colors.white),
+        ),
+      ],
     );
   }
 }

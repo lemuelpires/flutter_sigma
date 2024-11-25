@@ -26,4 +26,6 @@ class ProdutoProvider with ChangeNotifier {
       logger.e("Erro ao atualizar a imagem do produto: $e");
     }
   }
+
+  void loadProdutos() {}
 }

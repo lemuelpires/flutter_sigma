@@ -14,33 +14,15 @@ class AnuncioCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 16),
       color: Colors.white.withOpacity(0.1),
       child: ListTile(
-        contentPadding: const EdgeInsets.all(16),
-        leading: CircleAvatar(
-          backgroundImage: NetworkImage(anuncio.referenciaImagem),
-          radius: 30,
-          onBackgroundImageError: (exception, stackTrace) {
-            // Se houver erro na imagem, exibe uma imagem padrão
+        title: Image.network(
+          anuncio.referenciaImagem,
+          height: 200,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return const Icon(Icons.error);
           },
-        ),
-        title: Text(
-          anuncio.titulo,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        subtitle: Text(
-          'R\$ ${anuncio.preco.toStringAsFixed(2)}',
-          style: const TextStyle(
-            color: Colors.white70,
-          ),
-        ),
-        trailing: IconButton(
-          icon: const Icon(Icons.delete, color: Colors.red),
-          onPressed: onDelete,
         ),
       ),
     );
