@@ -11,10 +11,11 @@ class UsuarioProvider with ChangeNotifier {
   UsuarioProvider(this.usuarioRepository);
 
   List<Usuario> _usuarios = [];
+  List<Usuario> _usuariosFiltrados = []; // Lista filtrada para pesquisa
   bool _isLoading = false;
   String? _errorMessage;
 
-  List<Usuario> get usuarios => _usuarios;
+  List<Usuario> get usuarios => _usuariosFiltrados.isEmpty ? _usuarios : _usuariosFiltrados;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
@@ -27,6 +28,7 @@ class UsuarioProvider with ChangeNotifier {
       final response = await usuarioRepository.getUsuarios();
       if (response.success) {
         _usuarios = response.data!;
+        _usuariosFiltrados = []; // Resetar a lista filtrada quando novos dados forem carregados
       } else {
         _errorMessage = response.message;
         _usuarios = [];
@@ -89,5 +91,17 @@ class UsuarioProvider with ChangeNotifier {
     } catch (error) {
       _logger.severe('Erro ao deletar usuário: $error');
     }
+  }
+
+  // Método para filtrar a lista de usuários com base no nome
+  void filterUsuarios(String query) {
+    if (query.isEmpty) {
+      _usuariosFiltrados.clear(); // Se a pesquisa estiver vazia, mostrar todos os usuários
+    } else {
+      _usuariosFiltrados = _usuarios
+          .where((usuario) => usuario.nome.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    }
+    notifyListeners(); // Notificar a UI para atualizar a lista
   }
 }
