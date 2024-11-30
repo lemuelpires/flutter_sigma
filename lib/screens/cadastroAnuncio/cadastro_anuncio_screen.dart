@@ -41,7 +41,7 @@ class CadastroAnuncioState extends State<CadastroAnuncio> {
           scaffoldMessenger.showSnackBar(
             SnackBar(
               content: const Text('Anúncio cadastrado com sucesso!'),
-              backgroundColor: Colors.green,
+              backgroundColor: Color(0xFF7FFF00)
             ),
           );
           navigator.pop();
@@ -107,7 +107,7 @@ class CadastroAnuncioState extends State<CadastroAnuncio> {
         onPressed: () => _cadastrarAnuncio(context),
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 16),
-          backgroundColor: Colors.green,
+          backgroundColor:Color(0xFF7FFF00),
         ),
         child: const Text('Cadastrar Anúncio', style: TextStyle(fontSize: 18)),
       ),
