@@ -26,22 +26,22 @@ class Jogo {
   // Método para converter um objeto JSON em um objeto Jogo
   factory Jogo.fromJson(Map<String, dynamic> json) {
     return Jogo(
-      idJogo: json['idJogo'], 
-      nomeJogo: json['nomeJogo'],
-      categoriaJogo: json['categoriaJogo'],
-      processadorRequerido: json['processadorRequerido'],
-      memoriaRAMRequerida: json['memoriaRAMRequerida'],
-      placaVideoRequerida: json['placaVideoRequerida'],
-      espacoDiscoRequerido: json['espacoDiscoRequerido'],
-      referenciaImagemJogo: json['referenciaImagemJogo'],
-      data: DateTime.parse(json['data']),
-      ativo: json['ativo'],
+      idJogo: json['idJogo'] != null ? json['idJogo'] as int : null, // Garantir que idJogo é nulo ou int
+      nomeJogo: json['nomeJogo'] ?? '', // Valor padrão caso não esteja presente
+      categoriaJogo: json['categoriaJogo'] ?? '', // Valor padrão caso não esteja presente
+      processadorRequerido: json['processadorRequerido'] ?? '',
+      memoriaRAMRequerida: json['memoriaRAMRequerida'] ?? '',
+      placaVideoRequerida: json['placaVideoRequerida'] ?? '',
+      espacoDiscoRequerido: json['espacoDiscoRequerido'] ?? '',
+      referenciaImagemJogo: json['referenciaImagemJogo'] ?? '',
+      data: json['data'] != null ? DateTime.parse(json['data']) : DateTime.now(), // Valor padrão se data estiver ausente
+      ativo: json['ativo'] ?? true, // Se ativo não estiver presente, assume como true
     );
   }
 
   // Método para converter um objeto Jogo em um objeto JSON
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {
+    final Map<String, dynamic> jsonData = {  // Renomeado para evitar conflito com a variável data
       'nomeJogo': nomeJogo,
       'categoriaJogo': categoriaJogo,
       'processadorRequerido': processadorRequerido,
@@ -49,15 +49,15 @@ class Jogo {
       'placaVideoRequerida': placaVideoRequerida,
       'espacoDiscoRequerido': espacoDiscoRequerido,
       'referenciaImagemJogo': referenciaImagemJogo,
-      'data': this.data.toIso8601String(), // Corrigido aqui
+      'data': data.toIso8601String(), // Converter a data corretamente
       'ativo': ativo,
     };
 
     // Só inclui idJogo se ele não for nulo
     if (idJogo != null) {
-      data['idJogo'] = idJogo;
+      jsonData['idJogo'] = idJogo;
     }
 
-    return data;
+    return jsonData;
   }
 }

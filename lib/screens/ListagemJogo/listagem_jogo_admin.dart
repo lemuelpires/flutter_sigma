@@ -1,185 +1,157 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_sigma/models/jogo_model.dart';
 import 'package:flutter_sigma/providers/jogo_providers.dart';
+import 'package:flutter_sigma/widgets/jogo_card.dart';  // Importando o JogoCard
 import 'package:provider/provider.dart';
 
-class ListaJogos extends StatelessWidget {
-  const ListaJogos({super.key});
+class ListagemJogosPage extends StatefulWidget {
+  const ListagemJogosPage({super.key});
+
+  @override
+  ListagemJogosPageState createState() => ListagemJogosPageState();
+}
+
+class ListagemJogosPageState extends State<ListagemJogosPage> {
+  late JogoProvider _jogoProvider;
+  bool _isDataLoaded = false; // Controle para evitar recarregar dados várias vezes
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isDataLoaded) {
+      _jogoProvider = Provider.of<JogoProvider>(context, listen: false);
+
+      // Usar Future.delayed para adiar a chamada após a conclusão do ciclo de construção
+      Future.delayed(Duration.zero, () {
+        _jogoProvider.fetchJogos();
+        _isDataLoaded = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: const Text(
-          'Lista de Jogos',
-          style: TextStyle(color: Colors.white),
-        ),
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: Column(
+      backgroundColor: Colors.black,
+      body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  'Adicionar',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.secondary,
-                    fontSize: 16,
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.add,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                  onPressed: () {
-                    // Adicionar funcionalidade de navegação para a tela de adicionar jogo
-                    Navigator.pushNamed(context, '/cadastro_jogo');
-                  },
-                ),
-              ],
-            ),
+          Container(
+            color: Colors.black.withOpacity(0.7),
           ),
-          Expanded(
-            child: Consumer<JogoProvider>(
-              builder: (context, jogoProvider, child) {
-                if (jogoProvider.isLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (jogoProvider.errorMessage != null) {
-                  return Center(
-                    child: Text(
-                      jogoProvider.errorMessage!,
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                  );
-                }
-
-                if (jogoProvider.jogos.isEmpty) {
-                  return const Center(
-                    child: Text(
-                      'Nenhum jogo disponível.',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  );
-                }
-
-                return ListView.builder(
-                  itemCount: jogoProvider.jogos.length,
-                  itemBuilder: (context, index) {
-                    return JogoCard(
-                      jogo: jogoProvider.jogos[index],
-                      onEdit: () {
-                        // Navegar para a tela de edição de jogo
-                        Navigator.pushNamed(
-                          context,
-                          '/editar-jogo',
-                          arguments: jogoProvider.jogos[index],
-                        );
+          Column(
+            children: [
+              const SizedBox(height: 40), // Adiciona espaço no início da página
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      onPressed: () {
+                        Navigator.pop(context);
                       },
-                      onDelete: () async {
-                        // Chamar o método de exclusão
-                        await jogoProvider.deleteJogo(jogoProvider.jogos[index].idJogo!);
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          'Adicionar',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontSize: 16,
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.add,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              '/cadastro_jogo',
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              // Campo de pesquisa
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: TextField(
+                  onChanged: (value) {
+                    // Chama o método de filtro no Provider para realizar a pesquisa
+                    context.read<JogoProvider>().filterJogos(value);
+                  },
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.grey[800],
+                    hintText: 'Pesquisar jogos...',
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    prefixIcon: const Icon(Icons.search, color: Colors.white),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10), // Espaço após o campo de pesquisa
+              Expanded(
+                child: Consumer<JogoProvider>(
+                  builder: (context, jogoProvider, child) {
+                    if (jogoProvider.isLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (jogoProvider.errorMessage != null) {
+                      return Center(
+                        child: Text(
+                          jogoProvider.errorMessage!,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      );
+                    }
+
+                    // Filtrando apenas jogos ativos na listagem
+                    final jogosAtivos = jogoProvider.filteredJogos
+                        .where((jogo) => jogo.ativo == true)
+                        .toList();
+
+                    if (jogosAtivos.isEmpty) {
+                      return const Center(
+                        child: Text(
+                          'Nenhum jogo ativo encontrado.',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      );
+                    }
+
+                    return ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: jogosAtivos.length,
+                      itemBuilder: (context, index) {
+                        return JogoCard(
+                          jogo: jogosAtivos[index],
+                          onEdit: () {
+                            Navigator.pushNamed(
+                              context,
+                              '/editar_jogo',
+                              arguments: jogosAtivos[index],
+                            );
+                          },
+                          onDelete: () async {
+                            await jogoProvider.deleteJogo(
+                                jogosAtivos[index].idJogo!);
+                          },
+                        );
                       },
                     );
                   },
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class JogoCard extends StatelessWidget {
-  final Jogo jogo;
-  final VoidCallback onEdit;
-  final VoidCallback onDelete;
-
-  const JogoCard({
-    super.key,
-    required this.jogo,
-    required this.onEdit,
-    required this.onDelete,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.black87,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              image: DecorationImage(
-                image: NetworkImage(jogo.referenciaImagemJogo),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  jogo.nomeJogo,
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                 ),
-                SizedBox(height: 4),
-                Text(
-                  'Categoria: ${jogo.categoriaJogo}',
-                  style: const TextStyle(color: Colors.grey, fontSize: 14),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(width: 10),
-          Column(
-            children: [
-              ElevatedButton(
-                onPressed: onDelete,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                ),
-                child: Text('Excluir', style: TextStyle(color: Colors.white)),
-              ),
-              SizedBox(height: 5),
-              ElevatedButton(
-                onPressed: onEdit,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                ),
-                child: Text('Editar', style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
