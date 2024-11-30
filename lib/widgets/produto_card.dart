@@ -13,18 +13,21 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Obtem o tamanho da tela
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Center(
       child: SizedBox(
-        width: 280, // Largura mais estreita
-        height: 380, // Altura ajustada
+        width: screenWidth * 0.8, // 80% da largura da tela
         child: Card(
-          color: Colors.black.withOpacity(0.7), // Fundo escuro
+          color: Colors.black.withOpacity(0.7),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
           margin: const EdgeInsets.symmetric(vertical: 12),
-          elevation: 6, // Sombra para destacar
+          elevation: 6,
           child: Column(
+            mainAxisSize: MainAxisSize.min, // Ajusta dinamicamente à altura do conteúdo
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               ClipRRect(
@@ -32,15 +35,21 @@ class ProductCard extends StatelessWidget {
                     const BorderRadius.vertical(top: Radius.circular(12)),
                 child: Image.network(
                   product.imagemProduto,
-                  height: 180, // Altura ajustada para maior destaque
+                  height: screenWidth * 0.4, // Altura proporcional à largura da tela
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => const Icon(
+                    Icons.broken_image,
+                    size: 180,
+                    color: Colors.grey,
+                  ),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min, // Evita problemas de overflow
                   children: [
                     Text(
                       product.nomeProduto,
@@ -104,3 +113,4 @@ class ProductCard extends StatelessWidget {
     );
   }
 }
+
