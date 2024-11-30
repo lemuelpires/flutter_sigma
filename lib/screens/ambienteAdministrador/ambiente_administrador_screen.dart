@@ -1,70 +1,127 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_sigma/widgets/footer.dart';
-import 'package:flutter_sigma/widgets/header.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class AmbienteAdministrador extends StatelessWidget {
+class AmbienteAdministrador extends StatefulWidget {
   const AmbienteAdministrador({super.key});
+
+  @override
+  State<AmbienteAdministrador> createState() => _AmbienteAdministradorState();
+}
+
+class _AmbienteAdministradorState extends State<AmbienteAdministrador> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String? _userName;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserName();
+  }
+
+  Future<void> _loadUserName() async {
+    User? currentUser = _auth.currentUser;
+
+    if (currentUser != null) {
+      DocumentSnapshot userDoc = await _firestore
+          .collection('usuarios')
+          .doc(currentUser.uid)
+          .get();
+
+      if (userDoc.exists) {
+        setState(() {
+          _userName = userDoc['nome'] ?? 'Usuário';
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      body: Column(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: const Text(
+          'Ambiente Administrador',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+      ),
+      body: Stack(
         children: [
-          CustomHeader(title: 'header'), // Adiciona o Header
-          Expanded(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Ambiente Administrador\nOlá João, em que podemos ajudar?',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                  ),
-                  SizedBox(height: 40),
-                  Wrap(
-                    spacing: 20,
-                    runSpacing: 20,
+          Container(
+            color: Colors.black.withOpacity(0.7),
+          ),
+          Column(
+            children: [
+              Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      MenuButton(
-                        icon: Icons.inventory,
-                        label: 'Produtos',
-                        color: Colors.cyanAccent,
-                        routeName: '/lista_produtos',
+                      Text(
+                        _userName != null
+                            ? 'Ambiente Administrador\nOlá $_userName, em que podemos ajudar?'
+                            : 'Carregando...',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      MenuButton(
-                        icon: Icons.article,
-                        label: 'Anúncios',
-                        color: Colors.orangeAccent,
-                        routeName: '/lista_anuncios',
-                      ),
-                      MenuButton(
-                        icon: Icons.group,
-                        label: 'Usuarios',
-                        color: Colors.pinkAccent,
-                        routeName: '/lista_usuarios',
-                      ),
-                      MenuButton(
-                        icon: Icons.videogame_asset,
-                        label: 'Jogos',
-                        color: Colors.white,
-                        borderColor: Colors.blue,
-                        routeName: '/lista_jogos',
-                      ),
-                      MenuButton(
-                        icon: Icons.image,
-                        label: 'Imagens',
-                        color: Colors.greenAccent,
-                        routeName: '/lista_imagens', // Adicione esta rota se necessário
+                      const SizedBox(height: 40),
+                      Wrap(
+                        spacing: 20,
+                        runSpacing: 20,
+                        children: const [
+                          MenuButton(
+                            icon: Icons.inventory,
+                            label: 'Produtos',
+                            color: Color(0xFF7FFF00),
+                            routeName: '/lista_produtos',
+                          ),
+                          MenuButton(
+                            icon: Icons.article,
+                            label: 'Anúncios',
+                            color: Color(0xFFFFA500),
+                            routeName: '/lista_anuncios',
+                          ),
+                          MenuButton(
+                            icon: Icons.group,
+                            label: 'Usuários',
+                            color: Color(0xFFFF1493),
+                            routeName: '/lista_usuarios',
+                          ),
+                          MenuButton(
+                            icon: Icons.videogame_asset,
+                            label: 'Jogos',
+                            color: Color(0xFF87CEFA),
+                            routeName: '/lista_jogos',
+                          ),
+                          MenuButton(
+                            icon: Icons.image,
+                            label: 'Imagens',
+                            color: Color(0xFF32CD32),
+                            routeName: '/lista_imagens',
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
-          Footer(), // Adiciona o Footer
         ],
       ),
     );
@@ -75,40 +132,56 @@ class MenuButton extends StatelessWidget {
   final IconData icon;
   final String label;
   final Color color;
-  final Color? borderColor;
   final String routeName;
 
   const MenuButton({
-    super.key, 
+    super.key,
     required this.icon,
     required this.label,
     required this.color,
     required this.routeName,
-    this.borderColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: () {
         Navigator.pushNamed(context, routeName);
       },
+      borderRadius: BorderRadius.circular(15),
+      splashColor: color.withOpacity(0.3),
+      highlightColor: color.withOpacity(0.1),
       child: Container(
-        width: 80,
-        height: 80,
+        width: 160,
+        height: 160,
         decoration: BoxDecoration(
           color: Colors.black,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: borderColor ?? Colors.transparent, width: 2),
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(
+            color: const Color.fromARGB(255, 81, 81, 81),
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.4),
+              blurRadius: 10,
+              offset: const Offset(3, 6),
+            ),
+          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: color, size: 30),
-            SizedBox(height: 5),
+            Icon(icon, color: color, size: 80),
+            const SizedBox(height: 10),
             Text(
               label,
-              style: TextStyle(color: Colors.white, fontSize: 12),
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),
