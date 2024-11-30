@@ -2,12 +2,12 @@ import 'package:carousel_slider/carousel_slider.dart' as custom_carousel;
 import 'package:flutter/material.dart';
 import 'package:flutter_sigma/models/produto_model.dart';
 import 'package:flutter_sigma/providers/produto_providers.dart';
+import 'package:flutter_sigma/widgets/anuncio_carrossel_card.dart';
 import 'package:flutter_sigma/widgets/header.dart';
 import 'package:flutter_sigma/widgets/footer.dart';
 import 'package:flutter_sigma/models/anuncio_model.dart'; 
 import 'package:flutter_sigma/providers/anuncio_providers.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_sigma/widgets/anuncio_card.dart';
 import 'package:flutter_sigma/widgets/produto_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -73,7 +73,7 @@ class HomeScreenState extends State<HomeScreen> {
           builder: (BuildContext context) {
             return SizedBox(
               width: MediaQuery.of(context).size.width,              
-              child: AnuncioCard(
+              child: AnuncioCarrosselCard(
                 anuncio: anuncio,
                 onDelete: () {
                   // Lógica para excluir o anúncio (caso necessário)
