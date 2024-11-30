@@ -6,41 +6,54 @@ import 'package:logger/logger.dart';
 
 class AnuncioProvider with ChangeNotifier {
   final AnuncioRepository anuncioRepository;
-  final Logger logger = Logger(); // Instância do Logger
+  final Logger logger = Logger();
 
-  List<Anuncio> _anuncios = []; // Lista privada de anúncios
+  List<Anuncio> _anuncios = [];
+  List<Anuncio> _filteredAnuncios = []; // Lista filtrada para pesquisa
   bool _isLoading = false;
   String? _errorMessage;
 
   AnuncioProvider(this.anuncioRepository);
 
-  // Getters para acessar o estado
   List<Anuncio> get anuncios => _anuncios;
+  List<Anuncio> get filteredAnuncios => _filteredAnuncios; // Getter para lista filtrada
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  // Método para carregar os anúncios
   Future<void> loadAnuncios() async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
-    
+
     try {
       final ApiResponse<List<Anuncio>> response = await anuncioRepository.getAnuncios();
-      
       if (response.success) {
         _anuncios = response.data ?? [];
+        _filteredAnuncios = _anuncios; // Inicializa a lista filtrada com todos os anúncios
       } else {
         _errorMessage = response.message;
         _anuncios = [];
+        _filteredAnuncios = [];
       }
     } catch (e) {
       _errorMessage = 'Erro ao carregar anúncios: $e';
       logger.e("Erro ao carregar anúncios: $e");
     } finally {
       _isLoading = false;
-      notifyListeners(); // Notifica os ouvintes para atualizar a interface
+      notifyListeners();
     }
+  }
+
+  // Método para filtrar anúncios com base na pesquisa
+  void filterAnuncios(String query) {
+    if (query.isEmpty) {
+      _filteredAnuncios = _anuncios; // Se a pesquisa estiver vazia, retorna todos os anúncios
+    } else {
+      _filteredAnuncios = _anuncios.where((anuncio) {
+        return anuncio.titulo.toLowerCase().contains(query.toLowerCase()); // Filtra pelo título
+      }).toList();
+    }
+    notifyListeners(); // Notifica os ouvintes para atualizar a interface
   }
 
   // Método para adicionar um novo anúncio

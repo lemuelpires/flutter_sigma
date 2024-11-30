@@ -11,10 +11,12 @@ class ProductProvider with ChangeNotifier {
   ProductProvider(this.productRepository);
 
   List<Product> _products = [];
+  List<Product> _filteredProducts = []; // Lista filtrada de produtos
   bool _isLoading = false;
   String? _errorMessage;
 
   List<Product> get products => _products;
+  List<Product> get filteredProducts => _filteredProducts; // Acesso à lista filtrada
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
@@ -27,9 +29,11 @@ class ProductProvider with ChangeNotifier {
       final response = await productRepository.getProducts();
       if (response.success) {
         _products = response.data!;
+        _filteredProducts = _products; // Inicializa com todos os produtos
       } else {
         _errorMessage = response.message;
         _products = [];
+        _filteredProducts = [];
       }
     } catch (error) {
       _logger.severe('Erro ao buscar produtos: $error');
@@ -38,6 +42,18 @@ class ProductProvider with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  // Método para filtrar produtos com base no texto
+  void filterProducts(String query) {
+    if (query.isEmpty) {
+      _filteredProducts = _products; // Se a pesquisa estiver vazia, mostra todos os produtos
+    } else {
+      _filteredProducts = _products.where((product) {
+        return product.nomeProduto.toLowerCase().contains(query.toLowerCase());
+      }).toList();
+    }
+    notifyListeners(); // Atualiza a UI com a lista filtrada
   }
 
   // Método para adicionar um produto
