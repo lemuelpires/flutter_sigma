@@ -62,3 +62,5 @@ class AnuncioCard extends StatelessWidget {
     );
   }
 }
+
+
