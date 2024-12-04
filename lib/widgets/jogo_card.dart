@@ -4,13 +4,13 @@ import 'package:flutter_sigma/models/jogo_model.dart';
 class JogoCard extends StatelessWidget {
   final Jogo jogo;
   final VoidCallback onEdit;
-  final VoidCallback onDelete;
+  final VoidCallback onDisable;
 
   const JogoCard({
     super.key,
     required this.jogo,
     required this.onEdit,
-    required this.onDelete,
+    required this.onDisable,
   });
 
   @override
@@ -63,7 +63,7 @@ class JogoCard extends StatelessWidget {
                   color: Colors.red,
                   size: 30,
                 ),
-                onPressed: onDelete,
+                onPressed: onDisable,
               ),
               const SizedBox(height: 5),
               IconButton(

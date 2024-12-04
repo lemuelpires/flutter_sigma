@@ -22,6 +22,37 @@ class ListaProdutosState extends State<ListaProdutos> {
     });
   }
 
+  Future<void> _confirmDisableProduto(BuildContext context, int idProduto) async {
+    final provider = Provider.of<ProductProvider>(context, listen: false);
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Confirmação'),
+          content: const Text('Deseja excluir esse cadastro?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Confirmar'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirm == true) {
+      await provider.disableProduct(idProduto);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Produto excluído com sucesso')),
+      );
+      provider.fetchProducts();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,9 +147,9 @@ class ListaProdutosState extends State<ListaProdutos> {
                       itemBuilder: (context, index) {
                         return ProdutoCard(
                           product: provider.filteredProducts[index],
-                          onDelete: () async {
-                            await provider.deleteProduct(
-                                provider.filteredProducts[index].idProduto!);
+                          onDisable: () async {
+                            await _confirmDisableProduto(
+                                context, provider.filteredProducts[index].idProduto!);
                           },
                           onEdit: (updatedProduct) {
                             provider.updateProductInList(updatedProduct);

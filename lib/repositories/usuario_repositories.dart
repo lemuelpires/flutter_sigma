@@ -67,16 +67,18 @@ class UsuarioRepository {
   }
 
   // Método para deletar um usuário
-  Future<ApiResponse<void>> deleteUsuario(int idUsuario) async {
+   Future<ApiResponse<void>> disableUsuario(int idUsuario) async {
     try {
-      final response = await apiClient.delete('${ApiEndpoints.usuario}/$idUsuario');
+      final response =
+          await apiClient.patch('${ApiEndpoints.usuario}/$idUsuario/disable');
       if (response.statusCode == 204) {
         return ApiResponse.success(null);
       } else {
-        return ApiResponse.error('Falha ao deletar o usuário. Código: ${response.statusCode}');
+        return ApiResponse.error(
+            'Falha ao desativar anúncio. Código de status: ${response.statusCode}');
       }
     } catch (e) {
-      return ApiResponse.error('Erro ao deletar o usuário: $e');
+      return ApiResponse.error('Erro ao desativar anúncio: $e');
     }
   }
 }

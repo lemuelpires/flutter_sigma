@@ -22,6 +22,37 @@ class ListaAnunciosState extends State<ListaAnuncios> {
     });
   }
 
+  Future<void> _confirmDisableAnuncio(BuildContext context, int idAnuncio) async {
+    final provider = Provider.of<AnuncioProvider>(context, listen: false);
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Confirmação'),
+          content: const Text('Deseja excluir esse cadastro?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Confirmar'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirm == true) {
+      await provider.disableAnuncio(idAnuncio);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Anúncio excluído com sucesso')),
+      );
+      provider.loadAnuncios();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,11 +143,12 @@ class ListaAnunciosState extends State<ListaAnuncios> {
                       itemCount: provider.filteredAnuncios.length,
                       itemBuilder: (context, index) {
                         return AnuncioCard(
-                            anuncio: provider.filteredAnuncios[index],
-                            onDelete: () async {
-                              await provider.deleteAnuncio(
-                                  provider.filteredAnuncios[index].idAnuncio!);
-                            });
+                          anuncio: provider.filteredAnuncios[index],
+                          onDisable: () async {
+                            await _confirmDisableAnuncio(
+                                context, provider.filteredAnuncios[index].idAnuncio!);
+                          },
+                        );
                       },
                     );
                   },

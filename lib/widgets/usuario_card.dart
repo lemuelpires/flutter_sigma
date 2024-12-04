@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 class UsuarioCard extends StatelessWidget {
   final String name;
   final String phoneNumber;
-  final VoidCallback onDelete;
+  final VoidCallback onDisable;
   final VoidCallback onEdit;
 
   const UsuarioCard({
     super.key,
     required this.name,
     required this.phoneNumber,
-    required this.onDelete,
+    required this.onDisable,
     required this.onEdit,
   });
 
@@ -101,7 +101,7 @@ class UsuarioCard extends StatelessWidget {
                   Icons.delete,
                   color: Colors.red,
                 ),
-                onPressed: onDelete,
+                onPressed: onDisable,
               ),
               const SizedBox(height: 5),
               IconButton(

@@ -57,16 +57,18 @@ class JogoRepository {
   }
 
   // Método para remover um jogo
-  Future<ApiResponse<void>> deleteJogo(int idJogo) async {
+   Future<ApiResponse<void>> disableJogo(int idJogo) async {
     try {
-      final response = await apiClient.delete('${ApiEndpoints.jogo}/$idJogo');
+      final response =
+          await apiClient.patch('${ApiEndpoints.jogo}/$idJogo/disable');
       if (response.statusCode == 204) {
         return ApiResponse.success(null);
       } else {
-        return ApiResponse.error('Falha ao deletar jogo. Código de status: ${response.statusCode}');
+        return ApiResponse.error(
+            'Falha ao desativar anúncio. Código de status: ${response.statusCode}');
       }
     } catch (e) {
-      return ApiResponse.error('Erro ao remover jogo: $e');
+      return ApiResponse.error('Erro ao desativar anúncio: $e');
     }
   }
 }

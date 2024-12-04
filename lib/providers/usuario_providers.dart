@@ -77,19 +77,24 @@ class UsuarioProvider with ChangeNotifier {
     }
   }
 
-  // Método para deletar um usuário
-  Future<void> deleteUsuario(int idUsuario) async {
+  // Método para desativar um usuário
+  Future<void> disableUsuario(int idUsuario) async {
     try {
-      final response = await usuarioRepository.deleteUsuario(idUsuario);
+      final response = await usuarioRepository.disableUsuario(idUsuario);
       if (response.success) {
-        _usuarios.removeWhere((u) => u.idUsuario == idUsuario);
-        notifyListeners();
-        _logger.info('Usuário deletado com sucesso: $idUsuario');
+        final index = _usuarios.indexWhere((u) => u.idUsuario == idUsuario);
+        if (index != -1) {
+          _usuarios[index] = _usuarios[index].copyWith(ativo: false);
+          notifyListeners();
+          _logger.info('Usuário desativado com sucesso: $idUsuario');
+        }
       } else {
-        _logger.severe('Erro ao deletar usuário: ${response.message}');
+        _errorMessage = response.message;
+        _logger.severe('Erro ao desativar usuário: ${response.message}');
       }
     } catch (error) {
-      _logger.severe('Erro ao deletar usuário: $error');
+      _errorMessage = 'Erro ao desativar usuário: $error';
+      _logger.severe('Erro ao desativar usuário: $error');
     }
   }
 

@@ -41,7 +41,7 @@ class AnuncioRepository {
     }
   }
 
-// Método para atualizar um anúncio existente
+  // Método para atualizar um anúncio existente
   Future<ApiResponse<Anuncio>> updateAnuncio(Anuncio anuncio) async {
     try {
       if (anuncio.idAnuncio == null) {
@@ -67,19 +67,19 @@ class AnuncioRepository {
     }
   }
 
-  // Método para remover um anúncio
-  Future<ApiResponse<void>> deleteAnuncio(int idAnuncio) async {
+  // Método para desativar um anúncio
+  Future<ApiResponse<void>> disableAnuncio(int idAnuncio) async {
     try {
       final response =
-          await apiClient.delete('${ApiEndpoints.anuncio}/$idAnuncio');
+          await apiClient.patch('${ApiEndpoints.anuncio}/$idAnuncio/disable');
       if (response.statusCode == 204) {
         return ApiResponse.success(null);
       } else {
         return ApiResponse.error(
-            'Falha ao deletar anúncio. Código de status: ${response.statusCode}');
+            'Falha ao desativar anúncio. Código de status: ${response.statusCode}');
       }
     } catch (e) {
-      return ApiResponse.error('Erro ao remover anúncio: $e');
+      return ApiResponse.error('Erro ao desativar anúncio: $e');
     }
   }
 

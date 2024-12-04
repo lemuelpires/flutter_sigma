@@ -118,21 +118,24 @@ class AnuncioProvider with ChangeNotifier {
     }
   }
 
-  // Método para remover um anúncio
-  Future<void> deleteAnuncio(int idAnuncio) async {
+  // Método para desativar um anúncio
+  Future<void> disableAnuncio(int idAnuncio) async {
     try {
-      final response = await anuncioRepository.deleteAnuncio(idAnuncio);
+      final response = await anuncioRepository.disableAnuncio(idAnuncio);
       if (response.success) {
-        _anuncios.removeWhere((anuncio) => anuncio.idAnuncio == idAnuncio);
-        notifyListeners(); // Notifica os ouvintes
-        logger.i("Anúncio deletado com sucesso: $idAnuncio");
+        final index = _anuncios.indexWhere((anuncio) => anuncio.idAnuncio == idAnuncio);
+        if (index != -1) {
+          _anuncios[index] = _anuncios[index].copyWith(ativo: false, imagemReferencia: '');
+          notifyListeners(); // Notifica os ouvintes
+          logger.i("Anúncio desativado com sucesso: $idAnuncio");
+        }
       } else {
         _errorMessage = response.message;
-        logger.e("Erro ao remover anúncio: ${response.message}");
+        logger.e("Erro ao desativar anúncio: ${response.message}");
       }
     } catch (e) {
-      _errorMessage = 'Erro ao remover anúncio: $e';
-      logger.e("Erro ao remover anúncio: $e");
+      _errorMessage = 'Erro ao desativar anúncio: $e';
+      logger.e("Erro ao desativar anúncio: $e");
     }
   }
 }

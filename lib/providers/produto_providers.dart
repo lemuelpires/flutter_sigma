@@ -100,22 +100,25 @@ class ProductProvider with ChangeNotifier {
     }
   }
 
-  // Método para remover um produto
-  Future<void> deleteProduct(int idProduto) async {
+  // Método para desativar um produto
+  Future<void> disableProduct(int idProduto) async {
     try {
-      final ApiResponse<void> response = await productRepository.deleteProduct(idProduto);
+      final ApiResponse<void> response = await productRepository.disableProduto(idProduto);
       if (response.success) {
-        _products.removeWhere((product) => product.idProduto == idProduto);
-        _filteredProducts = List.from(_products);
-        notifyListeners();
-        _logger.i("Produto removido com sucesso: $idProduto");
+        final index = _products.indexWhere((product) => product.idProduto == idProduto);
+        if (index != -1) {
+          _products[index] = _products[index].copyWith(ativo: false);
+          _filteredProducts = List.from(_products);
+          notifyListeners();
+          _logger.i("Produto desativado com sucesso: $idProduto");
+        }
       } else {
         _errorMessage = response.message;
-        _logger.e("Erro ao remover produto: $_errorMessage");
+        _logger.e("Erro ao desativar produto: $_errorMessage");
       }
     } catch (error) {
-      _errorMessage = 'Erro ao remover produto: $error';
-      _logger.e("Erro ao remover produto: $error");
+      _errorMessage = 'Erro ao desativar produto: $error';
+      _logger.e("Erro ao desativar produto: $error");
     }
   }
 

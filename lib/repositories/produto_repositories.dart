@@ -66,18 +66,18 @@ class ProductRepository {
   }
 
   // Método para remover um produto
-  Future<ApiResponse<void>> deleteProduct(int idProduto) async {
+   Future<ApiResponse<void>> disableProduto(int idProduto) async {
     try {
       final response =
-          await apiClient.delete('${ApiEndpoints.produto}/$idProduto');
+          await apiClient.patch('${ApiEndpoints.produto}/$idProduto/disable');
       if (response.statusCode == 204) {
         return ApiResponse.success(null);
       } else {
         return ApiResponse.error(
-            'Falha ao deletar produto. Código de status: ${response.statusCode}');
+            'Falha ao desativar anúncio. Código de status: ${response.statusCode}');
       }
     } catch (e) {
-      return ApiResponse.error('Erro ao remover produto: $e');
+      return ApiResponse.error('Erro ao desativar anúncio: $e');
     }
   }
 

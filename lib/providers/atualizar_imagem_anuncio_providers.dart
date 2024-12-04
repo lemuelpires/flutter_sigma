@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:flutter_sigma/models/anuncio_model.dart';
 import 'package:flutter_sigma/repositories/anuncio_repositories.dart';
 import 'package:logging/logging.dart';
@@ -90,4 +90,4 @@ class AnuncioProvider with ChangeNotifier {
       _logger.severe('Erro ao remover anúncio: $error');
     }
   }
-}
+}*/

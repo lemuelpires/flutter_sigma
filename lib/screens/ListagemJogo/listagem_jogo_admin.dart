@@ -29,6 +29,37 @@ class ListagemJogosPageState extends State<ListagemJogosPage> {
     }
   }
 
+  Future<void> _confirmDisableJogo(BuildContext context, int idJogo) async {
+    final provider = Provider.of<JogoProvider>(context, listen: false);
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Confirmação'),
+          content: const Text('Deseja excluir esse cadastro?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Confirmar'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirm == true) {
+      await provider.disableJogo(idJogo);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Jogo excluído com sucesso')),
+      );
+      provider.fetchJogos();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -147,9 +178,9 @@ class ListagemJogosPageState extends State<ListagemJogosPage> {
                               jogoProvider.updateJogoInList(updatedJogo);
                             }
                           },
-                          onDelete: () async {
-                            await jogoProvider.deleteJogo(
-                                jogosAtivos[index].idJogo!);
+                          onDisable: () async {
+                            await _confirmDisableJogo(
+                                context, jogosAtivos[index].idJogo!);
                           },
                         );
                       },

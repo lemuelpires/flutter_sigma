@@ -3,12 +3,12 @@ import 'package:flutter_sigma/models/anuncio_model.dart';
 
 class AnuncioCard extends StatelessWidget {
   final Anuncio anuncio;
-  final VoidCallback onDelete;
+  final VoidCallback onDisable;
 
   const AnuncioCard({
     super.key,
     required this.anuncio,
-    required this.onDelete,
+    required this.onDisable,
   });
 
   @override
@@ -54,7 +54,7 @@ class AnuncioCard extends StatelessWidget {
                 Icons.delete,
                 color: Colors.red,
               ),
-              onPressed: onDelete,
+              onPressed: onDisable,
             ),
           ],
         ),
@@ -62,5 +62,3 @@ class AnuncioCard extends StatelessWidget {
     );
   }
 }
-
-

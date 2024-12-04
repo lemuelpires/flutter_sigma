@@ -3,13 +3,13 @@ import 'package:flutter_sigma/models/produto_model.dart';
 
 class ProdutoCard extends StatelessWidget {
   final Product product;
-  final VoidCallback onDelete;
+  final VoidCallback onDisable;
   final Function(Product) onEdit;
 
   const ProdutoCard({
     super.key,
     required this.product,
-    required this.onDelete,
+    required this.onDisable,
     required this.onEdit,
   });
 
@@ -60,7 +60,7 @@ class ProdutoCard extends StatelessWidget {
                 Icons.delete,
                 color: Colors.red,
               ),
-              onPressed: onDelete,
+              onPressed: onDisable,
             ),
           ],
         ),

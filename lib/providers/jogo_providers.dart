@@ -105,20 +105,24 @@ class JogoProvider with ChangeNotifier {
     }
   }
 
-  // Deletar jogo
-  Future<void> deleteJogo(int idJogo) async {
+  // Desativar jogo
+  Future<void> disableJogo(int idJogo) async {
     try {
-      final response = await jogoRepository.deleteJogo(idJogo);
+      final response = await jogoRepository.disableJogo(idJogo);
       if (response.success) {
-        _jogos.removeWhere((j) => j.idJogo == idJogo);
-        _filteredJogos.removeWhere((j) => j.idJogo == idJogo);
-        _logger.info('Jogo deletado com sucesso: $idJogo');
-        notifyListeners();
+        final index = _jogos.indexWhere((j) => j.idJogo == idJogo);
+        if (index != -1) {
+          _jogos[index] = _jogos[index].copyWith(ativo: false);
+          notifyListeners(); // Notifica os ouvintes
+          _logger.info("Jogo desativado com sucesso: $idJogo");
+        }
       } else {
-        _logger.warning('Erro ao deletar jogo: ${response.message}');
+        _errorMessage = response.message;
+        _logger.severe("Erro ao desativar jogo: ${response.message}");
       }
-    } catch (error) {
-      _logger.severe('Erro ao deletar jogo: $error');
+    } catch (e) {
+      _errorMessage = 'Erro ao desativar jogo: $e';
+      _logger.severe("Erro ao desativar jogo: $e");
     }
   }
 

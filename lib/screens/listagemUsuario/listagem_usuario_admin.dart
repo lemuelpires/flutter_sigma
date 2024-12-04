@@ -22,6 +22,37 @@ class ListaUsuariosState extends State<ListaUsuarios> {
     });
   }
 
+  Future<void> _confirmDisableUsuario(BuildContext context, int idUsuario) async {
+    final provider = Provider.of<UsuarioProvider>(context, listen: false);
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Confirmação'),
+          content: const Text('Deseja excluir esse cadastro?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Confirmar'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirm == true) {
+      await provider.disableUsuario(idUsuario);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Usuário excluído com sucesso')),
+      );
+      provider.fetchUsuarios(); // Atualiza a listagem após a desativação
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final usuarioProvider = Provider.of<UsuarioProvider>(context);
@@ -111,8 +142,9 @@ class ListaUsuariosState extends State<ListaUsuarios> {
                                   return UsuarioCard(
                                     name: usuario.nome,
                                     phoneNumber: usuario.telefone,
-                                    onDelete: () {
-                                      usuarioProvider.deleteUsuario(usuario.idUsuario!);
+                                    onDisable: () async {
+                                      await _confirmDisableUsuario(
+                                          context, usuario.idUsuario!);
                                     },
                                     onEdit: () async {
                                       final updatedUsuario = await Navigator.push(

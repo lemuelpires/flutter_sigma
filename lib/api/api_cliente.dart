@@ -43,12 +43,12 @@ class ApiClient {
     }
   }
 
-  // Método DELETE
-  Future<Response> delete(String endpoint) async {
+  // Método DISABLE
+  Future<Response> patch(String endpoint) async {
     try {
-      return await dio.delete(endpoint);
+      return await dio.patch(endpoint);
     } catch (e) {
-      throw Exception('Erro ao realizar DELETE: $e');
+      throw Exception('Erro ao realizar DISABLE: $e');
     }
   }
 }
