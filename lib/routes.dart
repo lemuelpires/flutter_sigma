@@ -89,7 +89,7 @@ class AppRoutes {
 
         // Verificando se os argumentos são do tipo Usuario
         if (args is Product) {
-          return EditarProduto(produto: args); // Passando o usuário para a tela de edição
+          return EdicaoProdutoScreen(product: args); // Passando o usuário para a tela de edição
         } else {
           // Caso o argumento seja inválido, exibe um placeholder ou mensagem de erro
           return const Scaffold(

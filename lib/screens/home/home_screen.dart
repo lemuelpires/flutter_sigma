@@ -7,8 +7,8 @@ import 'package:flutter_sigma/widgets/header.dart';
 import 'package:flutter_sigma/widgets/footer.dart';
 import 'package:flutter_sigma/models/anuncio_model.dart'; 
 import 'package:flutter_sigma/providers/anuncio_providers.dart';
+import 'package:flutter_sigma/widgets/produto_carrossel_card.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_sigma/widgets/produto_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -96,7 +96,7 @@ class HomeScreenState extends State<HomeScreen> {
       items: produtos.map((product) {
         return Builder(
           builder: (BuildContext context) {
-            return ProductCard(
+            return ProdutoCarrosselCard(
               product: product,
               onDetailsPressed: () {
                 // Ação para abrir os detalhes do produto
