@@ -1,116 +1,70 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_sigma/models/produto_model.dart'; // Importe a classe Product que você já tem
+import 'package:flutter_sigma/models/produto_model.dart';
 
-class ProductCard extends StatelessWidget {
+class ProdutoCard extends StatelessWidget {
   final Product product;
-  final VoidCallback onDetailsPressed;
+  final VoidCallback onDelete;
+  final Function(Product) onEdit;
 
-  const ProductCard({
+  const ProdutoCard({
     super.key,
     required this.product,
-    required this.onDetailsPressed,
+    required this.onDelete,
+    required this.onEdit,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Obtem o tamanho da tela
-    final screenWidth = MediaQuery.of(context).size.width;
-
-    return Center(
-      child: SizedBox(
-        width: screenWidth * 0.8, // 80% da largura da tela
-        child: Card(
-          color: Colors.black.withOpacity(0.7),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          margin: const EdgeInsets.symmetric(vertical: 12),
-          elevation: 6,
-          child: Column(
-            mainAxisSize: MainAxisSize.min, // Ajusta dinamicamente à altura do conteúdo
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              ClipRRect(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(12)),
-                child: Image.network(
-                  product.imagemProduto,
-                  height: screenWidth * 0.4, // Altura proporcional à largura da tela
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => const Icon(
-                    Icons.broken_image,
-                    size: 180,
-                    color: Colors.grey,
-                  ),
-                ),
+    return Card(
+      color: Colors.white.withOpacity(0.1),
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundImage: NetworkImage(product.imagemProduto),
+          radius: 30,
+          onBackgroundImageError: (exception, stackTrace) {
+            // Gerenciar erros de carregamento de imagem
+          },
+        ),
+        title: Text(
+          product.nomeProduto,
+          style: const TextStyle(color: Colors.white, fontSize: 16),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        subtitle: Text(
+          'Estoque: ${product.quantidadeEstoque}',
+          style: const TextStyle(color: Colors.white70, fontSize: 14),
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(
+                Icons.edit,
+                color: Colors.yellow,
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min, // Evita problemas de overflow
-                  children: [
-                    Text(
-                      product.nomeProduto,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(Icons.local_offer, color: Colors.greenAccent, size: 20),
-                        const SizedBox(width: 4),
-                        Text(
-                          'R\$ ${product.preco.toStringAsFixed(2)}',
-                          style: const TextStyle(
-                            color: Colors.greenAccent,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+              onPressed: () async {
+                final updatedProduct = await Navigator.pushNamed(
+                  context,
+                  '/editar_produto',
+                  arguments: product,
+                ) as Product?;
+                if (updatedProduct != null) {
+                  onEdit(updatedProduct);
+                }
+              },
+            ),
+            IconButton(
+              icon: const Icon(
+                Icons.delete,
+                color: Colors.red,
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF7FFF00), Color(0xFF66CC00)],
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: ElevatedButton(
-                    onPressed: onDetailsPressed,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                    child: const Text(
-                      'Ver Detalhes',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+              onPressed: onDelete,
+            ),
+          ],
         ),
       ),
     );
   }
 }
-

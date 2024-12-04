@@ -59,6 +59,38 @@ class EditarUsuarioState extends State<EditarUsuario> {
   }
 
   @override
+  void dispose() {
+    _nomeController.dispose();
+    _sobrenomeController.dispose();
+    _telefoneController.dispose();
+    _emailController.dispose();
+    _senhaController.dispose();
+    _cpfController.dispose();
+    _dataNascimentoController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _atualizarUsuario() async {
+    if (_formKey.currentState!.validate()) {
+      final updatedUsuario = widget.usuario.copyWith(
+        nome: _nomeController.text,
+        sobrenome: _sobrenomeController.text,
+        telefone: _telefoneController.text,
+        email: _emailController.text,
+        senha: _senhaController.text,
+        genero: _generoSelecionado,
+        dataNascimento: DateFormat('dd/MM/yyyy').parse(_dataNascimentoController.text),
+        cpf: _cpfController.text,
+        ativo: ativo,
+        data: DateTime.now(),
+      );
+
+      await Provider.of<UsuarioProvider>(context, listen: false).updateUsuario(updatedUsuario);
+      Navigator.pop(context, updatedUsuario);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -73,82 +105,46 @@ class EditarUsuarioState extends State<EditarUsuario> {
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: _buildFormFields(),
+              children: [
+                _buildTextField(_emailController, 'E-mail', icon: Icons.email),
+                const SizedBox(height: 16),
+                _buildTextField(_nomeController, 'Nome', icon: Icons.person),
+                const SizedBox(height: 16),
+                _buildTextField(_sobrenomeController, 'Sobrenome', icon: Icons.person_outline),
+                const SizedBox(height: 16),
+                _buildTextField(_senhaController, 'Senha', icon: Icons.lock, obscureText: true),
+                const SizedBox(height: 16),
+                _buildTextField(_dataNascimentoController, 'Data de Nascimento', icon: Icons.calendar_today, inputFormatters: [_dataFormatter]),
+                const SizedBox(height: 16),
+                _buildTextField(_telefoneController, 'Telefone', icon: Icons.phone, inputFormatters: [_telefoneFormatter]),
+                const SizedBox(height: 16),
+                _buildTextField(_cpfController, 'CPF', icon: Icons.account_box, inputFormatters: [_cpfFormatter]),
+                const SizedBox(height: 16),
+                _buildGeneroRadio(),
+                const SizedBox(height: 16),
+                SwitchListTile(
+                  title: const Text('Ativo', style: TextStyle(color: Colors.white)),
+                  value: ativo,
+                  onChanged: (value) {
+                    setState(() {
+                      ativo = value;
+                    });
+                  },
+                  activeColor: Colors.green,
+                  inactiveThumbColor: Colors.grey,
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _atualizarUsuario,
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                  child: const Text('Salvar', style: TextStyle(color: Colors.white)),
+                ),
+              ],
             ),
           ),
         ),
       ),
     );
-  }
-
-  List<Widget> _buildFormFields() {
-    return [
-      _buildTextField(
-        _emailController,
-        'E-mail',
-        icon: Icons.email,
-      ),
-      const SizedBox(height: 16),
-      _buildTextField(
-        _nomeController,
-        'Nome',
-        icon: Icons.person,
-      ),
-      const SizedBox(height: 16),
-      _buildTextField(
-        _sobrenomeController,
-        'Sobrenome',
-        icon: Icons.person_outline,
-      ),
-      const SizedBox(height: 16),
-      _buildTextField(
-        _senhaController,
-        'Senha',
-        icon: Icons.lock,
-        obscureText: true,
-      ),
-      const SizedBox(height: 16),
-      _buildTextField(
-        _dataNascimentoController,
-        'Data de Nascimento',
-        icon: Icons.calendar_today,
-        inputFormatters: [_dataFormatter],
-      ),
-      const SizedBox(height: 16),
-      _buildTextField(
-        _telefoneController,
-        'Telefone',
-        icon: Icons.phone,
-        inputFormatters: [_telefoneFormatter],
-      ),
-      const SizedBox(height: 16),
-      _buildTextField(
-        _cpfController,
-        'CPF',
-        icon: Icons.account_box,
-        inputFormatters: [_cpfFormatter],
-      ),
-      const SizedBox(height: 16),
-      _buildGeneroRadio(),
-      const SizedBox(height: 16),
-      SwitchListTile(
-        title: const Text('Ativo', style: TextStyle(color: Colors.white)),
-        value: ativo,
-        onChanged: (value) {
-          setState(() {
-            ativo = value;
-          });
-        },
-        activeColor: Colors.green,
-        inactiveThumbColor: Colors.grey,
-      ),
-      const SizedBox(height: 20),
-      ElevatedButton(
-        onPressed: () => _saveChanges(context),
-        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-        child: const Text('Salvar', style: TextStyle(color: Colors.white)),
-      ),
-    ];
   }
 
   Widget _buildGeneroRadio() {
@@ -189,66 +185,38 @@ class EditarUsuarioState extends State<EditarUsuario> {
   }
 
   Widget _buildTextField(
-  TextEditingController controller,
-  String label, {
-  bool obscureText = false,
-  List<TextInputFormatter>? inputFormatters,
-  required IconData icon,
-}) {
-  return TextFormField(
-    controller: controller,
-    obscureText: obscureText,
-    inputFormatters: inputFormatters,
-    keyboardType: TextInputType.text,
-    decoration: InputDecoration(
-      labelText: label,
-      labelStyle: const TextStyle(color: Colors.white),
-      prefixIcon: Icon(icon, color: Colors.white),
-      filled: true, // Ativa o preenchimento de cor de fundo
-      fillColor: const Color.fromARGB(255, 70, 69, 69), // Cor de fundo
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(30),
-        borderSide: const BorderSide(color: Colors.white),
+    TextEditingController controller,
+    String label, {
+    bool obscureText = false,
+    List<TextInputFormatter>? inputFormatters,
+    required IconData icon,
+  }) {
+    return TextFormField(
+      controller: controller,
+      obscureText: obscureText,
+      inputFormatters: inputFormatters,
+      keyboardType: TextInputType.text,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.white),
+        prefixIcon: Icon(icon, color: Colors.white),
+        filled: true, // Ativa o preenchimento de cor de fundo
+        fillColor: const Color.fromARGB(255, 70, 69, 69), // Cor de fundo
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: const BorderSide(color: Colors.white),
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.green),
+        ),
       ),
-      focusedBorder: const OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.green),
-      ),
-    ),
-    style: const TextStyle(color: Colors.white),
-    validator: (value) {
-      if (value == null || value.isEmpty) {
-        return '$label é obrigatório';
-      }
-      return null;
-    },
-  );
-}
-
-  Future<void> _saveChanges(BuildContext context) async {
-    if (_formKey.currentState!.validate()) {
-      final usuarioAtualizado = Usuario(
-        idUsuario: widget.usuario.idUsuario,
-        nome: _nomeController.text.trim(),
-        sobrenome: _sobrenomeController.text.trim(),
-        telefone: _telefoneController.text.trim(),
-        email: _emailController.text.trim(),
-        senha: _senhaController.text.trim(),
-        genero: _generoSelecionado.isEmpty ? 'Não informado' : _generoSelecionado,
-        dataNascimento: DateFormat('dd/MM/yyyy').parse(_dataNascimentoController.text.trim()),
-        cpf: _cpfController.text.trim(),
-        ativo: ativo,
-        data: DateTime.now(),
-      );
-
-      final provider = Provider.of<UsuarioProvider>(context, listen: false);
-      await provider.updateUsuario(usuarioAtualizado);
-
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Usuário atualizado com sucesso!')),
-      );
-      // ignore: use_build_context_synchronously
-      Navigator.pop(context);
-    }
+      style: const TextStyle(color: Colors.white),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return '$label é obrigatório';
+        }
+        return null;
+      },
+    );
   }
 }

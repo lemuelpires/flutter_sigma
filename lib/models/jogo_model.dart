@@ -60,4 +60,31 @@ class Jogo {
 
     return jsonData;
   }
+
+  // Método copyWith para criar uma cópia do objeto com algumas propriedades alteradas
+  Jogo copyWith({
+    int? idJogo,
+    String? nomeJogo,
+    String? categoriaJogo,
+    String? processadorRequerido,
+    String? memoriaRAMRequerida,
+    String? placaVideoRequerida,
+    String? espacoDiscoRequerido,
+    String? referenciaImagemJogo,
+    DateTime? data,
+    bool? ativo,
+  }) {
+    return Jogo(
+      idJogo: idJogo ?? this.idJogo,
+      nomeJogo: nomeJogo ?? this.nomeJogo,
+      categoriaJogo: categoriaJogo ?? this.categoriaJogo,
+      processadorRequerido: processadorRequerido ?? this.processadorRequerido,
+      memoriaRAMRequerida: memoriaRAMRequerida ?? this.memoriaRAMRequerida,
+      placaVideoRequerida: placaVideoRequerida ?? this.placaVideoRequerida,
+      espacoDiscoRequerido: espacoDiscoRequerido ?? this.espacoDiscoRequerido,
+      referenciaImagemJogo: referenciaImagemJogo ?? this.referenciaImagemJogo,
+      data: data ?? this.data,
+      ativo: ativo ?? this.ativo,
+    );
+  }
 }

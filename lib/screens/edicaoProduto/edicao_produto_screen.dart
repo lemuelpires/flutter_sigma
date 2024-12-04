@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_sigma/api/api_cliente.dart';
-import 'package:flutter_sigma/repositories/produto_repositories.dart';
 import 'package:flutter_sigma/models/produto_model.dart';
+import 'package:flutter_sigma/providers/produto_providers.dart';
+import 'package:provider/provider.dart';
 
-class EditarProduto extends StatefulWidget {
-  final Product produto;
+class EdicaoProdutoScreen extends StatefulWidget {
+  final Product product;
 
-  const EditarProduto({super.key, required this.produto});
+  const EdicaoProdutoScreen({super.key, required this.product});
 
   @override
-  EditarProdutoState createState() => EditarProdutoState();
+  _EdicaoProdutoScreenState createState() => _EdicaoProdutoScreenState();
 }
 
-class EditarProdutoState extends State<EditarProduto> {
-  final _formKey = GlobalKey<FormState>();
+class _EdicaoProdutoScreenState extends State<EdicaoProdutoScreen> {
   late TextEditingController _nomeProdutoController;
   late TextEditingController _descricaoProdutoController;
   late TextEditingController _precoController;
@@ -24,68 +23,46 @@ class EditarProdutoState extends State<EditarProduto> {
   late TextEditingController _imagemProdutoController;
   late TextEditingController _fichaTecnicaController;
 
-  final ProductRepository _productRepository = ProductRepository(ApiClient());
-
   @override
   void initState() {
     super.initState();
-    // Inicializa os controladores com os dados do produto passado
-    _nomeProdutoController = TextEditingController(text: widget.produto.nomeProduto);
-    _descricaoProdutoController = TextEditingController(text: widget.produto.descricaoProduto);
-    _precoController = TextEditingController(text: widget.produto.preco.toString());
-    _quantidadeEstoqueController = TextEditingController(text: widget.produto.quantidadeEstoque.toString());
-    _categoriaController = TextEditingController(text: widget.produto.categoria);
-    _marcaController = TextEditingController(text: widget.produto.marca);
-    _imagemProdutoController = TextEditingController(text: widget.produto.imagemProduto);
-    _fichaTecnicaController = TextEditingController(text: widget.produto.fichaTecnica);
+    _nomeProdutoController = TextEditingController(text: widget.product.nomeProduto);
+    _descricaoProdutoController = TextEditingController(text: widget.product.descricaoProduto);
+    _precoController = TextEditingController(text: widget.product.preco.toString());
+    _quantidadeEstoqueController = TextEditingController(text: widget.product.quantidadeEstoque.toString());
+    _categoriaController = TextEditingController(text: widget.product.categoria);
+    _marcaController = TextEditingController(text: widget.product.marca);
+    _imagemProdutoController = TextEditingController(text: widget.product.imagemProduto);
+    _fichaTecnicaController = TextEditingController(text: widget.product.fichaTecnica);
   }
 
-  Future<void> _atualizarProduto(BuildContext context) async {
-    if (_formKey.currentState!.validate()) {
-      final scaffoldMessenger = ScaffoldMessenger.of(context);
-      final navigator = Navigator.of(context);
+  @override
+  void dispose() {
+    _nomeProdutoController.dispose();
+    _descricaoProdutoController.dispose();
+    _precoController.dispose();
+    _quantidadeEstoqueController.dispose();
+    _categoriaController.dispose();
+    _marcaController.dispose();
+    _imagemProdutoController.dispose();
+    _fichaTecnicaController.dispose();
+    super.dispose();
+  }
 
-      Product produtoAtualizado = Product(
-        idProduto: widget.produto.idProduto, // Mantém o idProduto para atualizar
-        nomeProduto: _nomeProdutoController.text.trim(),
-        descricaoProduto: _descricaoProdutoController.text.trim(),
-        preco: double.parse(_precoController.text.trim()),
-        quantidadeEstoque: int.parse(_quantidadeEstoqueController.text.trim()),
-        categoria: _categoriaController.text.trim(),
-        marca: _marcaController.text.trim(),
-        imagemProduto: _imagemProdutoController.text.trim(),
-        fichaTecnica: _fichaTecnicaController.text.trim(),
-        data: DateTime.now(),
-        ativo: true, // Pode mudar conforme necessidade
-      );
+  Future<void> _atualizarProduto() async {
+    final updatedProduct = widget.product.copyWith(
+      nomeProduto: _nomeProdutoController.text,
+      descricaoProduto: _descricaoProdutoController.text,
+      preco: double.parse(_precoController.text),
+      quantidadeEstoque: int.parse(_quantidadeEstoqueController.text),
+      categoria: _categoriaController.text,
+      marca: _marcaController.text,
+      imagemProduto: _imagemProdutoController.text,
+      fichaTecnica: _fichaTecnicaController.text,
+    );
 
-      try {
-        final response = await _productRepository.updateProduct(produtoAtualizado);
-        if (response.success) {
-          scaffoldMessenger.showSnackBar(
-            SnackBar(
-              content: const Text('Produto atualizado com sucesso!'),
-              backgroundColor: Colors.green,
-            ),
-          );
-          navigator.pop();
-        } else {
-          scaffoldMessenger.showSnackBar(
-            SnackBar(
-              content: Text('Erro ao atualizar produto: ${response.message}'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      } catch (e) {
-        scaffoldMessenger.showSnackBar(
-          SnackBar(
-            content: Text('Erro ao atualizar produto: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
+    await Provider.of<ProductProvider>(context, listen: false).updateProduct(updatedProduct);
+    Navigator.pop(context, updatedProduct);
   }
 
   @override
@@ -99,49 +76,52 @@ class EditarProdutoState extends State<EditarProduto> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
-          key: _formKey,
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: _buildFormFields(),
+              children: [
+                _buildTextField(_nomeProdutoController, 'Nome do Produto', icon: Icons.label),
+                const SizedBox(height: 16),
+                _buildTextField(_descricaoProdutoController, 'Descrição', icon: Icons.description),
+                const SizedBox(height: 16),
+                _buildTextField(_precoController, 'Preço', icon: Icons.attach_money, inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                ]),
+                const SizedBox(height: 16),
+                _buildTextField(_quantidadeEstoqueController, 'Quantidade em Estoque', icon: Icons.storage),
+                const SizedBox(height: 16),
+                _buildTextField(_categoriaController, 'Categoria', icon: Icons.category),
+                const SizedBox(height: 16),
+                _buildTextField(_marcaController, 'Marca', icon: Icons.branding_watermark),
+                const SizedBox(height: 16),
+                _buildTextField(_imagemProdutoController, 'URL da Imagem', icon: Icons.image),
+                const SizedBox(height: 16),
+                _buildTextField(_fichaTecnicaController, 'Ficha Técnica', icon: Icons.description),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: _atualizarProduto,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text(
+                    'Atualizar',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
       ),
     );
-  }
-
-  List<Widget> _buildFormFields() {
-    return [
-      _buildTextField(_nomeProdutoController, 'Nome do Produto', icon: Icons.label),
-      const SizedBox(height: 16),
-      _buildTextField(_descricaoProdutoController, 'Descrição', icon: Icons.description),
-      const SizedBox(height: 16),
-      _buildTextField(_precoController, 'Preço', icon: Icons.attach_money, inputFormatters: [
-        FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
-      ]),
-      const SizedBox(height: 16),
-      _buildTextField(_quantidadeEstoqueController, 'Quantidade em Estoque', icon: Icons.storage, inputFormatters: [
-        FilteringTextInputFormatter.digitsOnly,
-      ]),
-      const SizedBox(height: 16),
-      _buildTextField(_categoriaController, 'Categoria', icon: Icons.category),
-      const SizedBox(height: 16),
-      _buildTextField(_marcaController, 'Marca', icon: Icons.branding_watermark),
-      const SizedBox(height: 16),
-      _buildTextField(_imagemProdutoController, 'URL da Imagem', icon: Icons.image),
-      const SizedBox(height: 16),
-      _buildTextField(_fichaTecnicaController, 'Ficha Técnica', icon: Icons.article),
-      const SizedBox(height: 32),
-      ElevatedButton(
-        onPressed: () => _atualizarProduto(context),
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          backgroundColor: Colors.green,
-        ),
-        child: const Text('Atualizar Produto', style: TextStyle(fontSize: 18)),
-      ),
-    ];
   }
 
   TextFormField _buildTextField(
@@ -163,14 +143,8 @@ class EditarProdutoState extends State<EditarProduto> {
           borderSide: BorderSide.none,
         ),
       ),
-      style: const TextStyle(color: Colors.white),
       inputFormatters: inputFormatters,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Este campo é obrigatório';
-        }
-        return null;
-      },
+      style: const TextStyle(color: Colors.white),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_sigma/models/usuario_model.dart';
 import 'package:flutter_sigma/providers/usuario_providers.dart';
 import 'package:flutter_sigma/screens/auth/register_screen.dart';
 import 'package:flutter_sigma/screens/edicaoUsuario/edicao_usuario_screen.dart';
@@ -36,8 +37,7 @@ class ListaUsuariosState extends State<ListaUsuarios> {
             children: [
               const SizedBox(height: 40), // Adiciona espaço no início da página
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -114,14 +114,16 @@ class ListaUsuariosState extends State<ListaUsuarios> {
                                     onDelete: () {
                                       usuarioProvider.deleteUsuario(usuario.idUsuario!);
                                     },
-                                    onEdit: () {
-                                      // Navegar para a tela de edição passando o usuário selecionado
-                                      Navigator.push(
+                                    onEdit: () async {
+                                      final updatedUsuario = await Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => EditarUsuario(usuario: usuario),
                                         ),
-                                      );
+                                      ) as Usuario?;
+                                      if (updatedUsuario != null) {
+                                        usuarioProvider.updateUsuarioInList(updatedUsuario);
+                                      }
                                     },
                                   );
                                 },

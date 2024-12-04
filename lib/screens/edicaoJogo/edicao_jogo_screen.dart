@@ -22,6 +22,7 @@ class EditarJogoState extends State<EditarJogo> {
   late TextEditingController _placaVideoRequeridaController;
   late TextEditingController _espacoDiscoRequeridoController;
   late TextEditingController _referenciaImagemJogoController;
+  late bool ativo;
 
   @override
   void initState() {
@@ -33,6 +34,7 @@ class EditarJogoState extends State<EditarJogo> {
     _placaVideoRequeridaController = TextEditingController(text: widget.jogo.placaVideoRequerida);
     _espacoDiscoRequeridoController = TextEditingController(text: widget.jogo.espacoDiscoRequerido);
     _referenciaImagemJogoController = TextEditingController(text: widget.jogo.referenciaImagemJogo);
+    ativo = widget.jogo.ativo;
   }
 
   @override
@@ -49,11 +51,7 @@ class EditarJogoState extends State<EditarJogo> {
 
   Future<void> _saveChanges(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
-      final scaffoldMessenger = ScaffoldMessenger.of(context);
-      final navigator = Navigator.of(context);
-
-      final updatedJogo = Jogo(
-        idJogo: widget.jogo.idJogo,
+      final updatedJogo = widget.jogo.copyWith(
         nomeJogo: _nomeJogoController.text.trim(),
         categoriaJogo: _categoriaJogoController.text.trim(),
         processadorRequerido: _processadorRequeridoController.text.trim(),
@@ -61,23 +59,11 @@ class EditarJogoState extends State<EditarJogo> {
         placaVideoRequerida: _placaVideoRequeridaController.text.trim(),
         espacoDiscoRequerido: _espacoDiscoRequeridoController.text.trim(),
         referenciaImagemJogo: _referenciaImagemJogoController.text.trim(),
-        data: widget.jogo.data,
-        ativo: widget.jogo.ativo,
+        ativo: ativo,
       );
 
-      final jogoProvider = Provider.of<JogoProvider>(context, listen: false);
-      await jogoProvider.updateJogo(updatedJogo);
-
-      if (jogoProvider.errorMessage == null) {
-        scaffoldMessenger.showSnackBar(
-          const SnackBar(content: Text('Jogo atualizado com sucesso!')),
-        );
-        navigator.pop();
-      } else {
-        scaffoldMessenger.showSnackBar(
-          SnackBar(content: Text('Erro: ${jogoProvider.errorMessage}')),
-        );
-      }
+      await Provider.of<JogoProvider>(context, listen: false).updateJogo(updatedJogo);
+      Navigator.pop(context, updatedJogo);
     }
   }
 
@@ -96,7 +82,39 @@ class EditarJogoState extends State<EditarJogo> {
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: _buildFormFields(),
+              children: [
+                _buildTextField(_nomeJogoController, 'Nome do Jogo', icon: Icons.gamepad),
+                const SizedBox(height: 16),
+                _buildTextField(_categoriaJogoController, 'Categoria do Jogo', icon: Icons.category),
+                const SizedBox(height: 16),
+                _buildTextField(_processadorRequeridoController, 'Processador Requerido', icon: Icons.computer),
+                const SizedBox(height: 16),
+                _buildTextField(_memoriaRAMRequeridaController, 'Memória RAM Requerida', icon: Icons.memory),
+                const SizedBox(height: 16),
+                _buildTextField(_placaVideoRequeridaController, 'Placa de Vídeo Requerida', icon: Icons.videogame_asset),
+                const SizedBox(height: 16),
+                _buildTextField(_espacoDiscoRequeridoController, 'Espaço em Disco Requerido', icon: Icons.storage),
+                const SizedBox(height: 16),
+                _buildTextField(_referenciaImagemJogoController, 'Referência da Imagem', icon: Icons.image),
+                const SizedBox(height: 16),
+                SwitchListTile(
+                  title: const Text('Ativo', style: TextStyle(color: Colors.white)),
+                  value: ativo,
+                  onChanged: (value) {
+                    setState(() {
+                      ativo = value;
+                    });
+                  },
+                  activeColor: Colors.green,
+                  inactiveThumbColor: Colors.grey,
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () => _saveChanges(context),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                  child: const Text('Salvar', style: TextStyle(color: Colors.white)),
+                ),
+              ],
             ),
           ),
         ),
@@ -104,179 +122,39 @@ class EditarJogoState extends State<EditarJogo> {
     );
   }
 
-  List<Widget> _buildFormFields() {
-    return [
-      _buildTextField(
-        _nomeJogoController,
-        'Nome do Jogo',
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Por favor, insira o nome do jogo';
-          }
-          return null;
-        },
-        icon: Icons.gamepad,
-      ),
-      const SizedBox(height: 16),
-      _buildTextField(
-        _categoriaJogoController,
-        'Categoria do Jogo',
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Por favor, insira a categoria do jogo';
-          }
-          return null;
-        },
-        icon: Icons.category,
-      ),
-      const SizedBox(height: 16),
-      _buildTextField(
-        _processadorRequeridoController,
-        'Processador Requerido',
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Por favor, insira o processador requerido';
-          }
-          return null;
-        },
-        icon: Icons.computer,
-      ),
-      const SizedBox(height: 16),
-      _buildTextField(
-        _memoriaRAMRequeridaController,
-        'Memória RAM Requerida',
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Por favor, insira a memória RAM requerida';
-          }
-          return null;
-        },
-        icon: Icons.memory,
-      ),
-      const SizedBox(height: 16),
-      _buildTextField(
-        _placaVideoRequeridaController,
-        'Placa de Vídeo Requerida',
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Por favor, insira a placa de vídeo requerida';
-          }
-          return null;
-        },
-        icon: Icons.videogame_asset,
-      ),
-      const SizedBox(height: 16),
-      _buildTextField(
-        _espacoDiscoRequeridoController,
-        'Espaço em Disco Requerido',
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Por favor, insira o espaço em disco requerido';
-          }
-          return null;
-        },
-        icon: Icons.storage,
-      ),
-      const SizedBox(height: 16),
-      _buildTextField(
-        _referenciaImagemJogoController,
-        'Referência da Imagem',
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Por favor, insira a referência da imagem';
-          }
-          return null;
-        },
-        icon: Icons.image,
-      ),
-      const SizedBox(height: 16),
-      _buildReadOnlyField(
-        'Data de Criação',
-        widget.jogo.data.toString(),
-        icon: Icons.calendar_today,
-      ),
-      const SizedBox(height: 16),
-      SwitchListTile(
-        title: const Text('Ativo', style: TextStyle(color: Colors.white)),
-        value: widget.jogo.ativo,
-        onChanged: (value) {
-          setState(() {
-            widget.jogo.ativo = value;
-          });
-        },
-        activeColor: Colors.green,
-        inactiveThumbColor: Colors.grey,
-      ),
-      const SizedBox(height: 32),
-      Container(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF7FFF00), Color(0xFF66CC00)],
-          ),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: ElevatedButton(
-          onPressed: () => _saveChanges(context),
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            backgroundColor: Colors.transparent,
-            shadowColor: Colors.transparent,
-          ),
-          child: const Text(
-            'Salvar Alterações',
-            style: TextStyle(fontSize: 18, color: Colors.black),
-          ),
-        ),
-      ),
-    ];
-  }
-
   TextFormField _buildTextField(
     TextEditingController controller,
     String labelText, {
     bool obscureText = false,
-    String? Function(String?)? validator,
-    IconData? icon,
     List<TextInputFormatter>? inputFormatters,
-    TextInputType keyboardType = TextInputType.text,
+    required IconData icon,
   }) {
     return TextFormField(
       controller: controller,
-      decoration: InputDecoration(
-        prefixIcon: Icon(icon, color: Colors.white),
-        labelText: labelText,
-        labelStyle: const TextStyle(color: Colors.white),
-        filled: true,
-        fillColor: Colors.white.withOpacity(0.2),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
-          borderSide: BorderSide.none,
-        ),
-      ),
       obscureText: obscureText,
-      style: const TextStyle(color: Colors.white),
-      validator: validator,
       inputFormatters: inputFormatters,
-      keyboardType: keyboardType,
-    );
-  }
-
-  TextFormField _buildReadOnlyField(String labelText, String value, {IconData? icon}) {
-    return TextFormField(
-      initialValue: value,
+      keyboardType: TextInputType.text,
       decoration: InputDecoration(
-        prefixIcon: Icon(icon, color: Colors.white),
         labelText: labelText,
         labelStyle: const TextStyle(color: Colors.white),
-        filled: true,
-        fillColor: Colors.white.withOpacity(0.2),
+        prefixIcon: Icon(icon, color: Colors.white),
+        filled: true, // Ativa o preenchimento de cor de fundo
+        fillColor: const Color.fromARGB(255, 70, 69, 69), // Cor de fundo
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
-          borderSide: BorderSide.none,
+          borderSide: const BorderSide(color: Colors.white),
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.green),
         ),
       ),
       style: const TextStyle(color: Colors.white),
-      enabled: false,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return '$labelText é obrigatório';
+        }
+        return null;
+      },
     );
   }
 }

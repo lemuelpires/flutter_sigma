@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_sigma/api/api_response.dart';
 import 'package:flutter_sigma/models/produto_model.dart';
 import 'package:flutter_sigma/repositories/produto_repositories.dart';
-import 'package:logging/logging.dart';
-
-final Logger _logger = Logger('ProductProvider');
+import 'package:logger/logger.dart';
 
 class ProductProvider with ChangeNotifier {
   final ProductRepository productRepository;
-
-  ProductProvider(this.productRepository);
+  final Logger _logger = Logger();
 
   List<Product> _products = [];
-  List<Product> _filteredProducts = []; // Lista filtrada de produtos
+  List<Product> _filteredProducts = [];
   bool _isLoading = false;
   String? _errorMessage;
 
+  ProductProvider(this.productRepository);
+
   List<Product> get products => _products;
-  List<Product> get filteredProducts => _filteredProducts; // Acesso à lista filtrada
+  List<Product> get filteredProducts => _filteredProducts;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
@@ -25,82 +25,130 @@ class ProductProvider with ChangeNotifier {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
+
     try {
-      final response = await productRepository.getProducts();
+      final ApiResponse<List<Product>> response = await productRepository.getProducts();
       if (response.success) {
-        _products = response.data!;
-        _filteredProducts = _products; // Inicializa com todos os produtos
+        _products = response.data ?? [];
+        _filteredProducts = _products; // Inicializa a lista filtrada
+        _logger.i("Produtos carregados com sucesso.");
       } else {
-        _errorMessage = response.message;
+        _errorMessage = response.message ?? 'Erro desconhecido ao buscar produtos';
         _products = [];
         _filteredProducts = [];
+        _logger.e("Erro ao buscar produtos: $_errorMessage");
       }
     } catch (error) {
-      _logger.severe('Erro ao buscar produtos: $error');
       _errorMessage = 'Erro ao buscar produtos: $error';
+      _logger.e("Erro ao buscar produtos: $error");
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  // Método para filtrar produtos com base no texto
+  // Método para filtrar produtos
   void filterProducts(String query) {
     if (query.isEmpty) {
-      _filteredProducts = _products; // Se a pesquisa estiver vazia, mostra todos os produtos
+      _filteredProducts = List.from(_products);
     } else {
       _filteredProducts = _products.where((product) {
         return product.nomeProduto.toLowerCase().contains(query.toLowerCase());
       }).toList();
     }
-    notifyListeners(); // Atualiza a UI com a lista filtrada
+    notifyListeners();
   }
 
   // Método para adicionar um produto
   Future<void> addProduct(Product product) async {
     try {
-      final response = await productRepository.addProduct(product);
+      final ApiResponse<Product> response = await productRepository.addProduct(product);
       if (response.success) {
         _products.add(response.data!);
+        _filteredProducts = List.from(_products);
         notifyListeners();
+        _logger.i("Produto adicionado com sucesso: ${response.data!.idProduto}");
       } else {
-        _logger.severe('Erro ao adicionar produto: ${response.message}');
+        _errorMessage = response.message;
+        _logger.e("Erro ao adicionar produto: $_errorMessage");
       }
     } catch (error) {
-      _logger.severe('Erro ao adicionar produto: $error');
+      _errorMessage = 'Erro ao adicionar produto: $error';
+      _logger.e("Erro ao adicionar produto: $error");
     }
   }
 
   // Método para atualizar um produto
   Future<void> updateProduct(Product product) async {
     try {
-      final response = await productRepository.updateProduct(product);
+      final ApiResponse<Product> response = await productRepository.updateProduct(product);
       if (response.success) {
-        final index = _products.indexWhere((p) => p.idProduto == response.data!.idProduto);
+        final index = _products.indexWhere((p) => p.idProduto == product.idProduto);
         if (index != -1) {
           _products[index] = response.data!;
+          _filteredProducts = List.from(_products);
           notifyListeners();
+          _logger.i("Produto atualizado com sucesso: ${response.data!.idProduto}");
         }
       } else {
-        _logger.severe('Erro ao atualizar produto: ${response.message}');
+        _errorMessage = response.message;
+        _logger.e("Erro ao atualizar produto: $_errorMessage");
       }
     } catch (error) {
-      _logger.severe('Erro ao atualizar produto: $error');
+      _errorMessage = 'Erro ao atualizar produto: $error';
+      _logger.e("Erro ao atualizar produto: $error");
     }
   }
 
   // Método para remover um produto
   Future<void> deleteProduct(int idProduto) async {
     try {
-      final response = await productRepository.deleteProduct(idProduto);
+      final ApiResponse<void> response = await productRepository.deleteProduct(idProduto);
       if (response.success) {
-        _products.removeWhere((p) => p.idProduto == idProduto);
+        _products.removeWhere((product) => product.idProduto == idProduto);
+        _filteredProducts = List.from(_products);
         notifyListeners();
+        _logger.i("Produto removido com sucesso: $idProduto");
       } else {
-        _logger.severe('Erro ao remover produto: ${response.message}');
+        _errorMessage = response.message;
+        _logger.e("Erro ao remover produto: $_errorMessage");
       }
     } catch (error) {
-      _logger.severe('Erro ao remover produto: $error');
+      _errorMessage = 'Erro ao remover produto: $error';
+      _logger.e("Erro ao remover produto: $error");
+    }
+  }
+
+  // Método para atualizar a imagem de um produto
+  Future<void> updateProductImage(int idProduto, String imagemProduto) async {
+    try {
+      final ApiResponse<void> response =
+          await productRepository.updateProductImage(idProduto, imagemProduto);
+      if (response.success) {
+        final index = _products.indexWhere((p) => p.idProduto == idProduto);
+        if (index != -1) {
+          _products[index] = _products[index].copyWith(imagemProduto: imagemProduto);
+          _filteredProducts = List.from(_products);
+          notifyListeners();
+          _logger.i("Imagem do produto atualizada com sucesso: $idProduto");
+        }
+      } else {
+        _errorMessage = response.message;
+        _logger.e("Erro ao atualizar a imagem do produto: $_errorMessage");
+      }
+    } catch (error) {
+      _errorMessage = 'Erro ao atualizar a imagem do produto: $error';
+      _logger.e("Erro ao atualizar a imagem do produto: $error");
+    }
+  }
+
+  // Método para atualizar um produto na lista localmente
+  void updateProductInList(Product updatedProduct) {
+    final index = _products.indexWhere((p) => p.idProduto == updatedProduct.idProduto);
+    if (index != -1) {
+      _products[index] = updatedProduct;
+      _filteredProducts = List.from(_products);
+      notifyListeners();
     }
   }
 }

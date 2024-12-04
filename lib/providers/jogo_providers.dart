@@ -121,4 +121,14 @@ class JogoProvider with ChangeNotifier {
       _logger.severe('Erro ao deletar jogo: $error');
     }
   }
+
+  // Método para atualizar um jogo na lista localmente
+  void updateJogoInList(Jogo updatedJogo) {
+    final index = _jogos.indexWhere((j) => j.idJogo == updatedJogo.idJogo);
+    if (index != -1) {
+      _jogos[index] = updatedJogo;
+      _filteredJogos = List.from(_jogos);
+      notifyListeners();
+    }
+  }
 }

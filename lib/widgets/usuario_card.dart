@@ -97,7 +97,7 @@ class UsuarioCard extends StatelessWidget {
           Column(
             children: [
               IconButton(
-                icon: Icon(
+                icon: const Icon(
                   Icons.delete,
                   color: Colors.red,
                 ),
@@ -105,7 +105,7 @@ class UsuarioCard extends StatelessWidget {
               ),
               const SizedBox(height: 5),
               IconButton(
-                icon: Icon(
+                icon: const Icon(
                   Icons.edit,
                   color: Colors.green,
                 ),

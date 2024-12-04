@@ -58,4 +58,33 @@ class Usuario {
       'ativo': ativo,
     };
   }
+
+  // Método copyWith para criar uma cópia do objeto com algumas propriedades alteradas
+  Usuario copyWith({
+    int? idUsuario,
+    String? email,
+    String? nome,
+    String? sobrenome,
+    String? senha,
+    String? genero,
+    DateTime? dataNascimento,
+    String? telefone,
+    DateTime? data,
+    String? cpf,
+    bool? ativo,
+  }) {
+    return Usuario(
+      idUsuario: idUsuario ?? this.idUsuario,
+      email: email ?? this.email,
+      nome: nome ?? this.nome,
+      sobrenome: sobrenome ?? this.sobrenome,
+      senha: senha ?? this.senha,
+      genero: genero ?? this.genero,
+      dataNascimento: dataNascimento ?? this.dataNascimento,
+      telefone: telefone ?? this.telefone,
+      data: data ?? this.data,
+      cpf: cpf ?? this.cpf,
+      ativo: ativo ?? this.ativo,
+    );
+  }
 }

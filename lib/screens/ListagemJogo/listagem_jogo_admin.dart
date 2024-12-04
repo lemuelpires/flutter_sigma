@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_sigma/models/jogo_model.dart';
 import 'package:flutter_sigma/providers/jogo_providers.dart';
 import 'package:flutter_sigma/widgets/jogo_card.dart';  // Importando o JogoCard
 import 'package:provider/provider.dart';
@@ -136,12 +137,15 @@ class ListagemJogosPageState extends State<ListagemJogosPage> {
                       itemBuilder: (context, index) {
                         return JogoCard(
                           jogo: jogosAtivos[index],
-                          onEdit: () {
-                            Navigator.pushNamed(
+                          onEdit: () async {
+                            final updatedJogo = await Navigator.pushNamed(
                               context,
                               '/editar_jogo',
                               arguments: jogosAtivos[index],
-                            );
+                            ) as Jogo?;
+                            if (updatedJogo != null) {
+                              jogoProvider.updateJogoInList(updatedJogo);
+                            }
                           },
                           onDelete: () async {
                             await jogoProvider.deleteJogo(

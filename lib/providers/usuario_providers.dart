@@ -104,4 +104,14 @@ class UsuarioProvider with ChangeNotifier {
     }
     notifyListeners(); // Notificar a UI para atualizar a lista
   }
+
+  // Método para atualizar um usuário na lista localmente
+  void updateUsuarioInList(Usuario updatedUsuario) {
+    final index = _usuarios.indexWhere((u) => u.idUsuario == updatedUsuario.idUsuario);
+    if (index != -1) {
+      _usuarios[index] = updatedUsuario;
+      _usuariosFiltrados = List.from(_usuarios);
+      notifyListeners();
+    }
+  }
 }

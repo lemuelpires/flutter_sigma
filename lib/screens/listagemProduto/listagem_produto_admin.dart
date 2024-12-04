@@ -1,11 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_sigma/models/produto_model.dart';
 import 'package:flutter_sigma/providers/produto_providers.dart';
 import 'package:flutter_sigma/screens/cadastroProduto/cadastro_produto_screen.dart';
+import 'package:flutter_sigma/widgets/produto_card.dart';
 import 'package:provider/provider.dart';
 
-class ListaProdutos extends StatelessWidget {
+class ListaProdutos extends StatefulWidget {
   const ListaProdutos({super.key});
+
+  @override
+  ListaProdutosState createState() => ListaProdutosState();
+}
+
+class ListaProdutosState extends State<ListaProdutos> {
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      if (mounted) {
+        Provider.of<ProductProvider>(context, listen: false).fetchProducts();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,10 +33,9 @@ class ListaProdutos extends StatelessWidget {
           ),
           Column(
             children: [
-              const SizedBox(height: 40), // Adiciona espaço no início da página
+              const SizedBox(height: 40),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -49,7 +63,7 @@ class ListaProdutos extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CadastroProduto()),
+                                  builder: (context) => const CadastroProduto()),
                             );
                           },
                         ),
@@ -63,7 +77,6 @@ class ListaProdutos extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: TextField(
                   onChanged: (value) {
-                    // Chama o método de filtro no Provider para realizar a pesquisa
                     context.read<ProductProvider>().filterProducts(value);
                   },
                   style: const TextStyle(color: Colors.white),
@@ -99,97 +112,22 @@ class ListaProdutos extends StatelessWidget {
 
                     return ListView.builder(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: provider
-                          .filteredProducts.length, // Usando a lista filtrada
+                      itemCount: provider.filteredProducts.length,
                       itemBuilder: (context, index) {
-                        return ItemCard(
-                            product: provider.filteredProducts[index]);
+                        return ProdutoCard(
+                          product: provider.filteredProducts[index],
+                          onDelete: () async {
+                            await provider.deleteProduct(
+                                provider.filteredProducts[index].idProduto!);
+                          },
+                          onEdit: (updatedProduct) {
+                            provider.updateProductInList(updatedProduct);
+                          },
+                        );
                       },
                     );
                   },
                 ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class ItemCard extends StatelessWidget {
-  final Product product;
-
-  const ItemCard({super.key, required this.product});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.grey[900],
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              image: DecorationImage(
-                image: NetworkImage(product.imagemProduto),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  product.nomeProduto,
-                  style: const TextStyle(color: Colors.white, fontSize: 16),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Estoque: ${product.quantidadeEstoque}',
-                  style: const TextStyle(color: Colors.grey, fontSize: 14),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 10),
-          Column(
-            children: [
-              IconButton(
-                icon: const Icon(
-                  Icons.delete,
-                  color: Colors.red,
-                  size: 30,
-                ),
-                onPressed: () {
-                  // Implementar funcionalidade de excluir item
-                },
-              ),
-              const SizedBox(height: 5),
-              IconButton(
-                icon: const Icon(
-                  Icons.edit,
-                  color: Colors.green,
-                  size: 30,
-                ),
-                onPressed: () {
-                  Navigator.pushNamed(
-                    context,
-                    '/editar_produto',
-                    arguments: product,
-                  );
-                },
               ),
             ],
           ),

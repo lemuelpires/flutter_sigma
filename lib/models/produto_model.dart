@@ -64,4 +64,33 @@ class Product {
 
     return data;
   }
+
+  // Método copyWith para criar uma cópia do objeto com algumas propriedades alteradas
+  Product copyWith({
+    int? idProduto,
+    String? nomeProduto,
+    String? descricaoProduto,
+    double? preco,
+    int? quantidadeEstoque,
+    String? categoria,
+    String? marca,
+    String? imagemProduto,
+    String? fichaTecnica,
+    DateTime? data,
+    bool? ativo,
+  }) {
+    return Product(
+      idProduto: idProduto ?? this.idProduto,
+      nomeProduto: nomeProduto ?? this.nomeProduto,
+      descricaoProduto: descricaoProduto ?? this.descricaoProduto,
+      preco: preco ?? this.preco,
+      quantidadeEstoque: quantidadeEstoque ?? this.quantidadeEstoque,
+      categoria: categoria ?? this.categoria,
+      marca: marca ?? this.marca,
+      imagemProduto: imagemProduto ?? this.imagemProduto,
+      fichaTecnica: fichaTecnica ?? this.fichaTecnica,
+      data: data ?? this.data,
+      ativo: ativo ?? this.ativo,
+    );
+  }
 }
