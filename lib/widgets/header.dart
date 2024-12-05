@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_sigma/services/firebase_auth_service.dart';
+import 'package:provider/provider.dart';
+import 'dart:math';
 
 class CustomHeader extends StatelessWidget {
   final String title;
@@ -8,11 +11,42 @@ class CustomHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _searchController = TextEditingController();
+    final TextEditingController searchController = TextEditingController();
+    final user = Provider.of<FirebaseAuthService>(context).currentUser;
 
-    void _handleSearch() {
-      onSearch(_searchController.text);
+    void handleSearch() {
+      final query = searchController.text;
+      if (query.isNotEmpty) {
+        Navigator.pushNamed(
+          context,
+          '/home_lista',
+          arguments: query,
+        );
+      }
     }
+
+    void handleLogout() async {
+      final authService = Provider.of<FirebaseAuthService>(context, listen: false);
+      await authService.logout();
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Usuário deslogado')),
+        );
+        Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+      }
+    }
+
+    // Lista de cores para a borda
+    final List<Color> borderColors = [
+      const Color.fromARGB(255, 240, 175, 170),
+      const Color.fromARGB(255, 128, 223, 131),
+      const Color.fromARGB(255, 103, 177, 238),
+      const Color.fromARGB(255, 228, 195, 144),
+      const Color.fromARGB(255, 222, 171, 231),
+    ];
+
+    // Seleciona uma cor aleatória da lista
+    final Color randomBorderColor = borderColors[Random().nextInt(borderColors.length)];
 
     return SafeArea(
       child: Container(
@@ -56,14 +90,14 @@ class CustomHeader extends StatelessWidget {
                     ],
                   ),
                   child: TextField(
-                    controller: _searchController,
-                    onSubmitted: (value) => _handleSearch(),
+                    controller: searchController,
+                    onSubmitted: (value) => handleSearch(),
                     decoration: InputDecoration(
                       hintText: 'Pesquisar...',
                       hintStyle: TextStyle(color: Colors.grey[600]),
                       prefixIcon: IconButton(
                         icon: Icon(Icons.search, color: Colors.grey[700]),
-                        onPressed: _handleSearch,
+                        onPressed: handleSearch,
                       ),
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -73,13 +107,48 @@ class CustomHeader extends StatelessWidget {
               ),
             ),
             
-            // Ícone de Login
-            IconButton(
-              icon: const Icon(Icons.person, color: Colors.white),
-              onPressed: () {
-                // Ação ao clicar no ícone de login
-              },
-            ),
+            // Ícone de Login ou Inicial do Usuário
+            user != null
+                ? PopupMenuButton<String>(
+                    icon: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: randomBorderColor, // Cor da borda aleatória
+                          width: 2.0, // Largura da borda
+                        ),
+                      ),
+                      child: CircleAvatar(
+                        backgroundColor: Colors.transparent, // Sem fundo
+                        child: Text(
+                          user.displayName != null && user.displayName!.isNotEmpty
+                              ? user.displayName![0].toUpperCase()
+                              : user.email![0].toUpperCase(),
+                          style: const TextStyle(color: Colors.white),
+                          textAlign: TextAlign.center, // Centraliza a letra
+                        ),
+                      ),
+                    ),
+                    onSelected: (value) {
+                      if (value == 'logout') {
+                        handleLogout();
+                      }
+                    },
+                    itemBuilder: (BuildContext context) {
+                      return [
+                        const PopupMenuItem(
+                          value: 'logout',
+                          child: Text('Sair', style: TextStyle(color: Colors.black)),
+                        ),
+                      ];
+                    },
+                  )
+                : IconButton(
+                    icon: const Icon(Icons.person, color: Colors.white),
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/login');
+                    },
+                  ),
             
             // Menu Hambúrguer
             PopupMenuButton<String>(
