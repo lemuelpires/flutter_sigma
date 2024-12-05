@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart' as custom_carousel;
 import 'package:flutter/material.dart';
 import 'package:flutter_sigma/models/produto_model.dart';
 import 'package:flutter_sigma/providers/produto_providers.dart';
+import 'package:flutter_sigma/screens/home/home_listagem_screen.dart';
 import 'package:flutter_sigma/widgets/anuncio_carrossel_card.dart';
 import 'package:flutter_sigma/widgets/header.dart';
 import 'package:flutter_sigma/widgets/footer.dart';
@@ -27,15 +28,24 @@ class HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void _onSearch(String query) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HomeListagemScreen(searchQuery: query),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final anuncioProvider = Provider.of<AnuncioProvider>(context);
     final produtoProvider = Provider.of<ProductProvider>(context);
 
     return Scaffold(
-      appBar: const PreferredSize(
+      appBar: PreferredSize(
         preferredSize: Size.fromHeight(60),
-        child: CustomHeader(title: 'header'),
+        child: CustomHeader(title: 'header', onSearch: _onSearch),
       ),
       backgroundColor: const Color(0xFF101419),
       body: Padding(

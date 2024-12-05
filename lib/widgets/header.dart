@@ -1,16 +1,35 @@
 import 'package:flutter/material.dart';
 
 class CustomHeader extends StatelessWidget {
-  const CustomHeader({super.key, required String title});
+  final String title;
+  final Function(String) onSearch;
+
+  const CustomHeader({super.key, required this.title, required this.onSearch});
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController _searchController = TextEditingController();
+
+    void _handleSearch() {
+      onSearch(_searchController.text);
+    }
+
     return SafeArea(
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        color: const Color(0xFF101419), // Fundo do Header
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: const Color(0xFF101419), // Fundo do Header
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(0, 3), // changes position of shadow
+            ),
+          ],
+        ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             // Logo
             Image.asset(
@@ -23,18 +42,31 @@ class CustomHeader extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Container(
-                  height: 30,
+                  height: 40,
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: const Offset(0, 3), // changes position of shadow
+                      ),
+                    ],
                   ),
                   child: TextField(
+                    controller: _searchController,
+                    onSubmitted: (value) => _handleSearch(),
                     decoration: InputDecoration(
                       hintText: 'Pesquisar...',
                       hintStyle: TextStyle(color: Colors.grey[600]),
-                      prefixIcon: Icon(Icons.search, color: Colors.grey[700]),
+                      prefixIcon: IconButton(
+                        icon: Icon(Icons.search, color: Colors.grey[700]),
+                        onPressed: _handleSearch,
+                      ),
                       border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                     ),
                   ),
                 ),
@@ -59,7 +91,7 @@ class CustomHeader extends StatelessWidget {
                 return [
                    const PopupMenuItem(
                     value: '/home',
-                    child: Text('pagina inicial', style: TextStyle(color: Colors.black)),
+                    child: Text('Página Inicial', style: TextStyle(color: Colors.black)),
                   ),
                   const PopupMenuItem(
                     value: '/ambiente_administrador',
