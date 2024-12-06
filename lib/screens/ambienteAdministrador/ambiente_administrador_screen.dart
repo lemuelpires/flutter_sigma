@@ -16,19 +16,6 @@ class _AmbienteAdministradorState extends State<AmbienteAdministrador> {
   void initState() {
     super.initState();
 
-    // Ouvir mudanças no estado do usuário
-    _auth.authStateChanges().listen((User? user) {
-      if (user != null) {
-        setState(() {
-          _userEmail = user.email; // Atualiza o email do usuário
-        });
-      } else {
-        setState(() {
-          _userEmail = null; // Limpa o email se não houver usuário autenticado
-        });
-      }
-    });
-
     // Verificar se já há um usuário logado quando o app é iniciado
     User? currentUser = _auth.currentUser;
     if (currentUser != null) {
