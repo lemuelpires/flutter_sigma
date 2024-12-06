@@ -27,7 +27,7 @@ class UsuarioProvider with ChangeNotifier {
     try {
       final response = await usuarioRepository.getUsuarios();
       if (response.success) {
-        _usuarios = response.data!;
+        _usuarios = response.data?.where((usuario) => usuario.ativo).toList() ?? [];
         _usuariosFiltrados = []; // Resetar a lista filtrada quando novos dados forem carregados
       } else {
         _errorMessage = response.message;

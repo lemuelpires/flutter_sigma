@@ -29,8 +29,8 @@ class ProductProvider with ChangeNotifier {
     try {
       final ApiResponse<List<Product>> response = await productRepository.getProducts();
       if (response.success) {
-        _products = response.data ?? [];
-        _filteredProducts = _products; // Inicializa a lista filtrada
+        _products = response.data?.where((product) => product.ativo).toList() ?? [];
+        _filteredProducts = List.from(_products); // Inicializa a lista filtrada
         _logger.i("Produtos carregados com sucesso.");
       } else {
         _errorMessage = response.message ?? 'Erro desconhecido ao buscar produtos';
@@ -152,6 +152,36 @@ class ProductProvider with ChangeNotifier {
       _products[index] = updatedProduct;
       _filteredProducts = List.from(_products);
       notifyListeners();
+    }
+  }
+
+  // Método para ordenar produtos por preço
+  void sortProductsByPrice({required bool descending}) {
+    _filteredProducts.sort((a, b) {
+      if (descending) {
+        return b.preco.compareTo(a.preco);
+      } else {
+        return a.preco.compareTo(b.preco);
+      }
+    });
+    notifyListeners();
+  }
+
+  // Método para buscar produto por ID
+  Future<Product?> getProductById(int idProduto) async {
+    try {
+      final ApiResponse<Product> response = await productRepository.getProductById(idProduto);
+      if (response.success) {
+        return response.data;
+      } else {
+        _errorMessage = response.message;
+        _logger.e("Erro ao buscar produto por ID: $_errorMessage");
+        return null;
+      }
+    } catch (error) {
+      _errorMessage = 'Erro ao buscar produto por ID: $error';
+      _logger.e("Erro ao buscar produto por ID: $error");
+      return null;
     }
   }
 }

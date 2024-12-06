@@ -29,7 +29,7 @@ class JogoProvider with ChangeNotifier {
     try {
       final response = await jogoRepository.getJogos();
       if (response.success && response.data != null) {
-        _jogos = response.data!;
+        _jogos = response.data!.where((jogo) => jogo.ativo).toList();
         _filteredJogos = List.from(_jogos); // Sincroniza as listas
         _logger.info('Jogos carregados com sucesso (${_jogos.length} jogos).');
       } else {

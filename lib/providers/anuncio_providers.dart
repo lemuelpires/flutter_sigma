@@ -28,8 +28,8 @@ class AnuncioProvider with ChangeNotifier {
     try {
       final ApiResponse<List<Anuncio>> response = await anuncioRepository.getAnuncios();
       if (response.success) {
-        _anuncios = response.data ?? [];
-        _filteredAnuncios = _anuncios; // Inicializa a lista filtrada com todos os anúncios
+        _anuncios = response.data?.where((anuncio) => anuncio.ativo).toList() ?? [];
+        _filteredAnuncios = _anuncios; // Inicializa a lista filtrada com todos os anúncios ativos
       } else {
         _errorMessage = response.message;
         _anuncios = [];
@@ -47,7 +47,7 @@ class AnuncioProvider with ChangeNotifier {
   // Método para filtrar anúncios com base na pesquisa
   void filterAnuncios(String query) {
     if (query.isEmpty) {
-      _filteredAnuncios = _anuncios; // Se a pesquisa estiver vazia, retorna todos os anúncios
+      _filteredAnuncios = _anuncios; // Se a pesquisa estiver vazia, retorna todos os anúncios ativos
     } else {
       _filteredAnuncios = _anuncios.where((anuncio) {
         return anuncio.titulo.toLowerCase().contains(query.toLowerCase()); // Filtra pelo título
