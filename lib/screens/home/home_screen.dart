@@ -6,7 +6,7 @@ import 'package:flutter_sigma/screens/home/home_listagem_screen.dart';
 import 'package:flutter_sigma/widgets/anuncio_carrossel_card.dart';
 import 'package:flutter_sigma/widgets/header.dart';
 import 'package:flutter_sigma/widgets/footer.dart';
-import 'package:flutter_sigma/models/anuncio_model.dart'; 
+import 'package:flutter_sigma/models/anuncio_model.dart';
 import 'package:flutter_sigma/providers/anuncio_providers.dart';
 import 'package:flutter_sigma/widgets/produto_carrossel_card.dart';
 import 'package:provider/provider.dart';
@@ -44,7 +44,7 @@ class HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(60),
+        preferredSize: Size.fromHeight(80), // Ajustando a altura do header para 80
         child: CustomHeader(title: 'header', onSearch: _onSearch),
       ),
       backgroundColor: const Color(0xFF101419),
@@ -74,20 +74,25 @@ class HomeScreenState extends State<HomeScreen> {
   Widget _buildAnuncioCarousel(List<Anuncio> anuncios) {
     return custom_carousel.CarouselSlider(
       options: custom_carousel.CarouselOptions(
-        height: 220,
+        height: MediaQuery.of(context).size.height * 0.3, // Ajustando para altura dinâmica
         autoPlay: true,
-        enlargeCenterPage: true,
+        enlargeCenterPage: true, // Itens do centro serão ampliados
+        enableInfiniteScroll: true, // Permite rotação infinita
+        viewportFraction: 0.8, // Ajustando a fração da área que o item ocupa
+        initialPage: 0, // Começando na primeira página
       ),
       items: anuncios.map((anuncio) {
         return Builder(
           builder: (BuildContext context) {
-            return SizedBox(
-              width: MediaQuery.of(context).size.width,              
-              child: AnuncioCarrosselCard(
-                anuncio: anuncio,
-                onDelete: () {
-                  // Lógica para excluir o anúncio (caso necessário)
-                },
+            return Center( // Centraliza o carrossel
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9, // Controlando o tamanho dos itens
+                child: AnuncioCarrosselCard(
+                  anuncio: anuncio,
+                  onDelete: () {
+                    // Lógica para excluir o anúncio (caso necessário)
+                  },
+                ),
               ),
             );
           },
@@ -97,26 +102,35 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildFeaturedProductsCarousel(List<Product> produtos) {
-    return custom_carousel.CarouselSlider(
-      options: custom_carousel.CarouselOptions(
-        height: 400,
-        autoPlay: true,
-        enlargeCenterPage: true,
-      ),
-      items: produtos.map((product) {
-        return Builder(
-          builder: (BuildContext context) {
-            return ProdutoCarrosselCard(
-              product: product,
-              onDetailsPressed: () {
-                // Ação para abrir os detalhes do produto
-              },
-            );
-          },
-        );
-      }).toList(),
-    );
-  }
+  return custom_carousel.CarouselSlider(
+    options: custom_carousel.CarouselOptions(
+      height: MediaQuery.of(context).size.height * 0.4, // Altura dinâmica ajustada
+      autoPlay: true,
+      enlargeCenterPage: true, // Itens do centro ampliados
+      enableInfiniteScroll: true, // Permite rotação infinita
+      viewportFraction: 0.75, // Ajuste a fração do viewport para que os itens se encaixem melhor
+      initialPage: 0, // Começando pela primeira página
+      aspectRatio: 1.0, // Proporção do carrossel para garantir o ajuste
+    ),
+    items: produtos.map((product) {
+      return Builder(
+        builder: (BuildContext context) {
+          return Center( // Centraliza o carrossel
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0), // Espaçamento entre os itens
+              child: ProdutoCarrosselCard(
+                product: product,
+                onDetailsPressed: () {
+                  // Ação para abrir os detalhes do produto
+                },
+              ),
+            ),
+          );
+        },
+      );
+    }).toList(),
+  );
+}
 
   Widget _buildCategories() {
     return Row(

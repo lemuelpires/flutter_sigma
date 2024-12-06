@@ -17,11 +17,7 @@ class CustomHeader extends StatelessWidget {
     void handleSearch() {
       final query = searchController.text;
       if (query.isNotEmpty) {
-        Navigator.pushNamed(
-          context,
-          '/home_lista',
-          arguments: query,
-        );
+        onSearch(query); // Chama a função de pesquisa passada por parâmetro
       }
     }
 
@@ -36,7 +32,6 @@ class CustomHeader extends StatelessWidget {
       }
     }
 
-    // Lista de cores para a borda
     final List<Color> borderColors = [
       const Color.fromARGB(255, 240, 175, 170),
       const Color.fromARGB(255, 128, 223, 131),
@@ -45,129 +40,115 @@ class CustomHeader extends StatelessWidget {
       const Color.fromARGB(255, 222, 171, 231),
     ];
 
-    // Seleciona uma cor aleatória da lista
     final Color randomBorderColor = borderColors[Random().nextInt(borderColors.length)];
 
     return SafeArea(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: const Color(0xFF101419), // Fundo do Header
+          color: Colors.black, // Cor de fundo mais forte
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.5),
               spreadRadius: 2,
               blurRadius: 5,
-              offset: const Offset(0, 3), // changes position of shadow
+              offset: const Offset(0, 3),
             ),
           ],
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Column(
           children: [
-            // Logo
-            Image.asset(
-              'assets/logo.png',
-              width: 40,
-            ),
-            
-            // Campo de Pesquisa
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Container(
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        spreadRadius: 2,
-                        blurRadius: 5,
-                        offset: const Offset(0, 3), // changes position of shadow
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Image.asset('assets/logo.png', width: 40),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Container(
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: TextField(
-                    controller: searchController,
-                    onSubmitted: (value) => handleSearch(),
-                    decoration: InputDecoration(
-                      hintText: 'Pesquisar...',
-                      hintStyle: TextStyle(color: Colors.grey[600]),
-                      prefixIcon: IconButton(
-                        icon: Icon(Icons.search, color: Colors.grey[700]),
-                        onPressed: handleSearch,
+                      child: TextField(
+                        controller: searchController,
+                        onSubmitted: (value) => handleSearch(),
+                        decoration: InputDecoration(
+                          hintText: 'Pesquisar...',
+                          hintStyle: TextStyle(color: Colors.grey[600]),
+                          prefixIcon: IconButton(
+                            icon: Icon(Icons.search, color: Colors.grey[700]),
+                            onPressed: handleSearch,
+                          ),
+                          border: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                        ),
                       ),
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                     ),
                   ),
                 ),
-              ),
-            ),
-            
-            // Ícone de Login ou Inicial do Usuário
-            user != null
-                ? PopupMenuButton<String>(
-                    icon: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: randomBorderColor, // Cor da borda aleatória
-                          width: 2.0, // Largura da borda
+                user != null
+                    ? PopupMenuButton<String>(
+                        icon: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: randomBorderColor, width: 2.0),
+                          ),
+                          child: CircleAvatar(
+                            backgroundColor: Colors.transparent,
+                            child: Text(
+                              user.displayName != null && user.displayName!.isNotEmpty
+                                  ? user.displayName![0].toUpperCase()
+                                  : user.email![0].toUpperCase(),
+                              style: const TextStyle(color: Colors.white),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ),
+                        onSelected: (value) {
+                          if (value == 'logout') {
+                            handleLogout();
+                          } else {
+                            Navigator.pushNamed(context, value);
+                          }
+                        },
+                        itemBuilder: (BuildContext context) {
+                          return [
+                            const PopupMenuItem(
+                              value: '/home',
+                              child: Text('Página Inicial', style: TextStyle(color: Colors.black)),
+                            ),
+                            const PopupMenuItem(
+                              value: '/ambiente_administrador',
+                              child: Text('Área Administrativa', style: TextStyle(color: Colors.black)),
+                            ),
+                            PopupMenuItem(
+                              value: 'email',
+                              child: Text('E-mail: ${user.email}', style: TextStyle(color: Colors.black)),
+                            ),
+                            const PopupMenuItem(
+                              value: 'logout',
+                              child: Text('Sair', style: TextStyle(color: Colors.black)),
+                            ),
+                          ];
+                        },
+                      )
+                    : IconButton(
+                        icon: const Icon(Icons.person, color: Colors.white),
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/login');
+                        },
                       ),
-                      child: CircleAvatar(
-                        backgroundColor: Colors.transparent, // Sem fundo
-                        child: Text(
-                          user.displayName != null && user.displayName!.isNotEmpty
-                              ? user.displayName![0].toUpperCase()
-                              : user.email![0].toUpperCase(),
-                          style: const TextStyle(color: Colors.white),
-                          textAlign: TextAlign.center, // Centraliza a letra
-                        ),
-                      ),
-                    ),
-                    onSelected: (value) {
-                      if (value == 'logout') {
-                        handleLogout();
-                      }
-                    },
-                    itemBuilder: (BuildContext context) {
-                      return [
-                        const PopupMenuItem(
-                          value: 'logout',
-                          child: Text('Sair', style: TextStyle(color: Colors.black)),
-                        ),
-                      ];
-                    },
-                  )
-                : IconButton(
-                    icon: const Icon(Icons.person, color: Colors.white),
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/login');
-                    },
-                  ),
-            
-            // Menu Hambúrguer
-            PopupMenuButton<String>(
-              icon: const Icon(Icons.menu, color: Colors.white),
-              onSelected: (value) {
-                Navigator.pushNamed(context, value);
-              },
-              itemBuilder: (BuildContext context) {
-                return [
-                   const PopupMenuItem(
-                    value: '/home',
-                    child: Text('Página Inicial', style: TextStyle(color: Colors.black)),
-                  ),
-                  const PopupMenuItem(
-                    value: '/ambiente_administrador',
-                    child: Text('Ambiente Administrador', style: TextStyle(color: Colors.black)),
-                  ),         
-                ];
-              },
+              ],
             ),
           ],
         ),

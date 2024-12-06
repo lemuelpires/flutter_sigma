@@ -14,7 +14,7 @@ class AnuncioCarrosselCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.white.withOpacity(0.1),
+      color: const Color.fromARGB(0, 8, 8, 8).withOpacity(1),
       child: ListTile(
         title: Image.network(
           anuncio.referenciaImagem,
