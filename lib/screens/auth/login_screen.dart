@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sigma/screens/auth/forgot_password.dart';
 import 'package:flutter_sigma/screens/auth/register_screen.dart';
 import 'package:flutter_sigma/screens/home/home_screen.dart';
-import 'package:flutter_sigma/services/firebase_auth_service.dart'; // Importa o serviço
+import 'package:flutter_sigma/services/firebase_auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -20,34 +20,37 @@ class LoginScreenState extends State<LoginScreen> {
   bool _obscureText = true;
 
   Future<void> _login() async {
-    if (_emailController.text.trim().isEmpty ||
-        _passwordController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor, preencha todos os campos.')),
+  if (_emailController.text.trim().isEmpty ||
+      _passwordController.text.trim().isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Por favor, preencha todos os campos.')),
+    );
+    return;
+  }
+
+  try {
+    User? user = await _authService.login(
+      _emailController.text,
+      _passwordController.text,
+    );
+
+    if (user != null && mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
-      return;
     }
+  } catch (e) {
+    if (mounted) {
+      String errorMessage = 'Email ou senha incorretos.';
 
-    try {
-      User? user = await _authService.login(
-        _emailController.text,
-        _passwordController.text,
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage)),
       );
-
-      if (user != null && mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao fazer login: $e')),
-        );
-      }
     }
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
