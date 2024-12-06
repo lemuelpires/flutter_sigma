@@ -14,8 +14,7 @@ class ListagemJogosPage extends StatefulWidget {
 
 class ListagemJogosPageState extends State<ListagemJogosPage> {
   late JogoProvider _jogoProvider;
-  bool _isDataLoaded =
-      false; // Controle para evitar recarregar dados várias vezes
+  bool _isDataLoaded = false; // Controle para evitar recarregar dados várias vezes
 
   @override
   void didChangeDependencies() {
@@ -75,8 +74,7 @@ class ListagemJogosPageState extends State<ListagemJogosPage> {
             children: [
               const SizedBox(height: 40), // Adiciona espaço no início da página
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

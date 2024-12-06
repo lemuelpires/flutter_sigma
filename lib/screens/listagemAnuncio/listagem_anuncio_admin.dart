@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sigma/providers/anuncio_providers.dart';
 import 'package:flutter_sigma/screens/cadastroAnuncio/cadastro_anuncio_screen.dart';
-import 'package:flutter_sigma/screens/cadastroJogo/cadastro_jogo_screen.dart';
 import 'package:flutter_sigma/widgets/anuncio_card.dart';
 import 'package:provider/provider.dart';
 
@@ -96,7 +95,7 @@ class ListaAnunciosState extends State<ListaAnuncios> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CadastroJogo()),
+                                  builder: (context) => CadastroAnuncio()),
                             );
                           },
                         )

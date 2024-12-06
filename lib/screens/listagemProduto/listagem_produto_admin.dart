@@ -144,15 +144,29 @@ class ListaProdutosState extends State<ListaProdutos> {
                       );
                     }
 
+                    // Filtrando apenas produtos ativos na listagem
+                    final produtosAtivos = provider.filteredProducts
+                        .where((produto) => produto.ativo == true)
+                        .toList();
+
+                    if (produtosAtivos.isEmpty) {
+                      return const Center(
+                        child: Text(
+                          'Nenhum produto ativo encontrado.',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      );
+                    }
+
                     return ListView.builder(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: provider.filteredProducts.length,
+                      itemCount: produtosAtivos.length,
                       itemBuilder: (context, index) {
                         return ProdutoCard(
-                          product: provider.filteredProducts[index],
+                          product: produtosAtivos[index],
                           onDisable: () async {
                             await _confirmDisableProduto(context,
-                                provider.filteredProducts[index].idProduto!);
+                                produtosAtivos[index].idProduto!);
                           },
                           onEdit: (updatedProduct) {
                             provider.updateProductInList(updatedProduct);
