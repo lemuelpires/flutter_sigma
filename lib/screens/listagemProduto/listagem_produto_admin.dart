@@ -70,7 +70,7 @@ class ListaProdutosState extends State<ListaProdutos> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     IconButton(
                       icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -78,35 +78,9 @@ class ListaProdutosState extends State<ListaProdutos> {
                         Navigator.pop(context);
                       },
                     ),
-                    Row(
-                      children: [
-                        TextButton.icon(
-                          icon: Icon(
-                            Icons.add,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                          label: Text(
-                            "Adicionar",
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => CadastroProduto()),
-                            );
-                          },
-                        )
-                      ],
-                    ),
                   ],
                 ),
               ),
-              // Campo de pesquisa
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: TextField(
@@ -127,7 +101,7 @@ class ListaProdutosState extends State<ListaProdutos> {
                   ),
                 ),
               ),
-              const SizedBox(height: 10), // Espaço após o campo de pesquisa
+              const SizedBox(height: 10),
               Expanded(
                 child: Consumer<ProductProvider>(
                   builder: (context, provider, child) {
@@ -144,7 +118,6 @@ class ListaProdutosState extends State<ListaProdutos> {
                       );
                     }
 
-                    // Filtrando apenas produtos ativos na listagem
                     final produtosAtivos = provider.filteredProducts
                         .where((produto) => produto.ativo == true)
                         .toList();
@@ -165,8 +138,8 @@ class ListaProdutosState extends State<ListaProdutos> {
                         return ProdutoCard(
                           product: produtosAtivos[index],
                           onDisable: () async {
-                            await _confirmDisableProduto(context,
-                                produtosAtivos[index].idProduto!);
+                            await _confirmDisableProduto(
+                                context, produtosAtivos[index].idProduto!);
                           },
                           onEdit: (updatedProduct) {
                             provider.updateProductInList(updatedProduct);
@@ -180,6 +153,18 @@ class ListaProdutosState extends State<ListaProdutos> {
             ],
           ),
         ],
+      ),
+       floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CadastroProduto(),
+            ),
+          );
+        },
+        backgroundColor: const Color(0xFF66CC00),
+        child: const Icon(Icons.add),
       ),
     );
   }

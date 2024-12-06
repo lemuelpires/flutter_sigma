@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sigma/models/jogo_model.dart';
 import 'package:flutter_sigma/providers/jogo_providers.dart';
 import 'package:flutter_sigma/screens/cadastroJogo/cadastro_jogo_screen.dart';
-import 'package:flutter_sigma/widgets/jogo_card.dart'; // Importando o JogoCard
+import 'package:flutter_sigma/widgets/jogo_card.dart';
 import 'package:provider/provider.dart';
 
 class ListagemJogosPage extends StatefulWidget {
@@ -14,15 +14,13 @@ class ListagemJogosPage extends StatefulWidget {
 
 class ListagemJogosPageState extends State<ListagemJogosPage> {
   late JogoProvider _jogoProvider;
-  bool _isDataLoaded = false; // Controle para evitar recarregar dados várias vezes
+  bool _isDataLoaded = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_isDataLoaded) {
       _jogoProvider = Provider.of<JogoProvider>(context, listen: false);
-
-      // Usar Future.delayed para adiar a chamada após a conclusão do ciclo de construção
       Future.delayed(Duration.zero, () {
         _jogoProvider.fetchJogos();
         _isDataLoaded = true;
@@ -72,9 +70,10 @@ class ListagemJogosPageState extends State<ListagemJogosPage> {
           ),
           Column(
             children: [
-              const SizedBox(height: 40), // Adiciona espaço no início da página
+              const SizedBox(height: 40),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -84,40 +83,13 @@ class ListagemJogosPageState extends State<ListagemJogosPage> {
                         Navigator.pop(context);
                       },
                     ),
-                    Row(
-                      children: [
-                        TextButton.icon(
-                          icon: Icon(
-                            Icons.add,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                          label: Text(
-                            "Adicionar",
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => CadastroJogo()),
-                            );
-                          },
-                        )
-                      ],
-                    ),
                   ],
                 ),
               ),
-              // Campo de pesquisa
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: TextField(
                   onChanged: (value) {
-                    // Chama o método de filtro no Provider para realizar a pesquisa
                     context.read<JogoProvider>().filterJogos(value);
                   },
                   style: const TextStyle(color: Colors.white),
@@ -134,7 +106,7 @@ class ListagemJogosPageState extends State<ListagemJogosPage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 10), // Espaço após o campo de pesquisa
+              const SizedBox(height: 10),
               Expanded(
                 child: Consumer<JogoProvider>(
                   builder: (context, jogoProvider, child) {
@@ -151,7 +123,6 @@ class ListagemJogosPageState extends State<ListagemJogosPage> {
                       );
                     }
 
-                    // Filtrando apenas jogos ativos na listagem
                     final jogosAtivos = jogoProvider.filteredJogos
                         .where((jogo) => jogo.ativo == true)
                         .toList();
@@ -194,6 +165,18 @@ class ListagemJogosPageState extends State<ListagemJogosPage> {
             ],
           ),
         ],
+      ),
+       floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CadastroJogo(),
+            ),
+          );
+        },
+        backgroundColor: const Color(0xFF66CC00),
+        child: const Icon(Icons.add),
       ),
     );
   }

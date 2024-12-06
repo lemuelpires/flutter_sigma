@@ -76,31 +76,6 @@ class ListaAnunciosState extends State<ListaAnuncios> {
                         Navigator.pop(context);
                       },
                     ),
-                    Row(
-                      children: [
-                        TextButton.icon(
-                          icon: Icon(
-                            Icons.add,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                          label: Text(
-                            "Adicionar",
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => CadastroAnuncio()),
-                            );
-                          },
-                        )
-                      ],
-                    ),
                   ],
                 ),
               ),
@@ -160,6 +135,18 @@ class ListaAnunciosState extends State<ListaAnuncios> {
             ],
           ),
         ],
+      ),
+       floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CadastroAnuncio(),
+            ),
+          );
+        },
+        backgroundColor: const Color(0xFF66CC00),
+        child: const Icon(Icons.add),
       ),
     );
   }

@@ -72,38 +72,13 @@ class ListaUsuariosState extends State<ListaUsuarios> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     IconButton(
                       icon: const Icon(Icons.arrow_back, color: Colors.white),
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                    ),
-                    Row(
-                      children: [
-                        TextButton.icon(
-                          icon: Icon(
-                            Icons.add,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                          label: Text(
-                            "Adicionar",
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => RegistroScreen()),
-                            );
-                          },
-                        )
-                      ],
                     ),
                   ],
                 ),
@@ -172,6 +147,18 @@ class ListaUsuariosState extends State<ListaUsuarios> {
             ],
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => RegistroScreen(),
+            ),
+          );
+        },
+        backgroundColor: const Color(0xFF66CC00),
+        child: const Icon(Icons.add),
       ),
     );
   }
