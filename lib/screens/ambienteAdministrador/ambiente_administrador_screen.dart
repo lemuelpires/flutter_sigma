@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AmbienteAdministrador extends StatefulWidget {
   const AmbienteAdministrador({super.key});
@@ -11,29 +10,31 @@ class AmbienteAdministrador extends StatefulWidget {
 
 class _AmbienteAdministradorState extends State<AmbienteAdministrador> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  String? _userName;
+  String? _userEmail;
 
   @override
   void initState() {
     super.initState();
-    _loadUserName();
-  }
 
-  Future<void> _loadUserName() async {
-    User? currentUser = _auth.currentUser;
-
-    if (currentUser != null) {
-      DocumentSnapshot userDoc = await _firestore
-          .collection('usuarios')
-          .doc(currentUser.uid)
-          .get();
-
-      if (userDoc.exists) {
+    // Ouvir mudanças no estado do usuário
+    _auth.authStateChanges().listen((User? user) {
+      if (user != null) {
         setState(() {
-          _userName = userDoc['nome'] ?? 'Usuário';
+          _userEmail = user.email; // Atualiza o email do usuário
+        });
+      } else {
+        setState(() {
+          _userEmail = null; // Limpa o email se não houver usuário autenticado
         });
       }
+    });
+
+    // Verificar se já há um usuário logado quando o app é iniciado
+    User? currentUser = _auth.currentUser;
+    if (currentUser != null) {
+      setState(() {
+        _userEmail = currentUser.email; // Atribui o email do usuário
+      });
     }
   }
 
@@ -69,8 +70,8 @@ class _AmbienteAdministradorState extends State<AmbienteAdministrador> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        _userName != null
-                            ? 'Ambiente Administrador\nOlá $_userName, em que podemos ajudar?'
+                        _userEmail != null
+                            ? 'Olá $_userEmail, seja Bem Vindo!?'
                             : 'Carregando...',
                         textAlign: TextAlign.center,
                         style: const TextStyle(
