@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sigma/models/jogo_model.dart';
 import 'package:flutter_sigma/providers/jogo_providers.dart';
-import 'package:flutter_sigma/widgets/jogo_card.dart';  // Importando o JogoCard
+import 'package:flutter_sigma/screens/cadastroJogo/cadastro_jogo_screen.dart';
+import 'package:flutter_sigma/widgets/jogo_card.dart'; // Importando o JogoCard
 import 'package:provider/provider.dart';
 
 class ListagemJogosPage extends StatefulWidget {
@@ -13,7 +14,8 @@ class ListagemJogosPage extends StatefulWidget {
 
 class ListagemJogosPageState extends State<ListagemJogosPage> {
   late JogoProvider _jogoProvider;
-  bool _isDataLoaded = false; // Controle para evitar recarregar dados várias vezes
+  bool _isDataLoaded =
+      false; // Controle para evitar recarregar dados várias vezes
 
   @override
   void didChangeDependencies() {
@@ -73,7 +75,8 @@ class ListagemJogosPageState extends State<ListagemJogosPage> {
             children: [
               const SizedBox(height: 40), // Adiciona espaço no início da página
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -85,25 +88,27 @@ class ListagemJogosPageState extends State<ListagemJogosPage> {
                     ),
                     Row(
                       children: [
-                        Text(
-                          'Adicionar',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary,
-                            fontSize: 16,
-                          ),
-                        ),
-                        IconButton(
+                        TextButton.icon(
                           icon: Icon(
                             Icons.add,
                             color: Theme.of(context).colorScheme.secondary,
                           ),
+                          label: Text(
+                            "Adicionar",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           onPressed: () {
-                            Navigator.pushNamed(
+                            Navigator.push(
                               context,
-                              '/cadastro_jogo',
+                              MaterialPageRoute(
+                                  builder: (context) => CadastroJogo()),
                             );
                           },
-                        ),
+                        )
                       ],
                     ),
                   ],

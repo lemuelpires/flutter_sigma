@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sigma/providers/anuncio_providers.dart';
 import 'package:flutter_sigma/screens/cadastroAnuncio/cadastro_anuncio_screen.dart';
+import 'package:flutter_sigma/screens/cadastroJogo/cadastro_jogo_screen.dart';
 import 'package:flutter_sigma/widgets/anuncio_card.dart';
 import 'package:provider/provider.dart';
 
@@ -22,7 +23,8 @@ class ListaAnunciosState extends State<ListaAnuncios> {
     });
   }
 
-  Future<void> _confirmDisableAnuncio(BuildContext context, int idAnuncio) async {
+  Future<void> _confirmDisableAnuncio(
+      BuildContext context, int idAnuncio) async {
     final provider = Provider.of<AnuncioProvider>(context, listen: false);
     final confirm = await showDialog<bool>(
       context: context,
@@ -64,7 +66,8 @@ class ListaAnunciosState extends State<ListaAnuncios> {
             children: [
               const SizedBox(height: 40),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -76,26 +79,27 @@ class ListaAnunciosState extends State<ListaAnuncios> {
                     ),
                     Row(
                       children: [
-                        Text(
-                          'Adicionar',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary,
-                            fontSize: 16,
-                          ),
-                        ),
-                        IconButton(
+                        TextButton.icon(
                           icon: Icon(
                             Icons.add,
                             color: Theme.of(context).colorScheme.secondary,
+                          ),
+                          label: Text(
+                            "Adicionar",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           onPressed: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CadastroAnuncio()),
+                                  builder: (context) => CadastroJogo()),
                             );
                           },
-                        ),
+                        )
                       ],
                     ),
                   ],
@@ -145,8 +149,8 @@ class ListaAnunciosState extends State<ListaAnuncios> {
                         return AnuncioCard(
                           anuncio: provider.filteredAnuncios[index],
                           onDisable: () async {
-                            await _confirmDisableAnuncio(
-                                context, provider.filteredAnuncios[index].idAnuncio!);
+                            await _confirmDisableAnuncio(context,
+                                provider.filteredAnuncios[index].idAnuncio!);
                           },
                         );
                       },

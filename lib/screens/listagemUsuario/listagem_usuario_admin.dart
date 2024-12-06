@@ -22,7 +22,8 @@ class ListaUsuariosState extends State<ListaUsuarios> {
     });
   }
 
-  Future<void> _confirmDisableUsuario(BuildContext context, int idUsuario) async {
+  Future<void> _confirmDisableUsuario(
+      BuildContext context, int idUsuario) async {
     final provider = Provider.of<UsuarioProvider>(context, listen: false);
     final confirm = await showDialog<bool>(
       context: context,
@@ -68,7 +69,8 @@ class ListaUsuariosState extends State<ListaUsuarios> {
             children: [
               const SizedBox(height: 40), // Adiciona espaço no início da página
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -80,17 +82,18 @@ class ListaUsuariosState extends State<ListaUsuarios> {
                     ),
                     Row(
                       children: [
-                        Text(
-                          'Adicionar',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary,
-                            fontSize: 16,
-                          ),
-                        ),
-                        IconButton(
+                        TextButton.icon(
                           icon: Icon(
                             Icons.add,
                             color: Theme.of(context).colorScheme.secondary,
+                          ),
+                          label: Text(
+                            "Adicionar",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           onPressed: () {
                             Navigator.push(
@@ -99,7 +102,7 @@ class ListaUsuariosState extends State<ListaUsuarios> {
                                   builder: (context) => RegistroScreen()),
                             );
                           },
-                        ),
+                        )
                       ],
                     ),
                   ],
@@ -134,11 +137,13 @@ class ListaUsuariosState extends State<ListaUsuarios> {
                     : usuarioProvider.errorMessage != null
                         ? Center(child: Text(usuarioProvider.errorMessage!))
                         : usuarioProvider.usuarios.isEmpty
-                            ? const Center(child: Text('Nenhum usuário encontrado.'))
+                            ? const Center(
+                                child: Text('Nenhum usuário encontrado.'))
                             : ListView.builder(
                                 itemCount: usuarioProvider.usuarios.length,
                                 itemBuilder: (context, index) {
-                                  final usuario = usuarioProvider.usuarios[index];
+                                  final usuario =
+                                      usuarioProvider.usuarios[index];
                                   return UsuarioCard(
                                     name: usuario.nome,
                                     phoneNumber: usuario.telefone,
@@ -147,14 +152,17 @@ class ListaUsuariosState extends State<ListaUsuarios> {
                                           context, usuario.idUsuario!);
                                     },
                                     onEdit: () async {
-                                      final updatedUsuario = await Navigator.push(
+                                      final updatedUsuario =
+                                          await Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => EditarUsuario(usuario: usuario),
+                                          builder: (context) =>
+                                              EditarUsuario(usuario: usuario),
                                         ),
                                       ) as Usuario?;
                                       if (updatedUsuario != null) {
-                                        usuarioProvider.updateUsuarioInList(updatedUsuario);
+                                        usuarioProvider.updateUsuarioInList(
+                                            updatedUsuario);
                                       }
                                     },
                                   );

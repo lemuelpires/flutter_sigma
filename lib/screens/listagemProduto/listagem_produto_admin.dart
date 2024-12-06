@@ -22,7 +22,8 @@ class ListaProdutosState extends State<ListaProdutos> {
     });
   }
 
-  Future<void> _confirmDisableProduto(BuildContext context, int idProduto) async {
+  Future<void> _confirmDisableProduto(
+      BuildContext context, int idProduto) async {
     final provider = Provider.of<ProductProvider>(context, listen: false);
     final confirm = await showDialog<bool>(
       context: context,
@@ -66,7 +67,8 @@ class ListaProdutosState extends State<ListaProdutos> {
             children: [
               const SizedBox(height: 40),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -78,26 +80,27 @@ class ListaProdutosState extends State<ListaProdutos> {
                     ),
                     Row(
                       children: [
-                        Text(
-                          'Adicionar',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary,
-                            fontSize: 16,
-                          ),
-                        ),
-                        IconButton(
+                        TextButton.icon(
                           icon: Icon(
                             Icons.add,
                             color: Theme.of(context).colorScheme.secondary,
+                          ),
+                          label: Text(
+                            "Adicionar",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           onPressed: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const CadastroProduto()),
+                                  builder: (context) => CadastroProduto()),
                             );
                           },
-                        ),
+                        )
                       ],
                     ),
                   ],
@@ -148,8 +151,8 @@ class ListaProdutosState extends State<ListaProdutos> {
                         return ProdutoCard(
                           product: provider.filteredProducts[index],
                           onDisable: () async {
-                            await _confirmDisableProduto(
-                                context, provider.filteredProducts[index].idProduto!);
+                            await _confirmDisableProduto(context,
+                                provider.filteredProducts[index].idProduto!);
                           },
                           onEdit: (updatedProduct) {
                             provider.updateProductInList(updatedProduct);
