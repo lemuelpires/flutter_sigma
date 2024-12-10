@@ -1,22 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Footer extends StatelessWidget {
   const Footer({super.key});
+
+  Future<void> _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri)) {
+      throw 'Could not launch $url';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: const Color(0xFF101419), // Cor de fundo
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-      child: const Column(
+      child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Row(
-                children: [
+                children: const [
                   SizedBox(width: 10),
                   Text(
                     'Suporte',
@@ -25,7 +33,7 @@ class Footer extends StatelessWidget {
                 ],
               ),
               Row(
-                children: [
+                children: const [
                   SizedBox(width: 10),
                   Text(
                     'Política de Privacidade',
@@ -34,7 +42,7 @@ class Footer extends StatelessWidget {
                 ],
               ),
               Row(
-                children: [
+                children: const [
                   SizedBox(width: 10),
                   Text(
                     'Termos de Serviço',
@@ -44,23 +52,32 @@ class Footer extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              FaIcon(
-                FontAwesomeIcons.instagram,
-                color: Colors.white,
+              GestureDetector(
+                onTap: () => _launchURL('https://www.instagram.com'),
+                child: const FaIcon(
+                  FontAwesomeIcons.instagram,
+                  color: Colors.white,
+                ),
               ),
-              SizedBox(width: 20),
-              FaIcon(
-                FontAwesomeIcons.facebook,
-                color: Colors.white,
+              const SizedBox(width: 20),
+              GestureDetector(
+                onTap: () => _launchURL('https://www.facebook.com'),
+                child: const FaIcon(
+                  FontAwesomeIcons.facebook,
+                  color: Colors.white,
+                ),
               ),
-              SizedBox(width: 20),
-              FaIcon(
-                FontAwesomeIcons.twitter,
-                color: Colors.white,
+              const SizedBox(width: 20),
+              GestureDetector(
+                onTap: () => _launchURL('https://www.twitter.com'),
+                child: const FaIcon(
+                  FontAwesomeIcons.twitter,
+                  color: Colors.white,
+                ),
               ),
             ],
           ),
