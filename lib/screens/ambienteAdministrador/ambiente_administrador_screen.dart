@@ -58,7 +58,7 @@ class _AmbienteAdministradorState extends State<AmbienteAdministrador> {
                     children: [
                       Text(
                         _userEmail != null
-                            ? 'Olá $_userEmail, seja Bem Vindo!?'
+                            ? 'Olá $_userEmail,\n seja Bem Vindo!'
                             : 'Carregando...',
                         textAlign: TextAlign.center,
                         style: const TextStyle(
@@ -100,7 +100,7 @@ class _AmbienteAdministradorState extends State<AmbienteAdministrador> {
                             icon: Icons.image,
                             label: 'Imagens',
                             color: Color(0xFF32CD32),
-                            routeName: '/lista_imagens',
+                            routeName: '/em_construcao',
                           ),
                         ],
                       ),
