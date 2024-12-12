@@ -17,7 +17,7 @@ class CustomHeader extends StatelessWidget {
     void handleSearch() {
       final query = searchController.text;
       if (query.isNotEmpty) {
-        onSearch(query); // Chama a função de pesquisa passada por parâmetro
+        onSearch(query);
       }
     }
 
@@ -44,9 +44,9 @@ class CustomHeader extends StatelessWidget {
 
     return SafeArea(
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical:14),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
         decoration: BoxDecoration(
-          color: Colors.black, // Cor de fundo mais forte
+          color: Colors.black,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.5),
@@ -61,7 +61,7 @@ class CustomHeader extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                  GestureDetector(
+                GestureDetector(
                   onTap: () {
                     Navigator.pushNamed(context, '/home');
                   },
@@ -108,7 +108,7 @@ class CustomHeader extends StatelessWidget {
                           height: 35,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: randomBorderColor, width: 2.0), 
+                            border: Border.all(color: randomBorderColor, width: 2.0),
                           ),
                           child: CircleAvatar(
                             backgroundColor: Colors.transparent,
@@ -130,30 +130,12 @@ class CustomHeader extends StatelessWidget {
                         },
                         itemBuilder: (BuildContext context) {
                           return [
-                            const PopupMenuItem(
-                              value: '/home',
-                              child: Text('Página Inicial', style: TextStyle(color: Colors.black)),
-                            ),
-                            const PopupMenuItem(
-                              value: '/ambiente_administrador',
-                              child: Text('Área Administrativa', style: TextStyle(color: Colors.black)),
-                            ),
-                            PopupMenuItem( 
-                              value: '/em_construcao',
-                              child: Text('Meu Perfil:\n ${user.email}', style: TextStyle(color: Colors.black)),
-                            ),
-                              PopupMenuItem( 
-                              value: '/sobre',
-                              child: Text('Sobre Nós', style: TextStyle(color: Colors.black)),
-                            ),
-                                PopupMenuItem( 
-                              value: '/contatos',
-                              child: Text('Contatos', style: TextStyle(color: Colors.black)),
-                            ),
-                            const PopupMenuItem(
-                              value: 'logout',
-                              child: Text('Sair', style: TextStyle(color: Colors.black)),
-                            ),
+                            menuItem('Página Inicial', '/home'),
+                            menuItem('Área Administrativa', '/ambiente_administrador'),
+                            menuItem('Meu Perfil', '/em_construcao', detail: user.email),
+                            menuItem('Sobre Nós', '/sobre'),
+                            menuItem('Contatos', '/contatos'),
+                            menuItem('Sair', 'logout'),
                           ];
                         },
                       )
@@ -166,6 +148,24 @@ class CustomHeader extends StatelessWidget {
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  PopupMenuItem<String> menuItem(String title, String value, {String? detail}) {
+    return PopupMenuItem(
+      value: value,
+      child: MouseRegion(
+        onEnter: (event) {
+          // Lógica para iniciar animação
+        },
+        onExit: (event) {
+          // Lógica para finalizar animação
+        },
+        child: Text(
+          title,
+          style: TextStyle(color: Colors.black),
         ),
       ),
     );
