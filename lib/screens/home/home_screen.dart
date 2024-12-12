@@ -19,6 +19,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
+  bool _isHovered = false;
+
   @override
   void initState() {
     super.initState();
@@ -60,9 +62,8 @@ class HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 10),
               _buildFeaturedProductsCarousel(produtoProvider.products),
               const SizedBox(height: 20),
-              _buildSectionTitle('Categorias'),
-              const SizedBox(height: 10),
-              _buildCategories(),
+              _buildPromotionAd(),
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -102,43 +103,82 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildFeaturedProductsCarousel(List<Product> produtos) {
-  return custom_carousel.CarouselSlider(
-    options: custom_carousel.CarouselOptions(
-      height: MediaQuery.of(context).size.height * 0.4, // Altura dinâmica ajustada
-      autoPlay: true,
-      enlargeCenterPage: true, // Itens do centro ampliados
-      enableInfiniteScroll: true, // Permite rotação infinita
-      viewportFraction: 0.75, // Ajuste a fração do viewport para que os itens se encaixem melhor
-      initialPage: 0, // Começando pela primeira página
-      aspectRatio: 1.0, // Proporção do carrossel para garantir o ajuste
-    ),
-    items: produtos.map((product) {
-      return Builder(
-        builder: (BuildContext context) {
-          return Center( // Centraliza o carrossel
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0), // Espaçamento entre os itens
-              child: ProdutoCarrosselCard(
-                product: product,
-                onDetailsPressed: () {
-                  // Ação para abrir os detalhes do produto
-                },
+    return custom_carousel.CarouselSlider(
+      options: custom_carousel.CarouselOptions(
+        height: MediaQuery.of(context).size.height * 0.4, // Altura dinâmica ajustada
+        autoPlay: true,
+        enlargeCenterPage: true, // Itens do centro ampliados
+        enableInfiniteScroll: true, // Permite rotação infinita
+        viewportFraction: 0.75, // Ajuste a fração do viewport para que os itens se encaixem melhor
+        initialPage: 0, // Começando pela primeira página
+        aspectRatio: 1.0, // Proporção do carrossel para garantir o ajuste
+      ),
+      items: produtos.map((product) {
+        return Builder(
+          builder: (BuildContext context) {
+            return Center( // Centraliza o carrossel
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0), // Espaçamento entre os itens
+                child: ProdutoCarrosselCard(
+                  product: product,
+                  onDetailsPressed: () {
+                    // Ação para abrir os detalhes do produto
+                  },
+                ),
+              ),
+            );
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildPromotionAd() {
+    return Column(
+      children: [
+        Text(
+          'Monte seu setup gamer agora mesmo',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            shadows: [
+              Shadow(
+                blurRadius: 4,
+                color: Colors.black54,
+                offset: Offset(2, 2),
+              ),
+            ],
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 10),
+        GestureDetector(
+          onTap: () {
+            Navigator.pushNamed(context, '/em_construcao');
+          },
+          child: MouseRegion(
+            onEnter: (_) => setState(() => _isHovered = true),
+            onExit: (_) => setState(() => _isHovered = false),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                image: const DecorationImage(
+                  image: AssetImage('assets/imagemSetupGamer.png'),
+                  fit: BoxFit.cover,
+                ),
+                boxShadow: _isHovered
+                    ? [BoxShadow(color: Colors.black54, blurRadius: 10, offset: Offset(0, 4))]
+                    : [],
+              ),
+              height: _isHovered ? 130 : 120, // Ajuste a altura conforme necessário
+              child: Container(
+                color: Colors.black.withOpacity(0.5), // Fundo semitransparente
               ),
             ),
-          );
-        },
-      );
-    }).toList(),
-  );
-}
-
-  Widget _buildCategories() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        CategoryWidget(title: 'Eletrônicos'),
-        CategoryWidget(title: 'Roupas'),
-        CategoryWidget(title: 'Alimentos'),
+          ),
+        ),
       ],
     );
   }
@@ -151,26 +191,6 @@ class HomeScreenState extends State<HomeScreen> {
         fontWeight: FontWeight.bold,
         color: Colors.white,
       ),
-    );
-  }
-}
-
-class CategoryWidget extends StatelessWidget {
-  final String title;
-
-  const CategoryWidget({required this.title, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Icon(Icons.category_sharp, size: 40, color: Colors.white),
-        const SizedBox(height: 5),
-        Text(
-          title,
-          style: const TextStyle(color: Colors.white),
-        ),
-      ],
     );
   }
 }
