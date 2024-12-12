@@ -32,6 +32,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0  # Atualizado para a versão mais recente
+  flutter_launcher_icons: ^0.13.1
 
 # Dependências transitivas atualizadas
 dependency_overrides:
@@ -57,3 +58,9 @@ flutter:
   uses-material-design: true
   assets:
     - assets/logo.png
+    - assets/imagemSetupGamer.png
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo.png" # Caminho para o ícone que deseja usar
