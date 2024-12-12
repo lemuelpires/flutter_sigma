@@ -85,7 +85,7 @@ class HomeListagemScreenState extends State<HomeListagemScreen> {
           Column(
             children: [
               CustomHeader(title: 'Home', onSearch: _onSearch),
-              const SizedBox(height: 10), // Espaço após o campo de pesquisa
+              const SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
@@ -102,7 +102,7 @@ class HomeListagemScreenState extends State<HomeListagemScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 10), // Espaço após o ícone de filtro
+              const SizedBox(height: 10),
               Expanded(
                 child: Consumer<ProductProvider>(
                   builder: (context, provider, child) {
@@ -129,7 +129,7 @@ class HomeListagemScreenState extends State<HomeListagemScreen> {
                             Navigator.pushNamed(
                               context,
                               '/produto',
-                              arguments: provider.filteredProducts[index].idProduto,
+                              arguments: provider.filteredProducts[index].idProduto, // Certifique-se que `idProduto` é String
                             );
                           },
                         );
