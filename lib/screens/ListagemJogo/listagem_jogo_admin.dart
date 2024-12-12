@@ -52,10 +52,12 @@ class ListagemJogosPageState extends State<ListagemJogosPage> {
 
     if (confirm == true) {
       await provider.disableJogo(idJogo);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Jogo excluído com sucesso')),
-      );
-      provider.fetchJogos();
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Jogo excluído com sucesso')),
+        );
+        provider.fetchJogos();
+      }
     }
   }
 

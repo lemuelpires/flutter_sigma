@@ -47,10 +47,12 @@ class ListaUsuariosState extends State<ListaUsuarios> {
 
     if (confirm == true) {
       await provider.disableUsuario(idUsuario);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Usuário excluído com sucesso')),
-      );
-      provider.fetchUsuarios(); // Atualiza a listagem após a desativação
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Usuário excluído com sucesso')),
+        );
+        provider.fetchUsuarios();
+      }
     }
   }
 

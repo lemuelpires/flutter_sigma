@@ -47,10 +47,12 @@ class ListaProdutosState extends State<ListaProdutos> {
 
     if (confirm == true) {
       await provider.disableProduct(idProduto);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Produto excluído com sucesso')),
-      );
-      provider.fetchProducts();
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Produto excluído com sucesso')),
+        );
+        provider.fetchProducts();
+      }
     }
   }
 
@@ -154,7 +156,7 @@ class ListaProdutosState extends State<ListaProdutos> {
           ),
         ],
       ),
-       floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
             context,

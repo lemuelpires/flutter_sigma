@@ -47,10 +47,12 @@ class ListaAnunciosState extends State<ListaAnuncios> {
 
     if (confirm == true) {
       await provider.disableAnuncio(idAnuncio);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Anúncio excluído com sucesso')),
-      );
-      provider.loadAnuncios();
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Anúncio excluído com sucesso')),
+        );
+        provider.loadAnuncios();
+      }
     }
   }
 
@@ -136,7 +138,7 @@ class ListaAnunciosState extends State<ListaAnuncios> {
           ),
         ],
       ),
-       floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
             context,
