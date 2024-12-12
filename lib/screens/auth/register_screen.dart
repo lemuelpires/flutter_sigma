@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_sigma/models/usuario_model.dart';
 import 'package:flutter_sigma/services/firebase_auth_service.dart';
 import 'package:flutter_sigma/screens/utils/validators.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart'; // Importando o pacote para máscaras
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:intl/intl.dart';
 
 class RegistroScreen extends StatefulWidget {
@@ -46,41 +48,76 @@ class RegistroScreenState extends State<RegistroScreen> {
   );
 
   Future<void> _registrarUsuario(BuildContext context) async {
-    if (_formKey.currentState!.validate()) {
-      final scaffoldMessenger = ScaffoldMessenger.of(context);
-      final navigator = Navigator.of(context);
+  if (_formKey.currentState!.validate()) {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
 
-      Usuario novoUsuario = Usuario(
-        email: _emailController.text.trim(),
-        nome: _nomeController.text.trim(),
-        sobrenome: _sobrenomeController.text.trim(),
-        senha: _senhaController.text.trim(),
-        genero:
-            _generoSelecionado.isEmpty ? 'Não informado' : _generoSelecionado,
-        dataNascimento: DateFormat('dd/MM/yyyy').parseStrict(
-            _dataNascimentoController.text.trim()), // Parse correto da data
-        telefone:
-            _telefoneFormatter.getUnmaskedText(), // Remove máscara do telefone
-        data: DateTime.now(),
-        cpf: _cpfFormatter.getUnmaskedText(), // Remove máscara do CPF
-        ativo: true,
-      );
+    Usuario novoUsuario = Usuario(
+      email: _emailController.text.trim(),
+      nome: _nomeController.text.trim(),
+      sobrenome: _sobrenomeController.text.trim(),
+      senha: _senhaController.text.trim(),
+      genero: _generoSelecionado.isEmpty ? 'Não informado' : _generoSelecionado,
+      dataNascimento: DateFormat('dd/MM/yyyy').parseStrict(_dataNascimentoController.text.trim()),
+      telefone: _telefoneFormatter.getUnmaskedText(),
+      data: DateTime.now(),
+      cpf: _cpfFormatter.getUnmaskedText(),
+      ativo: true,
+    );
 
-      try {
-        await _authService.registerUser(
-            novoUsuario, _senhaController.text.trim());
+    try {
+      // Registra o usuário no Firebase
+      await _authService.registerUser(novoUsuario, _senhaController.text.trim());
 
+      // Log para garantir que o código chegou até aqui
+      if (kDebugMode) {
+        print("Usuário registrado com sucesso!");
+      }
+
+      // Exibe o SnackBar com um atraso de 2 segundos para garantir que ele seja visível antes da navegação
+      if (mounted) {
+        scaffoldMessenger.showSnackBar(
+          const SnackBar(content: Text('Usuário registrado com sucesso!')),
+        );
+
+        // Atraso para garantir que a mensagem seja visível
+        await Future.delayed(const Duration(seconds: 2));
+
+        // Após o atraso, navega para a tela anterior
         if (mounted) {
-          scaffoldMessenger.showSnackBar(
-              const SnackBar(content: Text('Usuário registrado com sucesso!')));
           navigator.pop(); // Retorna à tela de login ou outra tela
         }
-      } catch (e) {
-        scaffoldMessenger
-            .showSnackBar(SnackBar(content: Text('Erro ao registrar: $e')));
+      }
+    } catch (e) {
+      String errorMessage = 'Erro desconhecido. Tente novamente mais tarde.';
+
+      // Tratamento de erro específico
+      if (e is FirebaseAuthException) {
+        switch (e.code) {
+          case 'email-already-in-use':
+            errorMessage = 'Este e-mail já está em uso. Tente outro.';
+            break;
+          case 'weak-password':
+            errorMessage = 'A senha fornecida é muito fraca. Escolha uma senha mais forte.';
+            break;
+          case 'invalid-email':
+            errorMessage = 'O e-mail fornecido é inválido.';
+            break;
+          default:
+            errorMessage = 'Falha ao registrar usuário. Por favor, tente novamente.';
+        }
+      } else {
+        errorMessage = 'Houve um erro ao processar seu pedido. Tente novamente.';
+      }
+
+      // Exibe o erro para o usuário
+      if (mounted) {
+        scaffoldMessenger.showSnackBar(SnackBar(content: Text(errorMessage)));
       }
     }
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -196,8 +233,7 @@ class RegistroScreenState extends State<RegistroScreen> {
         decoration: InputDecoration(
           labelText: 'Gênero',
           labelStyle: const TextStyle(color: Colors.white),
-          prefixIcon: const Icon(Icons.wc,
-              color: Colors.white), // Adiciona o ícone de WC
+          prefixIcon: const Icon(Icons.wc, color: Colors.white),
           filled: true,
           fillColor: Colors.white.withOpacity(0.2),
           border: OutlineInputBorder(
@@ -245,7 +281,7 @@ class RegistroScreenState extends State<RegistroScreen> {
 
   TextFormField _buildTextField(
     TextEditingController controller,
-    String labelText, {
+    String label, {
     bool obscureText = false,
     String? Function(String?)? validator,
     IconData? icon,
@@ -253,10 +289,14 @@ class RegistroScreenState extends State<RegistroScreen> {
   }) {
     return TextFormField(
       controller: controller,
+      obscureText: obscureText,
+      validator: validator,
+      inputFormatters: inputFormatters,
+      style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
-        prefixIcon: Icon(icon, color: Colors.white),
-        labelText: labelText,
+        labelText: label,
         labelStyle: const TextStyle(color: Colors.white),
+        prefixIcon: icon != null ? Icon(icon, color: Colors.white) : null,
         filled: true,
         fillColor: Colors.white.withOpacity(0.2),
         border: OutlineInputBorder(
@@ -264,10 +304,6 @@ class RegistroScreenState extends State<RegistroScreen> {
           borderSide: BorderSide.none,
         ),
       ),
-      obscureText: obscureText,
-      style: const TextStyle(color: Colors.white),
-      validator: validator,
-      inputFormatters: inputFormatters,
     );
   }
 }
