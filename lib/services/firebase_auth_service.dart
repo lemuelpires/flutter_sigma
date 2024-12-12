@@ -8,25 +8,39 @@ class FirebaseAuthService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final Logger _logger = Logger();
 
+  // Getter para o usuário atual
+  User? get currentUser => _auth.currentUser;
+
   Future<User?> registerUser(Usuario novoUsuario, String senha) async {
     try {
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      // Log para saber quando o método de registro é chamado
+      _logger.i('Iniciando o registro do usuário: ${novoUsuario.email}');
+
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
         email: novoUsuario.email,
         password: senha,
       );
 
-      // Adiciona o usuário ao Firestore
-      await _firestore.collection('usuarios').doc(userCredential.user!.uid).set(novoUsuario.toJson());
+      // Log após o registro
+      _logger
+          .i('Usuário registrado com sucesso: ${userCredential.user?.email}');
 
-      _logger.i('Usuário registrado com sucesso: ${userCredential.user?.email}');
+      // Salvar o usuário no Firestore
+      await _firestore
+          .collection('usuarios')
+          .doc(userCredential.user!.uid)
+          .set(novoUsuario.toJson());
+
       return userCredential.user;
     } catch (e) {
-      _logger.e('Erro ao registrar usuário: $e');
-      rethrow;
+      // Log para capturar o erro
+      _logger.e('Erro ao registrar o usuário: $e');
+      rethrow; // Reenvia o erro para ser tratado no nível superior
     }
   }
 
-   Future<User?> login(String email, String password) async {
+  Future<User?> login(String email, String password) async {
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email.trim(),
@@ -36,7 +50,7 @@ class FirebaseAuthService {
       return userCredential.user;
     } catch (e) {
       _logger.e('Erro ao fazer login: $e');
-      rethrow;  // Propaga o erro para que a interface trate
+      rethrow; // Propaga o erro para que a interface trate
     }
   }
 
@@ -49,4 +63,3 @@ class FirebaseAuthService {
     }
   }
 }
-
