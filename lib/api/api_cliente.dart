@@ -25,6 +25,15 @@ class ApiClient {
     }
   }
 
+  // Método GET por ID
+  Future<Response> getById(String endpoint, int id) async {
+    try {
+      return await dio.get('$endpoint/$id');
+    } catch (e) {
+      throw Exception('Erro ao realizar GET por ID: $e');
+    }
+  }
+
   // Método POST
   Future<Response> post(String endpoint, {Map<String, dynamic>? data}) async {
     try {

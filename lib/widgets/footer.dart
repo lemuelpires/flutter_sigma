@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class Footer extends StatelessWidget {
   const Footer({super.key});
 
-  Future<void> _launchURL(String url) async {
-    final Uri uri = Uri.parse(url);
-    if (!await launchUrl(uri)) {
-      throw 'Could not launch $url';
-    }
+  void _navigateTo(BuildContext context, String route) {
+    Navigator.pushNamed(context, route);
   }
 
   @override
@@ -23,32 +19,26 @@ class Footer extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Row(
-                children: const [
-                  SizedBox(width: 10),
-                  Text(
-                    'Suporte',
-                    style: TextStyle(color: Colors.white, fontSize: 14), // Diminuindo a fonte
-                  ),
-                ],
+               GestureDetector(
+                onTap: () => _navigateTo(context, '/em_construcao'),
+                child: const Text(
+                  'Suporte',
+                  style: TextStyle(color: Colors.white, fontSize: 14), // Diminuindo a fonte
+                ),
               ),
-              Row(
-                children: const [
-                  SizedBox(width: 10),
-                  Text(
-                    'Política de Privacidade',
-                    style: TextStyle(color: Colors.white, fontSize: 14), // Diminuindo a fonte
-                  ),
-                ],
+              GestureDetector(
+                onTap: () => _navigateTo(context, '/politica_privacidade'),
+                child: const Text(
+                  'Política de Privacidade',
+                  style: TextStyle(color: Colors.white, fontSize: 14), // Diminuindo a fonte
+                ),
               ),
-              Row(
-                children: const [
-                  SizedBox(width: 10),
-                  Text(
-                    'Termos de Serviço',
-                    style: TextStyle(color: Colors.white, fontSize: 14), // Diminuindo a fonte
-                  ),
-                ],
+              GestureDetector(
+                onTap: () => _navigateTo(context, '/termos_condicoes'),
+                child: const Text(
+                  'Termos de Serviço',
+                  style: TextStyle(color: Colors.white, fontSize: 14), // Diminuindo a fonte
+                ),
               ),
             ],
           ),
@@ -57,7 +47,7 @@ class Footer extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               GestureDetector(
-                onTap: () => _launchURL('https://www.instagram.com'),
+                onTap: () => _navigateTo(context, 'https://www.instagram.com'),
                 child: const FaIcon(
                   FontAwesomeIcons.instagram,
                   color: Colors.white,
@@ -65,7 +55,7 @@ class Footer extends StatelessWidget {
               ),
               const SizedBox(width: 20),
               GestureDetector(
-                onTap: () => _launchURL('https://www.facebook.com'),
+                onTap: () => _navigateTo(context, 'https://www.facebook.com'),
                 child: const FaIcon(
                   FontAwesomeIcons.facebook,
                   color: Colors.white,
@@ -73,7 +63,7 @@ class Footer extends StatelessWidget {
               ),
               const SizedBox(width: 20),
               GestureDetector(
-                onTap: () => _launchURL('https://www.twitter.com'),
+                onTap: () => _navigateTo(context, 'https://www.twitter.com'),
                 child: const FaIcon(
                   FontAwesomeIcons.twitter,
                   color: Colors.white,

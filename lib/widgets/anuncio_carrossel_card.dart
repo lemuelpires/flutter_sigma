@@ -15,10 +15,12 @@ class AnuncioCarrosselCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       color: const Color.fromARGB(0, 8, 8, 8).withOpacity(1),
-      child: ListTile(
-        title: Image.network(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8.0), // Ajuste o valor conforme necessário
+        child: Image.network(
           anuncio.referenciaImagem,
           height: 200,
+          width: double.infinity,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
             return const Icon(Icons.error);

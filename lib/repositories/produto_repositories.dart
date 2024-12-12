@@ -99,4 +99,19 @@ class ProductRepository {
       return ApiResponse.error('Erro ao atualizar imagem do produto: $e');
     }
   }
+
+  // Método para buscar produto por ID
+  Future<ApiResponse<Product>> getProductById(int idProduto) async {
+    try {
+      final response = await apiClient.getById(ApiEndpoints.produto, idProduto);
+      if (response.statusCode == 200) {
+        return ApiResponse.success(Product.fromJson(response.data));
+      } else {
+        return ApiResponse.error(
+            'Falha ao buscar produto por ID. Código de status: ${response.statusCode}');
+      }
+    } catch (e) {
+      return ApiResponse.error('Erro ao buscar produto por ID: $e');
+    }
+  }
 }
