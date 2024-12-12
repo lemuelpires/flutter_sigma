@@ -19,16 +19,16 @@ class JogoCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 6),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.grey[900],
+        color: Colors.white.withOpacity(0.1),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
         children: [
           Container(
-            width: 50,
-            height: 50,
+            width: 60,
+            height: 60,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(50),
               image: DecorationImage(
                 image: NetworkImage(jogo.referenciaImagemJogo),
                 fit: BoxFit.cover,
@@ -55,24 +55,23 @@ class JogoCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-          Column(
+          Row(
             children: [
+                IconButton(
+                icon: const Icon(
+                  Icons.edit,
+                  color: Colors.yellow,
+                  size: 25,
+                ),
+                onPressed: onEdit,
+              ),
               IconButton(
                 icon: const Icon(
                   Icons.delete,
                   color: Colors.red,
-                  size: 30,
+                  size: 25,
                 ),
                 onPressed: onDisable,
-              ),
-              const SizedBox(height: 5),
-              IconButton(
-                icon: const Icon(
-                  Icons.edit,
-                  color: Colors.green,
-                  size: 30,
-                ),
-                onPressed: onEdit,
               ),
             ],
           ),

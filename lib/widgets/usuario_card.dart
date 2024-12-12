@@ -18,17 +18,17 @@ class UsuarioCard extends StatelessWidget {
   // Função para gerar uma cor aleatória que combina com verde
   Color _getRandomGreenColor() {
     final List<Color> greenColors = [
-      Colors.green,                  // Verde original
-      const Color.fromARGB(255, 78, 67, 199),         // Tom claro de verde
-      const Color.fromARGB(255, 194, 122, 14),         // Tom claro de verde
-      const Color.fromARGB(255, 228, 41, 212),         // Tom moderado de verde
-      const Color.fromARGB(255, 87, 183, 192),         // Tom escuro de verde
-      Colors.green.shade700,         // Tom escuro de verde
-      Colors.teal,                   // Verde-azulado
-      Colors.lightGreen,             // Verde claro
-      Colors.lime,                   // Amarelo esverdeado
+      Colors.green, // Verde original
+      const Color.fromARGB(255, 78, 67, 199), // Tom claro de verde
+      const Color.fromARGB(255, 194, 122, 14), // Tom claro de verde
+      const Color.fromARGB(255, 228, 41, 212), // Tom moderado de verde
+      const Color.fromARGB(255, 87, 183, 192), // Tom escuro de verde
+      Colors.green.shade700, // Tom escuro de verde
+      Colors.teal, // Verde-azulado
+      Colors.lightGreen, // Verde claro
+      Colors.lime, // Amarelo esverdeado
     ];
-    
+
     final random = Random();
     return greenColors[random.nextInt(greenColors.length)];
   }
@@ -42,15 +42,11 @@ class UsuarioCard extends StatelessWidget {
     Color borderColor = _getRandomGreenColor();
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      margin: const EdgeInsets.symmetric(vertical: 6),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.black87,
+        color: const Color.fromARGB(221, 28, 27, 27),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: const Color.fromARGB(255, 164, 164, 164), // Cor da borda do card
-          width: 2,
-        ),
       ),
       child: Row(
         children: [
@@ -60,8 +56,10 @@ class UsuarioCard extends StatelessWidget {
             height: 50,
             decoration: BoxDecoration(
               color: borderColor.withOpacity(0.1), // Fundo mais suave
-              borderRadius: BorderRadius.circular(25), // Deixa o círculo redondo
-              border: Border.all(color: borderColor, width: 2), // Borda colorida
+              borderRadius:
+                  BorderRadius.circular(25), // Deixa o círculo redondo
+              border:
+                  Border.all(color: borderColor, width: 2), // Borda colorida
             ),
             child: Center(
               child: Text(
@@ -94,22 +92,22 @@ class UsuarioCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-          Column(
+          Row(
             children: [
+              IconButton(
+                icon: const Icon(
+                  Icons.edit,
+                  color: Colors.yellow,
+                ),
+                onPressed: onEdit,
+              ),
+              const SizedBox(height: 5),
               IconButton(
                 icon: const Icon(
                   Icons.delete,
                   color: Colors.red,
                 ),
                 onPressed: onDisable,
-              ),
-              const SizedBox(height: 5),
-              IconButton(
-                icon: const Icon(
-                  Icons.edit,
-                  color: Colors.green,
-                ),
-                onPressed: onEdit,
               ),
             ],
           ),
