@@ -5,6 +5,7 @@ import 'package:flutter_sigma/providers/anuncio_providers.dart';
 import 'package:flutter_sigma/providers/produto_providers.dart';
 import 'package:flutter_sigma/providers/usuario_providers.dart';
 import 'package:flutter_sigma/providers/jogo_providers.dart';
+import 'package:flutter_sigma/services/firebase_auth_service.dart';
 import 'package:flutter_sigma/api/api_cliente.dart';
 import 'package:flutter_sigma/repositories/jogo_repositories.dart';
 import 'package:flutter_sigma/repositories/produto_repositories.dart';
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
 
     return MultiProvider(
       providers: [
+        // Providers existentes
         ChangeNotifierProvider(
           create: (_) => ProductProvider(ProductRepository(apiClient)),
         ),
@@ -43,11 +45,16 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => JogoProvider(JogoRepository(apiClient)),
         ),
+        // Novo Provider para FirebaseAuthService
+        Provider<FirebaseAuthService>(
+          create: (_) => FirebaseAuthService(),
+        ),
       ],
       child: MaterialApp(
         title: 'Flutter Sigma',
         theme: AppTheme.buildTheme(),
-        initialRoute: '/',
+        // Determinando a rota inicial baseada na autenticação
+        initialRoute: FirebaseAuthService().currentUser == null ? '/login' : '/home',
         routes: AppRoutes.buildRoutes(),
         debugShowCheckedModeBanner: false,
       ),

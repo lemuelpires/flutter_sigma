@@ -10,16 +10,19 @@ import 'package:flutter_sigma/screens/auth/register_screen.dart';
 import 'package:flutter_sigma/screens/cadastroAnuncio/cadastro_anuncio_screen.dart';
 import 'package:flutter_sigma/screens/cadastroJogo/cadastro_jogo_screen.dart';
 import 'package:flutter_sigma/screens/cadastroProduto/cadastro_produto_screen.dart';
+import 'package:flutter_sigma/screens/contato/contato_screen.dart';
 import 'package:flutter_sigma/screens/edicaoAnuncio/edicao_anuncio_screen.dart';
 import 'package:flutter_sigma/screens/edicaoJogo/edicao_jogo_screen.dart';
 import 'package:flutter_sigma/screens/edicaoProduto/edicao_produto_screen.dart';
 import 'package:flutter_sigma/screens/edicaoUsuario/edicao_usuario_screen.dart'; // Importando a tela de edição de usuário
+import 'package:flutter_sigma/screens/emConstrucao/em_construcao_screen.dart';
 import 'package:flutter_sigma/screens/home/home_listagem_screen.dart';
 import 'package:flutter_sigma/screens/home/home_screen.dart';
 import 'package:flutter_sigma/screens/listagemProduto/listagem_produto_admin.dart';
 import 'package:flutter_sigma/screens/listagemUsuario/listagem_usuario_admin.dart';
 import 'package:flutter_sigma/screens/listagemAnuncio/listagem_anuncio_admin.dart';
 import 'package:flutter_sigma/screens/produto/produto_detail_screen.dart';
+import 'package:flutter_sigma/screens/sobre/sobre_screen.dart';
 import 'package:flutter_sigma/screens/splash/splash.dart';
 
 class AppRoutes {
@@ -38,6 +41,9 @@ class AppRoutes {
       '/cadastro_produto': (context) => CadastroProduto(),
       '/cadastro_anuncio': (context) => CadastroAnuncio(),
       '/cadastro_jogo': (context) => CadastroJogo(),
+      '/contatos': (context) => ContatosPage(),
+      '/em_construcao': (context) => EmConstrucaoPage(),
+      '/sobre': (context) => SobreNosPage(),
       '/produto': (context) => ProdutoPage(productId: 0,),
       '/editar_anuncio': (context) {
         // Obtendo os argumentos passados para a rota
