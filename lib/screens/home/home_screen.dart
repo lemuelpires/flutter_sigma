@@ -164,7 +164,7 @@ class CategoryWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Icon(Icons.category, size: 40, color: Colors.white),
+        Icon(Icons.category_sharp, size: 40, color: Colors.white),
         const SizedBox(height: 5),
         Text(
           title,
