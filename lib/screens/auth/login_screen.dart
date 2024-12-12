@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_sigma/screens/auth/forgot_password.dart';
 import 'package:flutter_sigma/screens/auth/register_screen.dart';
 import 'package:flutter_sigma/screens/home/home_screen.dart';
@@ -15,42 +16,66 @@ class LoginScreen extends StatefulWidget {
 class LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final FirebaseAuthService _authService =
-      FirebaseAuthService(); // Usa o serviço
+  final FirebaseAuthService _authService = FirebaseAuthService();
   bool _obscureText = true;
 
+  String sanitizeEmail(String input) {
+    return input.trim().replaceAll(RegExp(r'[^\w@.]'), '');
+  }
+
+  String sanitizePassword(String input) {
+    return input.trim();
+  }
+
+  bool validateEmail(String email) {
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    return emailRegex.hasMatch(email);
+  }
+
+  bool validatePassword(String password) {
+    return password.length >= 6;
+  }
+
   Future<void> _login() async {
-  if (_emailController.text.trim().isEmpty ||
-      _passwordController.text.trim().isEmpty) {
+    String email = sanitizeEmail(_emailController.text);
+    String password = sanitizePassword(_passwordController.text);
+
+    if (email.isEmpty || password.isEmpty) {
+      _showSnackBar('Por favor, preencha todos os campos.');
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      _showSnackBar('Por favor, insira um email válido.');
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      _showSnackBar('A senha deve ter pelo menos 6 caracteres.');
+      return;
+    }
+
+    try {
+      User? user = await _authService.login(email, password);
+
+      if (user != null && mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        _showSnackBar('Email ou senha incorretos.');
+      }
+    }
+  }
+
+  void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Por favor, preencha todos os campos.')),
+      SnackBar(content: Text(message)),
     );
-    return;
   }
-
-  try {
-    User? user = await _authService.login(
-      _emailController.text,
-      _passwordController.text,
-    );
-
-    if (user != null && mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
-    }
-  } catch (e) {
-    if (mounted) {
-      String errorMessage = 'Email ou senha incorretos.';
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage)),
-      );
-    }
-  }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -77,85 +102,41 @@ class LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 40),
-                  TextField(
+                  _buildTextField(
                     controller: _emailController,
-                    decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.email, color: Colors.white),
-                      labelText: 'Usuário',
-                      labelStyle: const TextStyle(color: Colors.white),
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.2),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                    style: const TextStyle(color: Colors.white),
+                    labelText: 'Usuário',
+                    icon: Icons.email,
                     keyboardType: TextInputType.emailAddress,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.deny(RegExp(r'[<>]')),
+                    ],
                   ),
                   const SizedBox(height: 20),
-                  TextField(
+                  _buildTextField(
                     controller: _passwordController,
+                    labelText: 'Senha',
+                    icon: Icons.lock,
                     obscureText: _obscureText,
-                    decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.lock, color: Colors.white),
-                      labelText: 'Senha',
-                      labelStyle: const TextStyle(color: Colors.white),
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.2),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide.none,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscureText ? Icons.visibility : Icons.visibility_off,
+                        color: Colors.white,
                       ),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscureText
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscureText = !_obscureText;
-                          });
-                        },
-                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscureText = !_obscureText;
+                        });
+                      },
                     ),
-                    style: const TextStyle(color: Colors.white),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.deny(RegExp(r'[<>]')),
+                    ],
                   ),
                   const SizedBox(height: 30),
-                  SizedBox(
-                    width: double.infinity,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF7FFF00), Color(0xFF66CC00)],
-                        ),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: ElevatedButton(
-                        onPressed: _login,
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        child: const Text(
-                          'Login',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  _buildLoginButton(),
                   const SizedBox(height: 20),
-                  TextButton(
+                  _buildTextButton(
+                    text: 'Esqueceu a senha?',
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -163,12 +144,9 @@ class LoginScreenState extends State<LoginScreen> {
                             builder: (context) => const ForgotPasswordScreen()),
                       );
                     },
-                    child: const Text(
-                      'Esqueceu a senha?',
-                      style: TextStyle(color: Colors.white70),
-                    ),
                   ),
-                  TextButton(
+                  _buildTextButton(
+                    text: 'Ainda não tem usuário? Cadastre-se',
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -176,16 +154,88 @@ class LoginScreenState extends State<LoginScreen> {
                             builder: (context) => const RegistroScreen()),
                       );
                     },
-                    child: const Text(
-                      'Ainda não tem usuário? Cadastre-se',
-                      style: TextStyle(color: Colors.white70),
-                    ),
                   ),
                 ],
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String labelText,
+    required IconData icon,
+    bool obscureText = false,
+    TextInputType keyboardType = TextInputType.text,
+    Widget? suffixIcon,
+    List<TextInputFormatter>? inputFormatters,
+  }) {
+    return TextField(
+      controller: controller,
+      obscureText: obscureText,
+      keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
+      decoration: InputDecoration(
+        prefixIcon: Icon(icon, color: Colors.white),
+        labelText: labelText,
+        labelStyle: const TextStyle(color: Colors.white),
+        filled: true,
+        fillColor: Colors.white.withOpacity(0.2),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: BorderSide.none,
+        ),
+        suffixIcon: suffixIcon,
+      ),
+      style: const TextStyle(color: Colors.white),
+    );
+  }
+
+  Widget _buildLoginButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF7FFF00), Color(0xFF66CC00)],
+          ),
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: ElevatedButton(
+          onPressed: _login,
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+          ),
+          child: const Text(
+            'Login',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextButton({
+    required String text,
+    required VoidCallback onPressed,
+  }) {
+    return TextButton(
+      onPressed: onPressed,
+      child: Text(
+        text,
+        style: const TextStyle(color: Colors.white70),
       ),
     );
   }
