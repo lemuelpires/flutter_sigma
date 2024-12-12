@@ -18,6 +18,8 @@ import 'package:flutter_sigma/screens/edicaoUsuario/edicao_usuario_screen.dart';
 import 'package:flutter_sigma/screens/emConstrucao/em_construcao_screen.dart';
 import 'package:flutter_sigma/screens/home/home_listagem_screen.dart';
 import 'package:flutter_sigma/screens/home/home_screen.dart';
+import 'package:flutter_sigma/screens/lgpd/policy_privacity_screen.dart';
+import 'package:flutter_sigma/screens/lgpd/terms_conditions_screen.dart';
 import 'package:flutter_sigma/screens/listagemProduto/listagem_produto_admin.dart';
 import 'package:flutter_sigma/screens/listagemUsuario/listagem_usuario_admin.dart';
 import 'package:flutter_sigma/screens/listagemAnuncio/listagem_anuncio_admin.dart';
@@ -44,6 +46,8 @@ class AppRoutes {
       '/contatos': (context) => ContatosPage(),
       '/em_construcao': (context) => EmConstrucaoPage(),
       '/sobre': (context) => SobreNosPage(),
+      '/termos_condicoes': (context) => TermsConditionsScreen(),
+      '/politica_privacidade': (context) => PrivacyPolicyScreen(),
       '/produto': (context) => ProdutoPage(productId: 0,),
       '/editar_anuncio': (context) {
         // Obtendo os argumentos passados para a rota
