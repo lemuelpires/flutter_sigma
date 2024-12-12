@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sigma/providers/produto_providers.dart';
+import 'package:flutter_sigma/widgets/footer.dart';
 import 'package:flutter_sigma/widgets/header.dart';
 import 'package:flutter_sigma/widgets/produto_listagem_card.dart';
 import 'package:provider/provider.dart';
@@ -22,7 +23,9 @@ class HomeListagemScreenState extends State<HomeListagemScreen> {
     _searchQuery = widget.searchQuery;
     Future.delayed(Duration.zero, () {
       if (mounted) {
-        Provider.of<ProductProvider>(context, listen: false).fetchProducts().then((_) {
+        Provider.of<ProductProvider>(context, listen: false)
+            .fetchProducts()
+            .then((_) {
           if (_searchQuery.isNotEmpty) {
             context.read<ProductProvider>().filterProducts(_searchQuery);
           }
@@ -55,14 +58,18 @@ class HomeListagemScreenState extends State<HomeListagemScreen> {
               ListTile(
                 title: const Text('Maior Valor'),
                 onTap: () {
-                  context.read<ProductProvider>().sortProductsByPrice(descending: true);
+                  context
+                      .read<ProductProvider>()
+                      .sortProductsByPrice(descending: true);
                   Navigator.pop(context);
                 },
               ),
               ListTile(
                 title: const Text('Menor Valor'),
                 onTap: () {
-                  context.read<ProductProvider>().sortProductsByPrice(descending: false);
+                  context
+                      .read<ProductProvider>()
+                      .sortProductsByPrice(descending: false);
                   Navigator.pop(context);
                 },
               ),
@@ -123,15 +130,18 @@ class HomeListagemScreenState extends State<HomeListagemScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: provider.filteredProducts.length,
                       itemBuilder: (context, index) {
-                        return ProdutoListagemCard(
-                          product: provider.filteredProducts[index],
-                          onDetails: () {
-                            Navigator.pushNamed(
-                              context,
-                              '/produto',
-                              arguments: provider.filteredProducts[index].idProduto, // Certifique-se que `idProduto` é String
-                            );
-                          },
+                        return AnimatedItem(
+                          child: ProdutoListagemCard(
+                            product: provider.filteredProducts[index],
+                            onDetails: () {
+                              Navigator.pushNamed(
+                                context,
+                                '/produto',
+                                arguments: provider.filteredProducts[index]
+                                    .idProduto, // Certifique-se que `idProduto` é String
+                              );
+                            },
+                          ),
                         );
                       },
                     );
@@ -141,6 +151,33 @@ class HomeListagemScreenState extends State<HomeListagemScreen> {
             ],
           ),
         ],
+      ),
+      bottomNavigationBar: const Footer(),
+    );
+  }
+}
+
+class AnimatedItem extends StatefulWidget {
+  final Widget child;
+
+  const AnimatedItem({super.key, required this.child});
+
+  @override
+  AnimatedItemState createState() => AnimatedItemState();
+}
+
+class AnimatedItemState extends State<AnimatedItem> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        transform: _isHovered ? Matrix4.translationValues(0, -10, 0) : Matrix4.identity(),
+        child: widget.child,
       ),
     );
   }
