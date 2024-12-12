@@ -28,12 +28,18 @@ class EditarJogoState extends State<EditarJogo> {
   void initState() {
     super.initState();
     _nomeJogoController = TextEditingController(text: widget.jogo.nomeJogo);
-    _categoriaJogoController = TextEditingController(text: widget.jogo.categoriaJogo);
-    _processadorRequeridoController = TextEditingController(text: widget.jogo.processadorRequerido);
-    _memoriaRAMRequeridaController = TextEditingController(text: widget.jogo.memoriaRAMRequerida);
-    _placaVideoRequeridaController = TextEditingController(text: widget.jogo.placaVideoRequerida);
-    _espacoDiscoRequeridoController = TextEditingController(text: widget.jogo.espacoDiscoRequerido);
-    _referenciaImagemJogoController = TextEditingController(text: widget.jogo.referenciaImagemJogo);
+    _categoriaJogoController =
+        TextEditingController(text: widget.jogo.categoriaJogo);
+    _processadorRequeridoController =
+        TextEditingController(text: widget.jogo.processadorRequerido);
+    _memoriaRAMRequeridaController =
+        TextEditingController(text: widget.jogo.memoriaRAMRequerida);
+    _placaVideoRequeridaController =
+        TextEditingController(text: widget.jogo.placaVideoRequerida);
+    _espacoDiscoRequeridoController =
+        TextEditingController(text: widget.jogo.espacoDiscoRequerido);
+    _referenciaImagemJogoController =
+        TextEditingController(text: widget.jogo.referenciaImagemJogo);
     ativo = widget.jogo.ativo;
   }
 
@@ -62,8 +68,14 @@ class EditarJogoState extends State<EditarJogo> {
         ativo: ativo,
       );
 
-      await Provider.of<JogoProvider>(context, listen: false).updateJogo(updatedJogo);
-      Navigator.pop(context, updatedJogo);
+      await Provider.of<JogoProvider>(context, listen: false)
+          .updateJogo(updatedJogo);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Jogo atualizado com sucesso!')),
+        );
+        Navigator.pop(context, updatedJogo);
+      }
     }
   }
 
@@ -83,36 +95,51 @@ class EditarJogoState extends State<EditarJogo> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _buildTextField(_nomeJogoController, 'Nome do Jogo', icon: Icons.gamepad),
+                _buildTextField(_nomeJogoController, 'Nome do Jogo',
+                    icon: Icons.gamepad),
                 const SizedBox(height: 16),
-                _buildTextField(_categoriaJogoController, 'Categoria do Jogo', icon: Icons.category),
+                _buildTextField(_categoriaJogoController, 'Categoria do Jogo',
+                    icon: Icons.category),
                 const SizedBox(height: 16),
-                _buildTextField(_processadorRequeridoController, 'Processador Requerido', icon: Icons.computer),
+                _buildTextField(
+                    _processadorRequeridoController, 'Processador Requerido',
+                    icon: Icons.computer),
                 const SizedBox(height: 16),
-                _buildTextField(_memoriaRAMRequeridaController, 'Memória RAM Requerida', icon: Icons.memory),
+                _buildTextField(
+                    _memoriaRAMRequeridaController, 'Memória RAM Requerida',
+                    icon: Icons.memory),
                 const SizedBox(height: 16),
-                _buildTextField(_placaVideoRequeridaController, 'Placa de Vídeo Requerida', icon: Icons.videogame_asset),
+                _buildTextField(
+                    _placaVideoRequeridaController, 'Placa de Vídeo Requerida',
+                    icon: Icons.videogame_asset),
                 const SizedBox(height: 16),
-                _buildTextField(_espacoDiscoRequeridoController, 'Espaço em Disco Requerido', icon: Icons.storage),
+                _buildTextField(_espacoDiscoRequeridoController,
+                    'Espaço em Disco Requerido',
+                    icon: Icons.storage),
                 const SizedBox(height: 16),
-                _buildTextField(_referenciaImagemJogoController, 'Referência da Imagem', icon: Icons.image),
+                _buildTextField(
+                    _referenciaImagemJogoController, 'Referência da Imagem',
+                    icon: Icons.image),
                 const SizedBox(height: 16),
                 SwitchListTile(
-                  title: const Text('Ativo', style: TextStyle(color: Colors.white)),
+                  title: const Text('Ativo',
+                      style: TextStyle(color: Colors.white)),
                   value: ativo,
                   onChanged: (value) {
                     setState(() {
                       ativo = value;
                     });
                   },
-                  activeColor: Colors.green,
+                  activeColor: const Color(0xFF66CC00),
                   inactiveThumbColor: Colors.grey,
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () => _saveChanges(context),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                  child: const Text('Salvar', style: TextStyle(color: Colors.white)),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF66CC00)),
+                  child: const Text('Salvar',
+                      style: TextStyle(color: Color.fromARGB(255, 0, 0, 0))),
                 ),
               ],
             ),

@@ -47,7 +47,8 @@ class EditarUsuarioState extends State<EditarUsuario> {
   void initState() {
     super.initState();
     _nomeController = TextEditingController(text: widget.usuario.nome);
-    _sobrenomeController = TextEditingController(text: widget.usuario.sobrenome);
+    _sobrenomeController =
+        TextEditingController(text: widget.usuario.sobrenome);
     _telefoneController = TextEditingController(text: widget.usuario.telefone);
     _emailController = TextEditingController(text: widget.usuario.email);
     _senhaController = TextEditingController(text: widget.usuario.senha);
@@ -79,14 +80,21 @@ class EditarUsuarioState extends State<EditarUsuario> {
         email: _emailController.text,
         senha: _senhaController.text,
         genero: _generoSelecionado,
-        dataNascimento: DateFormat('dd/MM/yyyy').parse(_dataNascimentoController.text),
+        dataNascimento:
+            DateFormat('dd/MM/yyyy').parse(_dataNascimentoController.text),
         cpf: _cpfController.text,
         ativo: ativo,
         data: DateTime.now(),
       );
 
-      await Provider.of<UsuarioProvider>(context, listen: false).updateUsuario(updatedUsuario);
-      Navigator.pop(context, updatedUsuario);
+      await Provider.of<UsuarioProvider>(context, listen: false)
+          .updateUsuario(updatedUsuario);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Usuario atualizado com sucesso!')),
+        );
+        Navigator.pop(context, updatedUsuario);
+      }
     }
   }
 
@@ -94,7 +102,8 @@ class EditarUsuarioState extends State<EditarUsuario> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Editar Usuário', style: TextStyle(color: Colors.white)),
+        title:
+            const Text('Editar Usuário', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black,
       ),
       backgroundColor: Colors.black,
@@ -110,34 +119,43 @@ class EditarUsuarioState extends State<EditarUsuario> {
                 const SizedBox(height: 16),
                 _buildTextField(_nomeController, 'Nome', icon: Icons.person),
                 const SizedBox(height: 16),
-                _buildTextField(_sobrenomeController, 'Sobrenome', icon: Icons.person_outline),
+                _buildTextField(_sobrenomeController, 'Sobrenome',
+                    icon: Icons.person_outline),
                 const SizedBox(height: 16),
-                _buildTextField(_senhaController, 'Senha', icon: Icons.lock, obscureText: true),
+                _buildTextField(_senhaController, 'Senha',
+                    icon: Icons.lock, obscureText: true),
                 const SizedBox(height: 16),
-                _buildTextField(_dataNascimentoController, 'Data de Nascimento', icon: Icons.calendar_today, inputFormatters: [_dataFormatter]),
+                _buildTextField(_dataNascimentoController, 'Data de Nascimento',
+                    icon: Icons.calendar_today,
+                    inputFormatters: [_dataFormatter]),
                 const SizedBox(height: 16),
-                _buildTextField(_telefoneController, 'Telefone', icon: Icons.phone, inputFormatters: [_telefoneFormatter]),
+                _buildTextField(_telefoneController, 'Telefone',
+                    icon: Icons.phone, inputFormatters: [_telefoneFormatter]),
                 const SizedBox(height: 16),
-                _buildTextField(_cpfController, 'CPF', icon: Icons.account_box, inputFormatters: [_cpfFormatter]),
+                _buildTextField(_cpfController, 'CPF',
+                    icon: Icons.account_box, inputFormatters: [_cpfFormatter]),
                 const SizedBox(height: 16),
                 _buildGeneroRadio(),
                 const SizedBox(height: 16),
                 SwitchListTile(
-                  title: const Text('Ativo', style: TextStyle(color: Colors.white)),
+                  title: const Text('Ativo',
+                      style: TextStyle(color: Colors.white)),
                   value: ativo,
                   onChanged: (value) {
                     setState(() {
                       ativo = value;
                     });
                   },
-                  activeColor: Colors.green,
+                  activeColor: const Color(0xFF66CC00),
                   inactiveThumbColor: Colors.grey,
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _atualizarUsuario,
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                  child: const Text('Salvar', style: TextStyle(color: Colors.white)),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF66CC00)),
+                  child: const Text('Salvar',
+                      style: TextStyle(color: Color.fromARGB(255, 0, 0, 0))),
                 ),
               ],
             ),
@@ -153,7 +171,8 @@ class EditarUsuarioState extends State<EditarUsuario> {
       children: [
         const Text(
           'Gênero',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
+          style: TextStyle(
+              fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
         ),
         Row(
           children: [

@@ -10,10 +10,10 @@ class EdicaoProdutoScreen extends StatefulWidget {
   const EdicaoProdutoScreen({super.key, required this.product});
 
   @override
-  _EdicaoProdutoScreenState createState() => _EdicaoProdutoScreenState();
+  EdicaoProdutoScreenState createState() => EdicaoProdutoScreenState();
 }
 
-class _EdicaoProdutoScreenState extends State<EdicaoProdutoScreen> {
+class EdicaoProdutoScreenState extends State<EdicaoProdutoScreen> {
   late TextEditingController _nomeProdutoController;
   late TextEditingController _descricaoProdutoController;
   late TextEditingController _precoController;
@@ -22,6 +22,7 @@ class _EdicaoProdutoScreenState extends State<EdicaoProdutoScreen> {
   late TextEditingController _marcaController;
   late TextEditingController _imagemProdutoController;
   late TextEditingController _fichaTecnicaController;
+  late bool ativo;
 
   @override
   void initState() {
@@ -34,6 +35,7 @@ class _EdicaoProdutoScreenState extends State<EdicaoProdutoScreen> {
     _marcaController = TextEditingController(text: widget.product.marca);
     _imagemProdutoController = TextEditingController(text: widget.product.imagemProduto);
     _fichaTecnicaController = TextEditingController(text: widget.product.fichaTecnica);
+    ativo = widget.product.ativo;
   }
 
   @override
@@ -59,10 +61,16 @@ class _EdicaoProdutoScreenState extends State<EdicaoProdutoScreen> {
       marca: _marcaController.text,
       imagemProduto: _imagemProdutoController.text,
       fichaTecnica: _fichaTecnicaController.text,
+      ativo: ativo,
     );
 
-    await Provider.of<ProductProvider>(context, listen: false).updateProduct(updatedProduct);
-    Navigator.pop(context, updatedProduct);
+     await Provider.of<ProductProvider>(context, listen: false).updateProduct(updatedProduct);
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Produto atualizado com sucesso!')),
+      );
+      Navigator.pop(context, updatedProduct);
+    }
   }
 
   @override
@@ -98,6 +106,18 @@ class _EdicaoProdutoScreenState extends State<EdicaoProdutoScreen> {
                 const SizedBox(height: 16),
                 _buildTextField(_fichaTecnicaController, 'Ficha Técnica', icon: Icons.description),
                 const SizedBox(height: 24),
+                SwitchListTile(
+                  title: const Text('Ativo', style: TextStyle(color: Colors.white)),
+                  value: ativo,
+                  onChanged: (value) {
+                    setState(() {
+                      ativo = value;
+                    });
+                  },
+                  activeColor: Colors.green,
+                  inactiveThumbColor: Colors.grey,
+                ),
+                const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _atualizarProduto,
                   style: ElevatedButton.styleFrom(

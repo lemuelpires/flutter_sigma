@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_sigma/api/api_cliente.dart';
 import 'package:flutter_sigma/repositories/produto_repositories.dart';
 import 'package:flutter_sigma/models/produto_model.dart';
+import 'package:flutter_sigma/providers/produto_providers.dart';
+import 'package:provider/provider.dart';
 
 class CadastroProduto extends StatefulWidget {
   const CadastroProduto({super.key});
@@ -43,31 +45,39 @@ class CadastroProdutoState extends State<CadastroProduto> {
       );
 
       try {
-        final response = await _productRepository.addProduct(novoProduto);
-        if (response.success) {
-          scaffoldMessenger.showSnackBar(
-            SnackBar(
-              content: const Text('Produto cadastrado com sucesso!'),
-              backgroundColor: Colors.green,
-            ),
-          );
-          navigator.pop();
-        } else {
-          scaffoldMessenger.showSnackBar(
-            SnackBar(
-              content: Text('Erro ao cadastrar produto: ${response.message}'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      } catch (e) {
-        scaffoldMessenger.showSnackBar(
-          SnackBar(
-            content: Text('Erro ao cadastrar produto: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+  final response = await _productRepository.addProduct(novoProduto);
+  if (response.success) {
+    if (context.mounted) {
+      scaffoldMessenger.showSnackBar(
+        const SnackBar(
+          content: Text('Produto cadastrado com sucesso!'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+      // Atualiza a listagem de produtos
+      await Provider.of<ProductProvider>(context, listen: false).fetchProducts();
+      navigator.pop();
+    }
+  } else {
+    if (context.mounted) {
+      scaffoldMessenger.showSnackBar(
+        SnackBar(
+          content: Text('Erro ao cadastrar produto: ${response.message}'),
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }
+  }
+} catch (e) {
+  if (context.mounted) {
+    scaffoldMessenger.showSnackBar(
+      SnackBar(
+        content: Text('Erro ao cadastrar produto: $e'),
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+}
     }
   }
 
@@ -119,8 +129,7 @@ class CadastroProdutoState extends State<CadastroProduto> {
       ElevatedButton(
         onPressed: () => _cadastrarProduto(context),
         style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          backgroundColor: Colors.green,
+          padding: const EdgeInsets.symmetric(vertical: 16), backgroundColor: const Color(0xFF66CC00),
         ),
         child: const Text('Cadastrar Produto', style: TextStyle(fontSize: 18)),
       ),

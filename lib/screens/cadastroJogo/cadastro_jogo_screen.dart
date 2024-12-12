@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_sigma/api/api_cliente.dart';
 import 'package:flutter_sigma/models/jogo_model.dart';
 import 'package:flutter_sigma/repositories/jogo_repositories.dart';
+import 'package:flutter_sigma/providers/jogo_providers.dart';
+import 'package:provider/provider.dart';
 
 class CadastroJogo extends StatefulWidget {
   const CadastroJogo({super.key});
@@ -14,12 +16,18 @@ class CadastroJogo extends StatefulWidget {
 class CadastroJogoState extends State<CadastroJogo> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nomeJogoController = TextEditingController();
-  final TextEditingController _categoriaJogoController = TextEditingController();
-  final TextEditingController _processadorRequeridoController = TextEditingController();
-  final TextEditingController _memoriaRAMRequeridaController = TextEditingController();
-  final TextEditingController _placaVideoRequeridaController = TextEditingController();
-  final TextEditingController _espacoDiscoRequeridoController = TextEditingController();
-  final TextEditingController _referenciaImagemJogoController = TextEditingController();
+  final TextEditingController _categoriaJogoController =
+      TextEditingController();
+  final TextEditingController _processadorRequeridoController =
+      TextEditingController();
+  final TextEditingController _memoriaRAMRequeridaController =
+      TextEditingController();
+  final TextEditingController _placaVideoRequeridaController =
+      TextEditingController();
+  final TextEditingController _espacoDiscoRequeridoController =
+      TextEditingController();
+  final TextEditingController _referenciaImagemJogoController =
+      TextEditingController();
   final JogoRepository _jogoRepository = JogoRepository(ApiClient());
 
   Future<void> _cadastrarJogo(BuildContext context) async {
@@ -43,17 +51,22 @@ class CadastroJogoState extends State<CadastroJogo> {
         final response = await _jogoRepository.addJogo(novoJogo);
         if (response.success) {
           scaffoldMessenger.showSnackBar(
-            SnackBar(
-              content: const Text('Jogo cadastrado com sucesso!'),
-              backgroundColor: Colors.green,
+            const SnackBar(
+              content: Text('Jogo cadastrado com sucesso!'),
+              duration: Duration(seconds: 3),
             ),
           );
-          navigator.pop();
+          // Atualiza a listagem de jogos
+          if (context.mounted) {
+            await Provider.of<JogoProvider>(context, listen: false)
+                .fetchJogos();
+            navigator.pop();
+          }
         } else {
           scaffoldMessenger.showSnackBar(
             SnackBar(
               content: Text('Erro ao cadastrar jogo: ${response.message}'),
-              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 3),
             ),
           );
         }
@@ -61,7 +74,7 @@ class CadastroJogoState extends State<CadastroJogo> {
         scaffoldMessenger.showSnackBar(
           SnackBar(
             content: Text('Erro ao cadastrar jogo: $e'),
-            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
           ),
         );
       }
@@ -72,7 +85,8 @@ class CadastroJogoState extends State<CadastroJogo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cadastro de Jogo', style: TextStyle(color: Colors.white)),
+        title: const Text('Cadastro de Jogo',
+            style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black,
       ),
       backgroundColor: Colors.black,
@@ -93,25 +107,34 @@ class CadastroJogoState extends State<CadastroJogo> {
 
   List<Widget> _buildFormFields() {
     return [
-      _buildTextField(_nomeJogoController, 'Nome do Jogo', icon: Icons.videogame_asset),
+      _buildTextField(_nomeJogoController, 'Nome do Jogo',
+          icon: Icons.videogame_asset),
       const SizedBox(height: 16),
-      _buildTextField(_categoriaJogoController, 'Categoria do Jogo', icon: Icons.category),
+      _buildTextField(_categoriaJogoController, 'Categoria do Jogo',
+          icon: Icons.category),
       const SizedBox(height: 16),
-      _buildTextField(_processadorRequeridoController, 'Processador Requerido', icon: Icons.memory),
+      _buildTextField(_processadorRequeridoController, 'Processador Requerido',
+          icon: Icons.memory),
       const SizedBox(height: 16),
-      _buildTextField(_memoriaRAMRequeridaController, 'Memória RAM Requerida', icon: Icons.memory),
+      _buildTextField(_memoriaRAMRequeridaController, 'Memória RAM Requerida',
+          icon: Icons.memory),
       const SizedBox(height: 16),
-      _buildTextField(_placaVideoRequeridaController, 'Placa de Vídeo Requerida', icon: Icons.videocam),
+      _buildTextField(
+          _placaVideoRequeridaController, 'Placa de Vídeo Requerida',
+          icon: Icons.videocam),
       const SizedBox(height: 16),
-      _buildTextField(_espacoDiscoRequeridoController, 'Espaço em Disco Requerido', icon: Icons.storage),
+      _buildTextField(
+          _espacoDiscoRequeridoController, 'Espaço em Disco Requerido',
+          icon: Icons.storage),
       const SizedBox(height: 16),
-      _buildTextField(_referenciaImagemJogoController, 'URL da Imagem do Jogo', icon: Icons.image),
+      _buildTextField(_referenciaImagemJogoController, 'URL da Imagem do Jogo',
+          icon: Icons.image),
       const SizedBox(height: 32),
       ElevatedButton(
         onPressed: () => _cadastrarJogo(context),
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 16),
-          backgroundColor: Colors.green,
+          backgroundColor: const Color(0xFF66CC00),
         ),
         child: const Text('Cadastrar Jogo', style: TextStyle(fontSize: 18)),
       ),
