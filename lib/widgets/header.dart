@@ -44,7 +44,7 @@ class CustomHeader extends StatelessWidget {
 
     return SafeArea(
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical:14),
         decoration: BoxDecoration(
           color: Colors.black, // Cor de fundo mais forte
           boxShadow: [
@@ -61,7 +61,12 @@ class CustomHeader extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Image.asset('assets/logo.png', width: 40),
+                  GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/home');
+                  },
+                  child: Image.asset('assets/logo.png', width: 40),
+                ),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -99,9 +104,11 @@ class CustomHeader extends StatelessWidget {
                 user != null
                     ? PopupMenuButton<String>(
                         icon: Container(
+                          width: 35,
+                          height: 35,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: randomBorderColor, width: 2.0),
+                            border: Border.all(color: randomBorderColor, width: 2.0), 
                           ),
                           child: CircleAvatar(
                             backgroundColor: Colors.transparent,
@@ -109,7 +116,7 @@ class CustomHeader extends StatelessWidget {
                               user.displayName != null && user.displayName!.isNotEmpty
                                   ? user.displayName![0].toUpperCase()
                                   : user.email![0].toUpperCase(),
-                              style: const TextStyle(color: Colors.white),
+                              style: const TextStyle(color: Colors.white, fontSize: 20),
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -131,9 +138,17 @@ class CustomHeader extends StatelessWidget {
                               value: '/ambiente_administrador',
                               child: Text('Área Administrativa', style: TextStyle(color: Colors.black)),
                             ),
-                            PopupMenuItem(
-                              value: 'email',
-                              child: Text('E-mail: ${user.email}', style: TextStyle(color: Colors.black)),
+                            PopupMenuItem( 
+                              value: '/em_construcao',
+                              child: Text('Meu Perfil:\n ${user.email}', style: TextStyle(color: Colors.black)),
+                            ),
+                              PopupMenuItem( 
+                              value: '/sobre',
+                              child: Text('Sobre Nós', style: TextStyle(color: Colors.black)),
+                            ),
+                                PopupMenuItem( 
+                              value: '/contatos',
+                              child: Text('Contatos', style: TextStyle(color: Colors.black)),
                             ),
                             const PopupMenuItem(
                               value: 'logout',
