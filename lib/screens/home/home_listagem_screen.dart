@@ -136,7 +136,7 @@ class HomeListagemScreenState extends State<HomeListagemScreen> {
                             onDetails: () {
                               Navigator.pushNamed(
                                 context,
-                                '/produto',
+                                '/em_construcao',
                                 arguments: provider.filteredProducts[index]
                                     .idProduto, // Certifique-se que `idProduto` é String
                               );
