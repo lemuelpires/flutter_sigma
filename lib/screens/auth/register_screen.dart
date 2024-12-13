@@ -82,7 +82,7 @@ class RegistroScreenState extends State<RegistroScreen> {
         // Exibe o SnackBar com a mensagem de sucesso
         if (mounted) {
           scaffoldMessenger.showSnackBar(
-            const SnackBar(content: Text('Usuário registrado com sucesso no Firebase!')),
+            const SnackBar(content: Text('Usuário registrado com sucesso!')),
           );
 
           // Atraso para garantir que a mensagem seja visível
