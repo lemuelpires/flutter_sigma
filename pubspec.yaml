@@ -10,35 +10,35 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  font_awesome_flutter: ^10.0.0
+  font_awesome_flutter: ^10.8.0
   cupertino_icons: ^1.0.8
-  firebase_core: ^3.8.1  # Versão estável atual
+  firebase_core: ^3.9.0  # Versão estável atual
   firebase_auth: ^5.3.4  # Versão compatível
-  cloud_firestore: ^5.5.1
+  cloud_firestore: ^5.6.0
   dio: ^5.7.0
-  logging: ^1.0.2
+  logging: ^1.3.0
   logger: ^2.5.0
   http: ^1.2.2
   provider: ^6.1.2
   intl: ^0.20.1
   mask_text_input_formatter: ^2.9.0
-  flutter_svg: ^2.0.10+1
+  flutter_svg: ^2.0.16
   carousel_slider: ^5.0.0
-  url_launcher: ^6.0.20
+  url_launcher: ^6.3.1
   vector_graphics: ^1.1.15
   vector_graphics_compiler: ^1.1.16
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^5.0.0  # Atualizado para a versão mais recente
-  flutter_launcher_icons: ^0.13.1
+  flutter_lints: ^5.0.0 
+  flutter_launcher_icons: ^0.14.2
 
 # Dependências transitivas atualizadas
 dependency_overrides:
   async: ^2.12.0
   boolean_selector: ^2.1.2
-  characters: ^1.3.1
+  characters: ^1.4.0
   clock: ^1.1.2
   collection: ^1.19.1
   fake_async: ^1.3.2
@@ -49,10 +49,13 @@ dependency_overrides:
   material_color_utilities: ^0.12.0
   meta: ^1.16.0
   path: ^1.9.1
-  stack_trace: ^1.12.0
-  string_scanner: ^1.4.0
-  test_api: ^0.7.3
-  vm_service: ^14.3.1
+  stack_trace: ^1.12.1
+  string_scanner: ^1.4.1
+  test_api: ^0.7.4
+  vm_service: ^15.0.0
+  source_span: ^1.10.1
+  stream_channel: ^2.1.3
+  term_glyph: ^1.2.2
 
 flutter:
   uses-material-design: true

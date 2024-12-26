@@ -14,7 +14,7 @@ class AnuncioCarrosselCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: const Color.fromARGB(0, 8, 8, 8).withOpacity(1),
+      color: const Color.fromARGB(0, 8, 8, 8).withAlpha((1 * 255).toInt()),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8.0), // Ajuste o valor conforme necessário
         child: Image.network(

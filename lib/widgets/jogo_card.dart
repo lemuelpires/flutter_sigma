@@ -19,7 +19,7 @@ class JogoCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 6),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withAlpha((0.1 * 255).toInt()),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(

@@ -82,7 +82,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     labelText: 'E-mail',
                     labelStyle: const TextStyle(color: Colors.white),
                     filled: true,
-                    fillColor: Colors.white.withOpacity(0.2),
+                    fillColor: Colors.white.withAlpha((0.1 * 255).toInt()),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
                       borderSide: BorderSide.none,

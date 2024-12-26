@@ -223,7 +223,7 @@ class RegistroScreenState extends State<RegistroScreen> {
         labelText: labelText,
         labelStyle: const TextStyle(color: Colors.white),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.2),
+        fillColor: Colors.white.withAlpha((0.2 * 255).toInt()),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
           borderSide: BorderSide.none,
@@ -237,7 +237,7 @@ class RegistroScreenState extends State<RegistroScreen> {
     return RichText(
       textAlign: TextAlign.center,
       text: TextSpan(
-        text: 'Ao clicar em "Cadastrar", aceito os ',
+        text: 'Ao clicar em "Registrar", aceito os ',
         style: const TextStyle(color: Colors.white70),
         children: [
           TextSpan(
@@ -285,7 +285,7 @@ class RegistroScreenState extends State<RegistroScreen> {
           labelStyle: const TextStyle(color: Colors.white),
           prefixIcon: const Icon(Icons.wc, color: Colors.white),
           filled: true,
-          fillColor: Colors.white.withOpacity(0.2),
+          fillColor: Colors.white.withAlpha((0.2 * 255).toInt()),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide.none,

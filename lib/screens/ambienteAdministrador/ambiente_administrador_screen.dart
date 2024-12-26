@@ -47,7 +47,7 @@ class _AmbienteAdministradorState extends State<AmbienteAdministrador> {
       body: Stack(
         children: [
           Container(
-            color: Colors.black.withOpacity(0.7),
+            color: Colors.black.withAlpha((0.7 * 255).toInt()),
           ),
           Column(
             children: [
@@ -137,8 +137,8 @@ class MenuButton extends StatelessWidget {
         Navigator.pushNamed(context, routeName);
       },
       borderRadius: BorderRadius.circular(15),
-      splashColor: color.withOpacity(0.3),
-      highlightColor: color.withOpacity(0.1),
+      splashColor: color.withAlpha((0.3 * 255).toInt()),
+      highlightColor: color.withAlpha((0.1 * 255).toInt()),
       child: Container(
         width: 160,
         height: 160,
@@ -151,7 +151,7 @@ class MenuButton extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.4),
+              color: color.withAlpha((0.4 * 255).toInt()),
               blurRadius: 10,
               offset: const Offset(3, 6),
             ),

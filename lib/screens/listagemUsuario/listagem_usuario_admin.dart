@@ -65,7 +65,7 @@ class ListaUsuariosState extends State<ListaUsuarios> {
       body: Stack(
         children: [
           Container(
-            color: Colors.black.withOpacity(0.7),
+            color: Colors.black.withAlpha((0.7 * 255).toInt()),
           ),
           Column(
             children: [

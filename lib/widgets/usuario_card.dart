@@ -55,7 +55,7 @@ class UsuarioCard extends StatelessWidget {
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: borderColor.withOpacity(0.1), // Fundo mais suave
+              color: borderColor.withAlpha((0.1 * 255).toInt()), // Fundo mais suave
               borderRadius:
                   BorderRadius.circular(25), // Deixa o círculo redondo
               border:

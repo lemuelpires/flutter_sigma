@@ -14,7 +14,7 @@ class ProdutoListagemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.white.withOpacity(0.1),
+      color: Colors.white.withAlpha((0.1 * 255).toInt()),
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),

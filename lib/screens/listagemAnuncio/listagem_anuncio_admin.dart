@@ -62,7 +62,7 @@ class ListaAnunciosState extends State<ListaAnuncios> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          Container(color: Colors.black.withOpacity(0.7)),
+          Container(color: Colors.black.withAlpha((0.7 * 255).toInt())),
           Column(
             children: [
               const SizedBox(height: 40),

@@ -202,7 +202,7 @@ class EditarAnuncioState extends State<EditarAnuncio> {
         labelText: labelText,
         labelStyle: const TextStyle(color: Colors.white),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.2),
+        fillColor: Colors.white.withAlpha((0.2 * 255).toInt()),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
           borderSide: BorderSide.none,
@@ -224,7 +224,7 @@ class EditarAnuncioState extends State<EditarAnuncio> {
         labelText: labelText,
         labelStyle: const TextStyle(color: Colors.white),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.2),
+        fillColor: Colors.white.withAlpha((0.2 * 255).toInt()),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
           borderSide: BorderSide.none,

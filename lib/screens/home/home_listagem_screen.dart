@@ -87,7 +87,7 @@ class HomeListagemScreenState extends State<HomeListagemScreen> {
       body: Stack(
         children: [
           Container(
-            color: Colors.black.withOpacity(0.7),
+            color: Colors.black.withAlpha((0.7 * 255).toInt()),
           ),
           Column(
             children: [
@@ -136,7 +136,7 @@ class HomeListagemScreenState extends State<HomeListagemScreen> {
                             onDetails: () {
                               Navigator.pushNamed(
                                 context,
-                                '/em_construcao',
+                                '/produto',
                                 arguments: provider.filteredProducts[index]
                                     .idProduto, // Certifique-se que `idProduto` é String
                               );

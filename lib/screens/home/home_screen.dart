@@ -46,7 +46,8 @@ class HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(80), // Ajustando a altura do header para 80
+        preferredSize:
+            Size.fromHeight(80), // Ajustando a altura do header para 80
         child: CustomHeader(title: 'header', onSearch: _onSearch),
       ),
       backgroundColor: const Color(0xFF101419),
@@ -75,7 +76,8 @@ class HomeScreenState extends State<HomeScreen> {
   Widget _buildAnuncioCarousel(List<Anuncio> anuncios) {
     return custom_carousel.CarouselSlider(
       options: custom_carousel.CarouselOptions(
-        height: MediaQuery.of(context).size.height * 0.3, // Ajustando para altura dinâmica
+        height: MediaQuery.of(context).size.height *
+            0.3, // Ajustando para altura dinâmica
         autoPlay: true,
         enlargeCenterPage: true, // Itens do centro serão ampliados
         enableInfiniteScroll: true, // Permite rotação infinita
@@ -85,9 +87,11 @@ class HomeScreenState extends State<HomeScreen> {
       items: anuncios.map((anuncio) {
         return Builder(
           builder: (BuildContext context) {
-            return Center( // Centraliza o carrossel
+            return Center(
+              // Centraliza o carrossel
               child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9, // Controlando o tamanho dos itens
+                width: MediaQuery.of(context).size.width *
+                    0.9, // Controlando o tamanho dos itens
                 child: AnuncioCarrosselCard(
                   anuncio: anuncio,
                   onDelete: () {
@@ -105,20 +109,24 @@ class HomeScreenState extends State<HomeScreen> {
   Widget _buildFeaturedProductsCarousel(List<Product> produtos) {
     return custom_carousel.CarouselSlider(
       options: custom_carousel.CarouselOptions(
-        height: MediaQuery.of(context).size.height * 0.4, // Altura dinâmica ajustada
+        height: MediaQuery.of(context).size.height *
+            0.4, // Altura dinâmica ajustada
         autoPlay: true,
         enlargeCenterPage: true, // Itens do centro ampliados
         enableInfiniteScroll: true, // Permite rotação infinita
-        viewportFraction: 0.75, // Ajuste a fração do viewport para que os itens se encaixem melhor
+        viewportFraction:
+            0.75, // Ajuste a fração do viewport para que os itens se encaixem melhor
         initialPage: 0, // Começando pela primeira página
         aspectRatio: 1.0, // Proporção do carrossel para garantir o ajuste
       ),
       items: produtos.map((product) {
         return Builder(
           builder: (BuildContext context) {
-            return Center( // Centraliza o carrossel
+            return Center(
+              // Centraliza o carrossel
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0), // Espaçamento entre os itens
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 8.0), // Espaçamento entre os itens
                 child: ProdutoCarrosselCard(
                   product: product,
                   onDetailsPressed: () {
@@ -142,13 +150,6 @@ class HomeScreenState extends State<HomeScreen> {
             fontSize: 20,
             fontWeight: FontWeight.bold,
             color: Colors.white,
-            shadows: [
-              Shadow(
-                blurRadius: 4,
-                color: Colors.black54,
-                offset: Offset(2, 2),
-              ),
-            ],
           ),
           textAlign: TextAlign.center,
         ),
@@ -169,12 +170,18 @@ class HomeScreenState extends State<HomeScreen> {
                   fit: BoxFit.cover,
                 ),
                 boxShadow: _isHovered
-                    ? [BoxShadow(color: Colors.black54, blurRadius: 10, offset: Offset(0, 4))]
+                    ? [
+                        BoxShadow(
+                            color: Colors.black54,
+                            blurRadius: 10,
+                            offset: Offset(0, 4))
+                      ]
                     : [],
               ),
-              height: _isHovered ? 130 : 120, // Ajuste a altura conforme necessário
+              height:
+                  _isHovered ? 130 : 120, // Ajuste a altura conforme necessário
               child: Container(
-                color: Colors.black.withOpacity(0.5), // Fundo semitransparente
+                color: Colors.black.withAlpha((0.5 * 255).toInt()), // Fundo semitransparente
               ),
             ),
           ),

@@ -67,7 +67,7 @@ plugins {
 
 android {
     namespace = "com.example.flutter_sigma"
-    compileSdk = flutter.compileSdkVersion
+    compileSdkVersion = 34
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -81,7 +81,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.flutter_sigma"
-        minSdk = 23 // Você pode ajustar isso se precisar de uma versão mais baixa
+        minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

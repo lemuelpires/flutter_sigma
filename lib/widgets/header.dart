@@ -49,7 +49,7 @@ class CustomHeader extends StatelessWidget {
           color: Colors.black,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.5),
+              color: Colors.black.withAlpha((0.5 * 255).toInt()),
               spreadRadius: 2,
               blurRadius: 5,
               offset: const Offset(0, 3),
@@ -77,7 +77,7 @@ class CustomHeader extends StatelessWidget {
                         borderRadius: BorderRadius.circular(30),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
+                            color: Colors.black.withAlpha((0.2 * 255).toInt()),
                             spreadRadius: 2,
                             blurRadius: 5,
                             offset: const Offset(0, 3),
