@@ -48,7 +48,18 @@ class AppRoutes {
       '/sobre': (context) => SobreNosPage(),
       '/termos_condicoes': (context) => TermsConditionsScreen(),
       '/politica_privacidade': (context) => PrivacyPolicyScreen(),
-      '/produto': (context) => ProdutoPage(productId: 0,),
+      '/produto': (context) {
+        final args = ModalRoute.of(context)?.settings.arguments;
+        if (args is int) {
+          return ProdutoPage(productId: args);
+        } else {
+          return const Scaffold(
+            body: Center(
+              child: Text('Erro: Produto não encontrado.'),
+            ),
+          );
+        }
+      },
       '/editar_anuncio': (context) {
         // Obtendo os argumentos passados para a rota
         final args = ModalRoute.of(context)?.settings.arguments;
