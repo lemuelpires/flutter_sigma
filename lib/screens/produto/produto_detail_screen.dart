@@ -23,15 +23,15 @@ class _ProdutoPageState extends State<ProdutoPage> {
     });
 
     try {
-      // Simulação de uma chamada à API dos Correios ou serviço de cálculo de frete.
-      // Substitua pela lógica real de cálculo de frete, como uma chamada HTTP.
-      await Future.delayed(const Duration(seconds: 2)); // Simulação de tempo de resposta
+      await Future.delayed(
+          const Duration(seconds: 2)); // Simulação de tempo de resposta
       setState(() {
-        _freteInfo = 'Frete calculado: R\$ 25.00 para o CEP $cep';
+        _freteInfo = 'Frete: R\$ 25,00 para o CEP $cep';
       });
     } catch (error) {
       setState(() {
-        _freteInfo = 'Erro ao calcular frete. Verifique o CEP e tente novamente.';
+        _freteInfo =
+            'Erro ao calcular frete. Verifique o CEP e tente novamente.';
       });
     } finally {
       setState(() {
@@ -44,12 +44,14 @@ class _ProdutoPageState extends State<ProdutoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detalhes do Produto', style: TextStyle(color: Colors.white)),
+        title: const Text('Detalhes do Produto'),
         backgroundColor: Colors.black,
+        elevation: 0,
       ),
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.grey[900],
       body: FutureBuilder<Product?>(
-        future: Provider.of<ProductProvider>(context, listen: false).getProductById(widget.productId),
+        future: Provider.of<ProductProvider>(context, listen: false)
+            .getProductById(widget.productId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -70,7 +72,6 @@ class _ProdutoPageState extends State<ProdutoPage> {
           }
 
           final product = snapshot.data!;
-          int selectedQuantity = 1;
 
           return Padding(
             padding: const EdgeInsets.all(16.0),
@@ -80,9 +81,9 @@ class _ProdutoPageState extends State<ProdutoPage> {
                 children: [
                   // Imagem do produto
                   Container(
-                    height: 300,
+                    height: 250,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(12),
                       image: DecorationImage(
                         image: NetworkImage(product.imagemProduto),
                         fit: BoxFit.cover,
@@ -92,124 +93,152 @@ class _ProdutoPageState extends State<ProdutoPage> {
                   const SizedBox(height: 20),
                   Text(
                     product.nomeProduto,
-                    style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 26,
+                        fontWeight: FontWeight.w600),
+                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'Preço: \$${product.preco.toStringAsFixed(2)}',
-                    style: const TextStyle(color: Colors.white, fontSize: 20),
+                    'R\$${product.preco.toStringAsFixed(2)}',
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 15),
+                  
+                  // Quantidade
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      const Text(
+                        'Quantidade:',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                      const SizedBox(width: 10),
                       Expanded(
-                        child: Row(
-                          children: [
-                            const Text(
-                              'Quantidade:',
-                              style: TextStyle(color: Colors.white, fontSize: 16),
-                            ),
-                            const SizedBox(width: 10),
-                            DropdownButton<int>(
-                              dropdownColor: Colors.grey[900],
-                              value: selectedQuantity,
-                              onChanged: (int? newValue) {
-                                if (newValue != null) {
-                                  setState(() {
-                                    selectedQuantity = newValue;
-                                  });
-                                }
-                              },
-                              items: List.generate(
-                                product.quantidadeEstoque,
-                                (index) => DropdownMenuItem<int>(
-                                  value: index + 1,
-                                  child: Text(
-                                    '${index + 1}',
-                                    style: const TextStyle(color: Colors.white),
-                                  ),
-                                ),
+                        child: DropdownButton<int>(
+                          dropdownColor: Colors.grey[800],
+                          value: 1,
+                          onChanged: (int? newValue) {},
+                          items: List.generate(
+                            product.quantidadeEstoque,
+                            (index) => DropdownMenuItem<int>(
+                              value: index + 1,
+                              child: Text(
+                                '${index + 1}',
+                                style: const TextStyle(color: Colors.white),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                      Text(
-                        'Estoque: ${product.quantidadeEstoque}',
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.5),
-                          fontSize: 14,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 15),
 
-                  // Campo de cálculo de frete
-                  TextField(
-                    controller: _cepController,
-                    keyboardType: TextInputType.number,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      labelText: 'Digite seu CEP',
-                      labelStyle: const TextStyle(color: Colors.white),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.white),
+                  // Cálculo de Frete
+                  Row(
+                    children: [
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: TextField(
+                          controller: _cepController,
+                          keyboardType: TextInputType.number,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            hintText: 'Digite seu CEP',
+                            hintStyle: TextStyle(color: Colors.white54),
+                            filled: true,
+                            fillColor: Colors.white.withAlpha(30),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.green),
+                      const SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: _isCalculatingFrete
+                            ? null
+                            : () {
+                                if (_cepController.text.isNotEmpty) {
+                                  _calcularFrete(_cepController.text);
+                                }
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(255, 55, 55, 55),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 10),
+                        ),
+                        child: _isCalculatingFrete
+                            ? const CircularProgressIndicator(
+                                color: Colors.white,
+                              )
+                            : const Text('Calcular', style: TextStyle(color: Colors.white)),
+                      ),
+                    ],
+                  ),
+                  if (_freteInfo.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        _freteInfo,
+                        style: const TextStyle(color: Colors.white70, fontSize: 14),
+                        textAlign: TextAlign.center,
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: _isCalculatingFrete
-                        ? null
-                        : () {
-                            if (_cepController.text.isNotEmpty) {
-                              _calcularFrete(_cepController.text);
-                            }
-                          },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                    ),
-                    child: _isCalculatingFrete
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text('Calcular Frete'),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    _freteInfo,
-                    style: const TextStyle(color: Colors.white, fontSize: 16),
-                  ),
                   const SizedBox(height: 20),
 
-                  // Botões de ação
+                  // Botões de Compra e Carrinho
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Produto comprado com sucesso!')),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                          child: const Text('Comprar'),
+                      ElevatedButton(
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Produto comprado com sucesso!')),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 14, horizontal: 24),
+                        ),
+                        child: const Text(
+                          'Comprar',
+                          style: TextStyle(fontSize: 16),
                         ),
                       ),
-                      const SizedBox(width: 20),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Produto adicionado ao carrinho!')),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
-                          child: const Text('Adicionar ao Carrinho'),
+                      ElevatedButton(
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content:
+                                    Text('Produto adicionado ao carrinho!')),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 14, horizontal: 24),
+                        ),
+                        child: const Text(
+                          'Adicionar ao Carrinho',
+                          style: TextStyle(fontSize: 16),
                         ),
                       ),
                     ],
@@ -218,16 +247,21 @@ class _ProdutoPageState extends State<ProdutoPage> {
                   Text(
                     'Descrição: ${product.descricaoProduto}',
                     style: const TextStyle(color: Colors.white70, fontSize: 16),
+                    textAlign: TextAlign.justify,
                   ),
                   const SizedBox(height: 20),
-                  Text(
+                  const Text(
                     'Ficha Técnica:',
-                    style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
                   Text(
                     product.fichaTecnica,
                     style: const TextStyle(color: Colors.white70, fontSize: 16),
+                    textAlign: TextAlign.justify,
                   ),
                 ],
               ),

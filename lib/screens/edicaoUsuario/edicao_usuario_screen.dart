@@ -89,7 +89,7 @@ class EditarUsuarioState extends State<EditarUsuario> {
 
       await Provider.of<UsuarioProvider>(context, listen: false)
           .updateUsuario(updatedUsuario);
-      if (context.mounted) {
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Usuario atualizado com sucesso!')),
         );

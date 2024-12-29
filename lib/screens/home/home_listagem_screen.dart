@@ -21,15 +21,12 @@ class HomeListagemScreenState extends State<HomeListagemScreen> {
   void initState() {
     super.initState();
     _searchQuery = widget.searchQuery;
-    Future.delayed(Duration.zero, () {
+    Future.delayed(Duration.zero, () async {
       if (mounted) {
-        Provider.of<ProductProvider>(context, listen: false)
-            .fetchProducts()
-            .then((_) {
-          if (_searchQuery.isNotEmpty) {
-            context.read<ProductProvider>().filterProducts(_searchQuery);
-          }
-        });
+        await Provider.of<ProductProvider>(context, listen: false).fetchProducts();
+        if (mounted && _searchQuery.isNotEmpty) {
+          context.read<ProductProvider>().filterProducts(_searchQuery);
+        }
       }
     });
   }

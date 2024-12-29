@@ -64,8 +64,8 @@ class EdicaoProdutoScreenState extends State<EdicaoProdutoScreen> {
       ativo: ativo,
     );
 
-     await Provider.of<ProductProvider>(context, listen: false).updateProduct(updatedProduct);
-    if (context.mounted) {
+    await Provider.of<ProductProvider>(context, listen: false).updateProduct(updatedProduct);
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Produto atualizado com sucesso!')),
       );
