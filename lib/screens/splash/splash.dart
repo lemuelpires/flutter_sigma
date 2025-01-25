@@ -14,7 +14,7 @@ class SplashScreenState extends State<SplashScreen> {
     super.initState();
     // Aguarda 3 segundos antes de redirecionar para a tela de login
     Timer(const Duration(seconds: 3), () {
-      Navigator.of(context).pushReplacementNamed('/login'); // Redireciona para a tela de login
+      Navigator.of(context).pushReplacementNamed('/home'); // Redireciona para a tela de login
     });
   }
 

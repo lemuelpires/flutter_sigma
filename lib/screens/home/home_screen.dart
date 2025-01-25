@@ -156,7 +156,7 @@ class HomeScreenState extends State<HomeScreen> {
         const SizedBox(height: 10),
         GestureDetector(
           onTap: () {
-            Navigator.pushNamed(context, '/em_construcao');
+            Navigator.pushNamed(context, '/etapa1');
           },
           child: MouseRegion(
             onEnter: (_) => setState(() => _isHovered = true),

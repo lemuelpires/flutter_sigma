@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sigma/models/anuncio_model.dart';
 import 'package:flutter_sigma/models/jogo_model.dart';
 import 'package:flutter_sigma/models/produto_model.dart';
-import 'package:flutter_sigma/models/usuario_model.dart';  // Certifique-se de importar o modelo do usuário
+import 'package:flutter_sigma/models/usuario_model.dart'; // Certifique-se de importar o modelo do usuário
 import 'package:flutter_sigma/screens/ListagemJogo/listagem_jogo_admin.dart';
 import 'package:flutter_sigma/screens/ambienteAdministrador/ambiente_administrador_screen.dart';
 import 'package:flutter_sigma/screens/auth/login_screen.dart';
@@ -24,6 +24,10 @@ import 'package:flutter_sigma/screens/listagemProduto/listagem_produto_admin.dar
 import 'package:flutter_sigma/screens/listagemUsuario/listagem_usuario_admin.dart';
 import 'package:flutter_sigma/screens/listagemAnuncio/listagem_anuncio_admin.dart';
 import 'package:flutter_sigma/screens/produto/produto_detail_screen.dart';
+import 'package:flutter_sigma/screens/setupGamer/etapa1_screen.dart';
+import 'package:flutter_sigma/screens/setupGamer/etapa2_screen.dart';
+import 'package:flutter_sigma/screens/setupGamer/etapa3_screen.dart';
+import 'package:flutter_sigma/screens/setupGamer/etapa4_screen.dart';
 import 'package:flutter_sigma/screens/sobre/sobre_screen.dart';
 import 'package:flutter_sigma/screens/splash/splash.dart';
 
@@ -39,7 +43,9 @@ class AppRoutes {
       '/lista_usuarios': (context) => ListaUsuarios(),
       '/lista_anuncios': (context) => ListaAnuncios(),
       '/lista_jogos': (context) => ListagemJogosPage(),
-      '/home_lista': (context) => HomeListagemScreen(searchQuery: '',),
+      '/home_lista': (context) => HomeListagemScreen(
+            searchQuery: '',
+          ),
       '/cadastro_produto': (context) => CadastroProduto(),
       '/cadastro_anuncio': (context) => CadastroAnuncio(),
       '/cadastro_jogo': (context) => CadastroJogo(),
@@ -48,6 +54,10 @@ class AppRoutes {
       '/sobre': (context) => SobreNosPage(),
       '/termos_condicoes': (context) => TermsConditionsScreen(),
       '/politica_privacidade': (context) => PrivacyPolicyScreen(),
+      '/etapa1': (context) => const Etapa1Screen(),
+      '/etapa2': (context) => Etapa2Screen(),
+      '/etapa3': (context) => const Etapa3Screen(),
+      '/etapa4': (context) => const Etapa4Screen(),
       '/produto': (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
         if (args is int) {
@@ -82,7 +92,8 @@ class AppRoutes {
 
         // Verificando se os argumentos são do tipo Usuario
         if (args is Usuario) {
-          return EditarUsuario(usuario: args); // Passando o usuário para a tela de edição
+          return EditarUsuario(
+              usuario: args); // Passando o usuário para a tela de edição
         } else {
           // Caso o argumento seja inválido, exibe um placeholder ou mensagem de erro
           return const Scaffold(
@@ -98,7 +109,8 @@ class AppRoutes {
 
         // Verificando se os argumentos são do tipo Usuario
         if (args is Jogo) {
-          return EditarJogo(jogo: args); // Passando o usuário para a tela de edição
+          return EditarJogo(
+              jogo: args); // Passando o usuário para a tela de edição
         } else {
           // Caso o argumento seja inválido, exibe um placeholder ou mensagem de erro
           return const Scaffold(
@@ -114,7 +126,8 @@ class AppRoutes {
 
         // Verificando se os argumentos são do tipo Usuario
         if (args is Product) {
-          return EdicaoProdutoScreen(product: args); // Passando o usuário para a tela de edição
+          return EdicaoProdutoScreen(
+              product: args); // Passando o usuário para a tela de edição
         } else {
           // Caso o argumento seja inválido, exibe um placeholder ou mensagem de erro
           return const Scaffold(
