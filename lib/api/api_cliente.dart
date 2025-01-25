@@ -5,15 +5,23 @@ import 'dart:io'; // Import necessário para o HttpClient
 class ApiClient {
   late final Dio dio;
 
-  ApiClient() {
-    dio = Dio(BaseOptions(baseUrl: 'http://www.portalmantec.com.br:5001/api/'));
+  ApiClient({bool useHttps = false}) {
+    // Define a base URL com base no uso de HTTPS
+    final baseUrl = useHttps
+        ? 'https://www.portalmantec.com.br:5002/api/' // HTTPS
+        : 'http://www.portalmantec.com.br:5001/api/'; // HTTP
 
-    dio.httpClientAdapter = IOHttpClientAdapter()
-      ..createHttpClient = () {
-        final client = HttpClient();
-        client.badCertificateCallback = (cert, host, port) => true;
-        return client;
-      };
+    dio = Dio(BaseOptions(baseUrl: baseUrl));
+
+    // Configura o HttpClient para ignorar certificados inválidos (apenas para HTTPS)
+    if (useHttps) {
+      dio.httpClientAdapter = IOHttpClientAdapter()
+        ..createHttpClient = () {
+          final client = HttpClient();
+          client.badCertificateCallback = (cert, host, port) => true;
+          return client;
+        };
+    }
   }
 
   // Método GET
