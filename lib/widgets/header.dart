@@ -140,7 +140,7 @@ class CustomHeader extends StatelessWidget {
                         },
                       )
                     : IconButton(
-                        icon: const Icon(Icons.person, color: Colors.white),
+                        icon: const Icon(Icons.person, color: Colors.white, size: 35),
                         onPressed: () {
                           Navigator.pushNamed(context, '/login');
                         },
